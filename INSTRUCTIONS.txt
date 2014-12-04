@@ -1,0 +1,11 @@
+create local network - get IP from dylan and edit forwarder.js and phone.js
+
+open synapse_heartbeat patch on both computers
+
+connect to synapse on both computers
+
+run server on server computer
+
+connect other computer to server with node forwarder.js
+
+connect server's browser

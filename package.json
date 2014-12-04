@@ -1,0 +1,28 @@
+{
+  "name": "strength.js",
+  "version": "0.0.0",
+  "description": "col",
+  "main": "server.js",
+  "dependencies": {
+    "express": "3.4.8",
+    "osc": "^1.0.3",
+    "socket.io": "^1.1.0",
+    "socket.io-client": "~1.1.0",
+    "node-osc": "~0.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevin-roark/strength.js.git"
+  },
+  "author": "",
+  "license": "NONE",
+  "bugs": {
+    "url": "https://github.com/kevin-roark/strength.js/issues"
+  },
+  "homepage": "https://github.com/kevin-roark/strength.js"
+}
