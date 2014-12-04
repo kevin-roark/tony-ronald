@@ -5,7 +5,7 @@ $(function() {
   var Character = require('./character');
   var Skybox = require('./skybox');
   var io = require('./io');
-  
+
   var scene = new THREE.Scene();
 
   var renderer;
@@ -61,6 +61,8 @@ $(function() {
     camera.cam.position.set(0, 6, 110);
 
     io.begin(kevinRonald, dylanRonald, camera.cam, hueLight);
+
+    enterPhrasesState();
 
     render();
 
@@ -133,6 +135,18 @@ $(function() {
   /*
    * * * * * STATE CHANGES * * * * *
    */
+
+  function enterPhrasesState() {
+
+  }
+
+  function enterTrappedState() {
+
+  }
+
+  function enterDesperateFleeState() {
+    
+  }
 
   function enterHeavenState() {
 
