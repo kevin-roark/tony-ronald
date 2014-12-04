@@ -29,17 +29,22 @@ function RonaldWord(phrase) {
     , bevelEnabled: true
   });
 
-  this.material = new THREE.MeshPhongMaterial({
-    ambient: 0xffffff
-    , color: 0xffffff
-    , combine: THREE.MixOperation
-    , shading: THREE.FlatShading
-    , shininess: 60
-    , reflectivity: 0.5
-    , side: THREE.DoubleSide
-  });
+  this.material = Physijs.createMaterial(
+    new THREE.MeshPhongMaterial({
+      ambient: 0xffffff
+      , color: 0xffffff
+      , combine: THREE.MixOperation
+      , shading: THREE.FlatShading
+      , shininess: 60
+      , reflectivity: 0.5
+      , side: THREE.DoubleSide
+    },
+    .4, // low friction
+    .6 // high restitution
+  );
 
-  this.mesh = new THREE.Mesh(this.geometry, this.material);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material);
+  this.mesh.castShadow = this.mesh.receiveShadow = true;
 }
 
 RonaldWord.prototype.move = function(x, y, z) {

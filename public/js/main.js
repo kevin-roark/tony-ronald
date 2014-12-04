@@ -39,6 +39,27 @@ $(function() {
   var active = {ronalds: true, lighting: true, camera: false};
   var history = {};
 
+  var ground_material = Physijs.createMaterial(
+    new THREE.MeshLambertMaterial({color: 0xff0000}),
+    .8, // high friction
+    .4 // low restitution
+  );
+
+  var ground_geometry = new THREE.PlaneGeometry(300, 300, 100, 100);
+  ground_geometry.computeFaceNormals();
+  ground_geometry.computeVertexNormals();
+
+  var ground = new Physijs.HeightfieldMesh(ground_geometry, ground_material, 0);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  var cameraFollowState = {
+    obj: null,
+    cameraOffset: {x: 0, y: 0, z: 0},
+    lightOffset: {x: 0, y: 0, z: 0}
+  };
+
   var kevinRonald;
   var dylanRonald;
   var ronalds = [];
@@ -80,6 +101,14 @@ $(function() {
       ronalds.forEach(function(ronald) {
         ronald.render();
       });
+    }
+
+    if (cameraFollowState.obj) {
+      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.cameraOffset);
+      camera.lookAt(cameraFollowState.obj.position);
+
+      light.target.position.copy(cameraFollowState.obj.position);
+      light.position.addVectors(light.target.position, lightOffset);
     }
 
     renderer.render(scene, camera);
