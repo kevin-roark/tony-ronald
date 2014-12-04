@@ -23,7 +23,6 @@ function RonaldWord(phrase) {
     , height: 0.01
     , curveSegments: 1
     , font: "droid sans"
-
     , bevelThickness: 0.35
     , bevelSize: 0.15
     , bevelSegments: 1
