@@ -56,7 +56,7 @@ Arm.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],2:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -96,7 +96,7 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],3:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],3:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -295,73 +295,7 @@ BodyPart.prototype.fallToFloor = function(threshold, speed) {
 BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 
-},{"./lib/kutility":14,"./model_names":17}],4:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = BoxingRing;
-
-function BoxingRing(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.specificModelName = modelNames.BOXING_RING;
-}
-
-BoxingRing.prototype.__proto__ = BodyPart.prototype;
-
-BoxingRing.prototype.additionalInit = function() {
-
-};
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],5:[function(require,module,exports){
-
-var element = document.body;
-
-var cam = {};
-
-var kt = require('./lib/kutility');
-
-function onWindowResize() {
-	cam.aspect = window.innerWidth / window.innerHeight;
-	cam.updateProjectionMatrix();
-}
-
-module.exports = exports = Camera;
-
-function Camera(window, scene, config) {
-	if (!config) config = {};
-	if (!config.near) config.near = 0.1;
-	if (!config.far) config.far = 20000;
-
-
-  this.cam = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, config.near, config.far);
-	cam = this.cam;
-
-  window.addEventListener('resize', onWindowResize, false);
-
-  this.window = window;
-
-	this.objects = [];
-}
-
-Camera.prototype.addObject = function(object) {
-	this.objects.push(object);
-}
-
-Camera.prototype.render = function() {
-	// doesn't actually need to do anything yet
-}
-
-},{"./lib/kutility":14}],6:[function(require,module,exports){
+},{"./lib/kutility":9,"./model_names":11}],4:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -548,71 +482,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":2,"./foot":9,"./hand":10,"./head":11,"./leg":13,"./lib/kutility":14,"./model_names":17}],7:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = Computer;
-
-function Computer(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.specificModelName = modelNames.LAPTOP;
-}
-
-Computer.prototype.__proto__ = BodyPart.prototype;
-
-Computer.prototype.additionalInit = function() {
-
-};
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],8:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = FitnessTower;
-
-function FitnessTower(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.specificModelName = modelNames.FITNESS_TOWER;
-}
-
-FitnessTower.prototype.__proto__ = BodyPart.prototype;
-
-FitnessTower.prototype.additionalInit = function() {
-
-};
-
-FitnessTower.prototype.additionalRender = function() {
-  this.move(posNegRandom(0.04), posNegRandom(0.04), posNegRandom(0.04));
-};
-
-function posNegRandom(max) {
-  if (!max) max = 1;
-
-  return (Math.random() - 0.5) * 2 * max;
-}
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],9:[function(require,module,exports){
+},{"./arm":1,"./body":2,"./foot":5,"./hand":6,"./head":7,"./leg":8,"./lib/kutility":9,"./model_names":11}],5:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -659,7 +529,7 @@ Foot.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],10:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -710,7 +580,7 @@ Hand.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],11:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -756,606 +626,7 @@ Head.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],12:[function(require,module,exports){
-
-// CONTROLS::::
-
-// move torso to move character
-// shake head to swell character
-// left and right hands correspond to left and right arms for the character
-// delta between hands corresponds to degree of melt (closer together means more melt)
-// left and right knees handle the legs of the character
-// delta between knees controls rotation about y
-// delta between elbows controls rotation about x
-// elbows fuckily control the secondary light source
-
-// what does closest hand do?
-
-// TODO: all these things are separate and repetitive right now because there is no
-// guarantee that each wrestler will behave the same. please fix later.
-
-var socket = io('http://localhost:8888');
-
-var previousPositions = {};
-var positionDeltas = {};
-var previousPositionDeltas = {};
-
-var eventsWithRapidHeadVelocity = {one: 0, two: 0};
-
-var startDate = new Date();
-var meltingHistory = {one: {meltEndTime: startDate, meltStartTime: startDate}, two: {meltEndTime: startDate, meltStartTime: startDate}};
-
-var kneeHistory = {one: {rotating: false}, two: {rotating: false}};
-
-var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rotDown: false}};
-
-var BIG_HEAD_MAG = 15;
-var MAX_HEAD_SWELL = 500;
-var TORSO_CLOSE_MAG = 11;
-
-var CLOSE_KNEE_MAG = 60;
-var CLOSE_ELBOW_MAG = 60;
-var FAR_ELBOW_MAG = 300;
-var RIDICULOUS_ELBOW_MAG = 600;
-
-var CLOSE_HANDS_MAG = 100;
-
-var wrestler1, wrestler2, camera, light;
-
-module.exports.begin = function(w1, w2, cam, l) {
-  wrestler1 = w1;
-  wrestler2 = w2;
-  camera = cam;
-  light = l;
-
-  socket.emit('rollcall', 'browser');
-
-  socket.on('leftHand', function(data) {
-    if (data.wrestler == 1) {
-      leftHand1(data.position);
-    } else {
-      leftHand2(data.position);
-    }
-  });
-
-  socket.on('rightHand', function(data) {
-    if (data.wrestler == 1) {
-      rightHand1(data.position);
-    } else {
-      rightHand2(data.position);
-    }
-  });
-
-  socket.on('closestHand', function(data) {
-    if (data.wrestler == 1) {
-      closestHand1(data.position);
-    } else {
-      closestHand2(data.position);
-    }
-  });
-
-  socket.on('head', function(data) {
-    if (data.wrestler == 1) {
-      head1(data.position);
-    } else {
-      head2(data.position);
-    }
-  });
-
-  socket.on('leftKnee', function(data) {
-    if (data.wrestler == 1) {
-      leftKnee1(data.position);
-    } else {
-      leftKnee2(data.position);
-    }
-  });
-
-  socket.on('rightKnee', function(data) {
-    if (data.wrestler == 1) {
-      rightKnee1(data.position);
-    } else {
-      rightKnee2(data.position);
-    }
-  });
-
-  socket.on('leftElbow', function(data) {
-    if (data.wrestler == 1) {
-      leftElbow1(data.position);
-    } else {
-      leftElbow2(data.position);
-    }
-  });
-
-  socket.on('rightElbow', function(data) {
-    if (data.wrestler == 1) {
-      rightElbow1(data.position);
-    } else {
-      rightElbow2(data.position);
-    }
-  });
-
-  socket.on('torso', function(data) {
-    if (data.wrestler == 1) {
-      torso1(data.position);
-    } else {
-      torso2(data.position);
-    }
-  });
-
-  socket.on('resetPlayer', function(player) {
-    console.log('big reset');
-
-    if (player == 1) {
-      wrestler1.reset();
-    } else {
-      wrestler2.reset();
-    }
-  });
-}
-
-function moveDelta(bodypart, position, lastPos, divisor, directions) {
-  if (!directions) directions = {x: true, y: true, z: true};
-
-  var deltaX = 0;
-  var deltaY = 0;
-  var deltaZ = 0;
-
-  if (directions.x) {
-    deltaX = (position.x - lastPos.x) / divisor;
-  }
-
-  if (directions.y) {
-    deltaY = (position.y - lastPos.y) / -divisor;
-  }
-
-  if (directions.z) {
-    deltaZ = (position.z - lastPos.z) / -divisor;
-  }
-
-  bodypart.move(deltaX, deltaY, deltaZ);
-}
-
-function scaleWrestler(wrestler, rapidHeadTicks) {
-  var s = 1.0 + 20.0 * (rapidHeadTicks / MAX_HEAD_SWELL);
-  wrestler.swell(s);
-}
-
-function delta(current, previous) {
-  return {x: current.x - previous.x, y: current.y - previous.y, z: current.z - previous.z};
-}
-
-function totalMagnitude(pos) {
-  return Math.abs(pos.x) + Math.abs(pos.y) + Math.abs(pos.z);
-}
-
-function rightHand1(position) {
-  if (previousPositions.rightHand1) {
-    [wrestler1.rightHand, wrestler1.rightArm].forEach(function(part) {
-      moveDelta(part, position, previousPositions.rightHand1, 10);
-    });
-  }
-
-  previousPositions.rightHand1 = position;
-}
-
-function leftHand1(position) {
-  if (previousPositions.rightHand1) {
-    var rh = previousPositions.rightHand1;
-    positionDeltas.hand1 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
-    hand1DeltaAction(positionDeltas.hand1);
-  }
-
-  if (previousPositions.leftHand1) {
-    [wrestler1.leftHand, wrestler1.leftArm].forEach(function(part) {
-      moveDelta(part, position, previousPositions.leftHand1, 10);
-    });
-  }
-
-  previousPositions.leftHand1 = position;
-}
-
-function closestHand1(position) {
-
-}
-
-function head1(position) {
-  if (previousPositions.head1) {
-    if (positionDeltas.torso1 && totalMagnitude(positionDeltas.torso1) < TORSO_CLOSE_MAG) {
-      var positionChange = delta(position, previousPositions.head1);
-      var mag = totalMagnitude(positionChange);
-
-      if (mag > BIG_HEAD_MAG) {
-        if (eventsWithRapidHeadVelocity.one == 0) {
-          socket.emit('startSwell', 1);
-        }
-
-        eventsWithRapidHeadVelocity.one = Math.min(eventsWithRapidHeadVelocity.one + 1, MAX_HEAD_SWELL);
-      } else {
-        if (eventsWithRapidHeadVelocity.one == 1) {
-          socket.emit('endSwell', 1);
-        }
-
-        eventsWithRapidHeadVelocity.one = Math.max(eventsWithRapidHeadVelocity.one - 1, 0);
-      }
-
-      scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
-    }
-  }
-
-  previousPositions.head1 = position;
-}
-
-function leftKnee1(position) {
-  if (previousPositions.rightKnee1) {
-    var rh = previousPositions.rightKnee1;
-    positionDeltas.knee1 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
-    knee1DeltaAction(positionDeltas.knee1);
-  }
-
-  if (previousPositions.leftKnee1) {
-    [wrestler1.leftLeg, wrestler1.leftFoot].forEach(function(part) {
-      moveDelta(part, position, previousPositions.leftKnee1, 8);
-    });
-  }
-
-  previousPositions.leftKnee1 = position;
-}
-
-function rightKnee1(position) {
-  if (previousPositions.rightKnee1) {
-    [wrestler1.rightLeg, wrestler1.rightFoot].forEach(function(part) {
-      moveDelta(part, position, previousPositions.rightKnee1, 8);
-    });
-  }
-
-  previousPositions.rightKnee1 = position;
-}
-
-function leftElbow1(position) {
-  if (previousPositions.rightElbow1) {
-    var rh = previousPositions.rightElbow1;
-    positionDeltas.elbow1 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
-    elbow1DeltaAction(positionDeltas.elbow1);
-  }
-
-  light.target.position = position;
-
-  previousPositions.leftElbow1 = position;
-}
-
-function rightElbow1(position) {
-  light.intensity = Math.abs(position.y) / 30;
-  previousPositions.rightElbow1 = position;
-}
-
-function torso1(position) {
-  if (previousPositions.torso1) {
-    moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
-
-    positionDeltas.torso1 = delta(position, previousPositions.torso1);
-  }
-
-  previousPositions.torso1 = position;
-}
-
-function rightHand2(position)  {
-  if (previousPositions.rightHand2) {
-    [wrestler2.rightHand, wrestler2.rightArm].forEach(function(part) {
-      moveDelta(part, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
-    });
-  }
-
-  previousPositions.rightHand2 = position;
-}
-
-function leftHand2(position) {
-  if (previousPositions.rightHand2) {
-    var rh = previousPositions.rightHand2;
-    positionDeltas.hand2 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
-    hand2DeltaAction(positionDeltas.hand2);
-  }
-
-  if (previousPositions.leftHand2) {
-    [wrestler2.leftHand, wrestler2.leftArm].forEach(function(part) {
-      moveDelta(part, position, previousPositions.leftHand2, 10);
-    });
-  }
-
-  previousPositions.leftHand2 = position;
-}
-
-function closestHand2(position) {
-
-}
-
-function head2(position) {
-  if (previousPositions.head2) {
-    if (positionDeltas.torso2 && totalMagnitude(positionDeltas.torso2) < TORSO_CLOSE_MAG) {
-      var positionChange = delta(position, previousPositions.head2);
-      var mag = totalMagnitude(positionChange);
-
-      if (mag > BIG_HEAD_MAG) {
-        if (eventsWithRapidHeadVelocity.two == 0) {
-          socket.emit('startSwell', 2);
-        }
-
-        eventsWithRapidHeadVelocity.two = Math.min(eventsWithRapidHeadVelocity.two + 1, MAX_HEAD_SWELL);
-      } else {
-        if (eventsWithRapidHeadVelocity.two == 1) {
-          socket.emit('endSwell', 2);
-        }
-
-        eventsWithRapidHeadVelocity.two = Math.max(eventsWithRapidHeadVelocity.two - 1, 0);
-      }
-
-      scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
-    }
-  }
-
-  previousPositions.head2 = position;
-}
-
-function leftKnee2(position) {
-  if (previousPositions.rightKnee2) {
-    var rh = previousPositions.rightKnee2;
-    positionDeltas.knee2 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
-    knee2DeltaAction(positionDeltas.knee2);
-  }
-
-  if (previousPositions.leftKnee2) {
-    [wrestler2.leftLeg, wrestler2.leftFoot].forEach(function(part) {
-      moveDelta(part, position, previousPositions.leftKnee2, 8, {x: true, y: true, z: true});
-    });
-  }
-
-  previousPositions.leftKnee2 = position;
-}
-
-function rightKnee2(position) {
-  if (previousPositions.rightKnee2) {
-    [wrestler2.rightLeg, wrestler2.rightFoot].forEach(function(part) {
-      moveDelta(part, position, previousPositions.rightKnee2, 8, {x: true, y: true, z: true});
-    });
-  }
-
-  previousPositions.rightKnee2 = position;
-}
-
-function leftElbow2(position) {
-  if (previousPositions.rightElbow2) {
-    var rh = previousPositions.rightElbow2;
-    positionDeltas.elbow2 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
-    elbow2DeltaAction(positionDeltas.elbow2);
-  }
-
-  var mag = totalMagnitude(position);
-  light.distance = position.y;
-
-  previousPositions.leftElbow2 = position;
-}
-
-function rightElbow2(position) {
-  var mag = totalMagnitude(position);
-  light.angle = Math.PI / 2 * Math.min(1, (Math.abs(position.y) / 400));
-
-  previousPositions.rightElbow2 = position;
-}
-
-function torso2(position) {
-  if (previousPositions.torso2) {
-    moveDelta(wrestler2, position, previousPositions.torso2, 8);
-
-    positionDeltas.torso2 = delta(position, previousPositions.torso2);
-  }
-
-  previousPositions.torso2 = position;
-}
-
-function hand1DeltaAction(positionDelta) {
-  var mag = totalMagnitude(positionDelta);
-  var date = new Date();
-
-  if (mag < CLOSE_HANDS_MAG) {
-    if (!meltingHistory.one.melting && date - meltingHistory.one.meltEndTime > 1500) {
-      meltingHistory.one.melting = true;
-      meltingHistory.one.meltStartTime = new Date();
-      wrestler1.melting = true;
-    }
-
-    var intensity = (CLOSE_HANDS_MAG - mag) * 0.01 + 0.03;
-    wrestler1.meltIntensity = intensity;
-  } else {
-    if (meltingHistory.one.melting && date - meltingHistory.one.meltStartTime > 1500) {
-      meltingHistory.one.melting = false;
-      meltingHistory.one.meltEndTime = date;
-      wrestler1.cancelMelt(true);
-    }
-  }
-
-  socket.emit('handDelta', 1, mag);
-}
-
-function hand2DeltaAction(positionDelta) {
-  var mag = totalMagnitude(positionDelta);
-  var date = new Date();
-
-  if (mag < CLOSE_HANDS_MAG) {
-    if (!meltingHistory.two.melting && date - meltingHistory.two.meltEndTime > 1500) {
-      meltingHistory.two.melting = true;
-      meltingHistory.two.meltStartTime = new Date();
-      wrestler2.melting = true;
-    }
-
-    var intensity = (CLOSE_HANDS_MAG - mag) * 0.01 + 0.03;
-    wrestler2.meltIntensity = intensity;
-  } else {
-    if (meltingHistory.two.melting && date - meltingHistory.two.meltStartTime > 1500) {
-      meltingHistory.two.melting = false;
-      meltingHistory.two.meltEndTime = date;
-      wrestler2.cancelMelt(true);
-    }
-  }
-
-  socket.emit('handDelta', 2, mag);
-}
-
-function knee1DeltaAction(positionDelta) {
-  var mag = totalMagnitude(positionDelta);
-
-  if (mag < CLOSE_KNEE_MAG) {
-    if (!kneeHistory.one.rotating) {
-      socket.emit('startKnees', 1);
-      kneeHistory.one.rotating = true;
-    }
-
-    wrestler1.rotate(0, 0.1, 0);
-  } else {
-    if (kneeHistory.one.rotating) {
-      socket.emit('endKnees', 1);
-      kneeHistory.one.rotating = false;
-    }
-  }
-}
-
-function knee2DeltaAction(positionDelta) {
-  var mag = totalMagnitude(positionDelta);
-
-  if (mag < CLOSE_KNEE_MAG) {
-    if (!kneeHistory.two.rotating) {
-      socket.emit('startKnees', 2);
-      kneeHistory.two.rotating = true;
-    }
-
-    wrestler2.rotate(0, -0.1, 0);
-  } else {
-    if (kneeHistory.two.rotating) {
-      socket.emit('endKnees', 2);
-      kneeHistory.two.rotating = false;
-    }
-  }
-}
-
-function elbow1DeltaAction(positionDelta) {
-  var mag = totalMagnitude(positionDelta);
-
-  if (mag > FAR_ELBOW_MAG && handsBetweenElbows(1)) {
-    if (previousPositions.rightHand1.y < previousPositions.rightElbow1.y - 10 &&
-        previousPositions.leftHand1.y > previousPositions.leftElbow1.y + 10) {
-          if (!elbowHistory.one.rotUp) {
-            elbowHistory.one.rotUp = true;
-            socket.emit('startElbowRotUp', 1);
-          }
-
-          wrestler1.rotate(0.08, 0, 0);
-    } else {
-      checkPlayer1ElbowNonRot(true, false);
-    }
-
-    if (previousPositions.rightHand1.y > previousPositions.rightElbow1.y + 10 &&
-             previousPositions.leftHand1.y < previousPositions.leftElbow1.y - 10) {
-
-          if (!elbowHistory.one.rotDown) {
-            elbowHistory.one.rotDown = true;
-            socket.emit('startElbowRotDown', 1);
-          }
-
-          wrestler1.rotate(-0.08, 0, 0);
-    } else {
-      checkPlayer1ElbowNonRot(false, true);
-    }
-  } else {
-    checkPlayer1ElbowNonRot(true, true);
-  }
-
-  previousPositionDeltas.elbow1 = positionDelta;
-}
-
-function elbow2DeltaAction(positionDelta) {
-  var mag = totalMagnitude(positionDelta);
-
-  if (mag > FAR_ELBOW_MAG && handsBetweenElbows(2)) {
-    if (previousPositions.rightHand2.y < previousPositions.rightElbow2.y - 10 &&
-        previousPositions.leftHand2.y > previousPositions.leftElbow2.y + 10) {
-          if (!elbowHistory.two.rotUp) {
-            elbowHistory.two.rotUp = true;
-            socket.emit('startElbowRotUp', 2);
-          }
-
-          wrestler2.rotate(-0.08, 0, 0);
-    } else {
-      checkPlayer2ElbowNonRot(true, false);
-    }
-
-    if (previousPositions.rightHand2.y > previousPositions.rightElbow2.y + 10 &&
-             previousPositions.leftHand2.y < previousPositions.leftElbow2.y - 10) {
-
-          if (!elbowHistory.two.rotDown) {
-            elbowHistory.two.rotDown = true;
-            socket.emit('startElbowRotDown', 2);
-          }
-
-          wrestler2.rotate(0.08, 0, 0);
-    } else {
-      checkPlayer2ElbowNonRot(false, true);
-    }
-  } else {
-    checkPlayer2ElbowNonRot(true, true);
-  }
-
-  previousPositionDeltas.elbow2 = positionDelta;
-}
-
-function checkPlayer1ElbowNonRot(rotUp, rotDown) {
-  if (rotUp && elbowHistory.one.rotUp) {
-    elbowHistory.one.rotUp = false;
-    socket.emit('endElbowRotUp', 1);
-  }
-
-  if (rotDown && elbowHistory.one.rotDown) {
-    elbowHistory.one.rotDown = false;
-    socket.emit('endElbowRotDown', 1);
-  }
-}
-
-function checkPlayer2ElbowNonRot(rotUp, rotDown) {
-  if (rotUp && elbowHistory.two.rotUp) {
-    elbowHistory.two.rotUp = false;
-    socket.emit('endElbowRotUp', 2);
-  }
-
-  if (rotDown && elbowHistory.two.rotDown) {
-    elbowHistory.two.rotDown = false;
-    socket.emit('endElbowRotDown', 2);
-  }
-}
-
-function handsBetweenElbows(playerNum) {
-  var leftHand, rightHand, leftElbow, rightElbow;
-
-  if (playerNum == 1) {
-    leftHand = previousPositions.leftHand1;
-    rightHand = previousPositions.rightHand1;
-    leftElbow = previousPositions.leftElbow1;
-    rightElbow = previousPositions.rightElbow1;
-  } else {
-    leftHand = previousPositions.leftHand2;
-    rightHand = previousPositions.rightHand2;
-    leftElbow = previousPositions.leftElbow2;
-    rightElbow = previousPositions.rightElbow2;
-  }
-
-  if (!leftHand || !rightHand || !leftElbow || !rightElbow) return false;
-
-  // left hand above and to right of left elbow
-  // right hand below and to the left of the right elbow
-
-  // left hand below and to the right of left elbow
-  // right hand above and to the left of right elbow
-
-  return (leftHand.x > leftElbow.x) && (rightHand.x < rightElbow.x);
-}
-
-},{}],13:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -1391,7 +662,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],14:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],9:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1956,180 +1227,148 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],15:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = Locker;
-
-function Locker(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.specificModelName = modelNames.LOCKER;
-}
-
-Locker.prototype.__proto__ = BodyPart.prototype;
-
-Locker.prototype.additionalInit = function() {
-
-};
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],16:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
-  var Camera = require('./camera');
   var Character = require('./character');
-  var Skybox = require('./skybox');
-  var io = require('./io');
+  //var io = require('./io');
+  var RonaldWord = require('./ronald_word');
 
-  var Shower = require('./shower');
-  var Locker = require('./locker');
-  var Phone = require('./phone');
-  var Computer = require('./computer');
-  var BoxingRing = require('./boxing_ring');
-  var FitnessTower = require('./fitness_tower');
-  var Weights = require('./weights');
+  /*
+   * * * * * RENDERIN AND LIGHTIN * * * * *
+   */
 
-  var scene = new THREE.Scene();
-
-  var renderer;
-  var rendermode = 'webgl';
-  try {
-    renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor(0x111111, 1);
-  } catch(e) {
-    $('.error').show();
-  }
-
+  var renderer = new THREE.WebGLRenderer({antialias: true});
 	renderer.setSize(window.innerWidth, window.innerHeight);
-
 	document.body.appendChild(renderer.domElement);
 
-  var canvas = document.querySelector('canvas');
-  var $canvas = $(canvas);
+  var scene = new Physijs.Scene;
+  scene.setGravity(new THREE.Vector3(0, 0, 0));
+  scene.addEventListener('update', function() {
+    // here wanna apply new forces to objects and things based on state
 
-  var skybox = new Skybox();
-  skybox.addTo(scene);
+    scene.simulate(undefined, 1);
+  });
 
-  var camera = new Camera(window, scene);
+  var camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
+  scene.add(camera);
 
-  // spotlight shinin from above casting shadows and the like
-  var spotlight = new THREE.SpotLight(0xffffff, 5.0);
-  spotlight.position.set(0, 200, -25);
-  spotlight.castShadow = true;
-  scene.add(spotlight);
+  // mainLight shinin from above casting shadows and the like
+  var mainLight = new THREE.DirectionalLight(0xffffff);
+  mainLight.position.set(20, 20, 0);
+  mainLight.target.position.copy(scene.position);
+  mainLight.castShadow = true;
+  scene.add(mainLight);
 
-  var hueLight = new THREE.SpotLight(0xffffff, 1.0);
-  hueLight.castShadow = true;
-  hueLight.position.set(0, 100, -25);
-  scene.add(hueLight);
+  /*
+   * * * * * STATE OBJECTS * * * * *
+   */
 
-  // soft blue light //\\ can modify this sucker to change mood
-  var ambientLight = new THREE.AmbientLight(0xeeeeff);
-  ambientLight.intensity = 0.4;
-  //scene.add(ambientLight);
-
-  var active = {wrestlers: true, lighting: true, sliding: false, camera: false};
+  var active = {ronalds: false, lighting: false, camera: false, phrases: false};
   var history = {};
 
-  var kevinWrestler;
-  var dylanWrestler;
-  var wrestlers = [];
+  var phrases = [];
 
-  var boxingRing;
-  var fitnessTowers = [];
-  var weights = [];
+  var ground_material = Physijs.createMaterial(
+    new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.5}),
+    .8, // high friction
+    .4 // low restitution
+  );
 
-  var slideOb = {left: true, moveCount: 0};
-  var cameraOb = {};
+  var ground_geometry = new THREE.PlaneGeometry(100, 100);
+  calculateGeometryThings(ground_geometry);
 
-  var shower;
-  var lockers = [];
-  var computers = [];
+  var leftWallGeometry = new THREE.BoxGeometry(1, 80, 100);
+  var rightWallGeometry = new THREE.BoxGeometry(1, 80, 100);
+  var backWallGeometry = new THREE.BoxGeometry(100, 80, 1);
+  var frontWallGeometry = new THREE.BoxGeometry(100, 80, 1);
+  var wallGeometries = [leftWallGeometry, rightWallGeometry, backWallGeometry, frontWallGeometry];
+  wallGeometries.forEach(function(geometry) {
+    calculateGeometryThings(geometry);
+  });
 
-  var particleEngine;
+  var leftWall = new Physijs.BoxMesh(leftWallGeometry, ground_material.clone(), 0);
+  leftWall.position.z = -50;
+  leftWall.position.y = 40;
+  leftWall.position.x = -50;
+  leftWall.__dirtyPosition = true;
+  scene.add(leftWall);
+
+  var rightWall = new Physijs.BoxMesh(rightWallGeometry, ground_material.clone(), 0);
+  rightWall.position.z = -50;
+  rightWall.position.y = 40;
+  rightWall.position.x = 50;
+  rightWall.__dirtyPosition = true;
+  scene.add(rightWall);
+
+  var backWall = new Physijs.BoxMesh(backWallGeometry, ground_material.clone(), 0);
+  backWall.position.z = -100;
+  backWall.position.y = 40;
+  backWall.__dirtyPosition = true;
+  scene.add(backWall);
+
+  var frontWall = new Physijs.BoxMesh(frontWallGeometry, ground_material.clone(), 0);
+  frontWall.position.z = 0;
+  frontWall.position.y = 40;
+  frontWall.__dirtyPosition = true;
+  scene.add(frontWall);
+
+  var ground = new Physijs.BoxMesh(ground_geometry, ground_material, 0);
+  ground.rotation.x = -Math.PI / 2;
+  ground.position.z = -50;
+  ground.position.y = 0;
+  ground.__dirtyPosition = true;
+  scene.add(ground);
+
+  var ceiling = new Physijs.BoxMesh(ground_geometry.clone(), ground_material.clone(), 0);
+  ceiling.rotation.x = -Math.PI / 2;
+  ceiling.position.z = -50;
+  ceiling.position.y = 80;
+  ceiling.__dirtyPosition = true;
+  scene.add(ceiling);
+
+  var cameraFollowState = {
+    obj: null,
+    cameraOffset: {x: 0, y: 0, z: 0},
+    lightOffset: {x: 0, y: 0, z: 0}
+  };
+
+  var kevinRonald;
+  var dylanRonald;
+  var ronalds = [];
+
+  /*
+   * * * * * STARTIN AND RENDERIN * * * * *
+   */
 
   start();
-
   function start() {
-    kevinWrestler = new Character({x: -25, y: 5, z: -25}, 20);
-    dylanWrestler = new Character({x: 25, y: 5, z: -25}, 20);
-    wrestlers = [kevinWrestler, dylanWrestler];
+    //io.begin(kevinRonald, dylanRonald, camera, hueLight);
 
-    for (var i = 0; i < wrestlers.length; i++) {
-      wrestlers[i].addTo(scene);
-    }
-
-    boxingRing = new BoxingRing({x: 0, y: -70, z: -140}, 18);
-    boxingRing.addTo(scene, function() {
-      boxingRing.mesh.scale.x *= 1.5;
-    });
-
-    for (var i = 0; i < 2; i++) {
-      var pos;
-      if (i == 0) {
-        pos = {x: -50, y: 20, z: 0};
-      } else if (i == 1) {
-        pos = {x: 50, y: 20, z: 0};
-      }
-
-      var tower = new FitnessTower(pos, 10);
-      tower.addTo(scene);
-      fitnessTowers.push(tower);
-    }
-
-    for (var i = 0; i < 3; i++) {
-      var pos;
-      if (i == 0) {
-        pos = {x: 0, y: 68, z: -100};
-      } else if (i == 1) {
-        pos = {x: -130, y: -66, z: -150};
-      } else if (i == 2) {
-        pos = {x: 130, y: -66, z: -150};
-      }
-
-      var weight = new Weights(pos, 10);
-      weight.addTo(scene, function(w) {
-        if (w.mesh.position.y < 0) {
-          w.rotate(0, Math.PI / 2, 0);
-        }
-      });
-      weights.push(weight);
-    }
-
-    camera.cam.position.set(0, 6, 110);
-
-    io.begin(kevinWrestler, dylanWrestler, camera.cam, hueLight);
+    enterPhrasesState();
 
     render();
+    scene.simulate();
 
     $('body').keypress(function(ev) {
-      console.log(ev.which);
+      console.log('key press eh? ' + ev.which);
+      ev.preventDefault();
+
       if (ev.which == 32) { // spacebar
-        resetWrestlerPositions();
+        resetRonaldPositions();
       }
-      else if (ev.which == 113) { // q
-        initiateShower();
+      else if (ev.which == 97)  { // left
+        moveCameraPosition(-1, 0, 0);
       }
-      else if (ev.which == 122) { // z
-        active.camera = !active.camera;
+      else if (ev.which == 119)  { // up
+        moveCameraPosition(0, 0, 1);
       }
-      else if (ev.which == 120) { // x
-        kevinWrestler.melting = !kevinWrestler.melting;
-        dylanWrestler.melting = !dylanWrestler.melting;
+      else if (ev.which == 100)  { // right
+        moveCameraPosition(1, 0, 0);
       }
-      else if (ev.which == 99) { // c
-        active.lighting = !active.lighting;
+      else if (ev.which == 115)  { // down
+        moveCameraPosition(0, 0, -1);
       }
     });
   }
@@ -2137,310 +1376,120 @@ $(function() {
   function render() {
     requestAnimationFrame(render);
 
-    if (active.wrestlers) {
-      // render the wrestlers
-      wrestlers.forEach(function(wrestler) {
-        wrestler.render();
+    if (active.ronalds) {
+      ronalds.forEach(function(ronald) {
+        ronald.render();
       });
     }
 
-    if (active.character) {
-      mainCharacterModel.render();
+    if (active.phrases) {
+      phrases.forEach(function(phrase) {
+        phrase.render();
+      });
     }
 
-    if (active.sliding) {
-      slideWrestlers();
+    if (cameraFollowState.obj) {
+      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.cameraOffset);
+      camera.lookAt(cameraFollowState.obj.position);
+
+      light.target.position.copy(cameraFollowState.obj.position);
+      light.position.addVectors(light.target.position, lightOffset);
     }
 
-    if (active.lighting) {
-      changeLights();
-    }
-
-    if (active.camera) {
-      changeCamera();
-    }
-
-    fitnessTowers.forEach(function(tower) {
-      tower.render();
-    });
-
-    computers.forEach(function(computer) {
-      computer.render();
-    });
-
-    if (particleEngine) {
-      particleEngine.update(0.01 * 0.5);
-    }
-
-    camera.render();
-
-    renderer.render(scene, camera.cam);
+    renderer.render(scene, camera);
   }
+
+  /*
+   * * * * * UTILITY * * * * *
+   */
 
   function clearScene() {
     for (i = scene.children.length - 1; i >= 0; i--) {
       var obj = scene.children[ i ];
-      if (obj !== camera.cam && obj !== spotlight && obj !== hueLight) {
+      if (obj !== camera && obj !== mainLight) {
         scene.remove(obj);
       }
     }
   }
 
-  function resetWrestlerPositions() {
-    wrestlers.forEach(function(wrestler) {
-      wrestler.reset();
+  function resetRonaldPositions() {
+    ronalds.forEach(function(ronald) {
+      ronald.reset();
     });
-
-    if (history.startedShower) {
-      camera.cam.position.set(0, 1, 0);
-    } else {
-      camera.cam.position.set(0, 6, 110);
-    }
   }
 
-  var lightOb = {};
-  function changeLights() {
-    if (!lightOb) lightOb = {};
-
-    if (lightOb.movingUp) {
-      spotlight.position.y += 1;
-      if (spotlight.position.z > 400) {
-        lightOb.movingUp = false;
-      }
-    } else {
-      spotlight.position.y -= 1;
-      if (spotlight.position.z < 50) {
-        lightOb.movingUp = true;
-      }
-    }
-
-    spotlight.intensity = Math.random() * 5.0;
-
-    spotlight.position.x += (Math.random() - 0.5) * 20;
-    spotlight.position.z += (Math.random() - 0.5) * 20;
-
-    var gray = Math.random();
-    spotlight.color.setRGB(gray, gray, gray);
-  }
-
-  function changeCamera() {
+  function shakeCamera() {
     var dx = (Math.random() - 0.5) * 1;
     var dy = (Math.random() - 0.5) * 0.5;
     var dz = (Math.random() - 0.5) * 1;
 
-    camera.cam.position.x += dx;
-    camera.cam.position.y += dy;
-    camera.cam.position.z += dz;
+    moveCameraPosition(dx, dy, dz);
   }
 
-  function slideWrestlers() {
-    wrestlers.forEach(function(wrestler) {
-      if (slideOb.left) {
-        wrestler.move(-1, 0, 0);
-      } else {
-        wrestler.move(1, 0, 0);
-      }
-    });
+  function moveCameraPosition(dx, dy, dz) {
+    camera.position.x += dx;
+    camera.position.y += dy;
+    camera.position.z += dz;
+  }
 
-    slideOb.moveCount++;
-    if (slideOb.moveCount > 40) {
-      slideOb.moveCount = 0;
-      slideOb.left = !slideOb.left;
+  function setCameraPosition(x, y, z) {
+    camera.position.x = x;
+    camera.position.y = y;
+    camera.position.z = z;
+  }
+
+  function fadeToWhite() {
+    $('.overlay').fadeIn(9000, function() {
+        changeToShowerMode();
+    });
+  }
+
+  function calculateGeometryThings(geometry) {
+    geometry.computeFaceNormals();
+    geometry.computeVertexNormals();
+  }
+
+  /*
+   * * * * * STATE CHANGES * * * * *
+   */
+
+  function enterPhrasesState() {
+    active.phrases = true;
+
+    setCameraPosition(0, 40, 50);
+
+    setInterval(function() {
+      var rw = new RonaldWord();
+      rw.addTo(scene);
+      phrases.push(rw);
+    }, 1000);
+  }
+
+  function enterTrappedState() {
+    kevinRonald = new Character({x: -25, y: 5, z: -25}, 20);
+    dylanRonald = new Character({x: 25, y: 5, z: -25}, 20);
+    ronalds = [kevinRonald, dylanRonald];
+
+    for (var i = 0; i < ronalds.length; i++) {
+      ronalds[i].addTo(scene);
     }
   }
 
-  function landscapeWarp() {
-    active.landscape = true;
-    warp();
+  function enterDesperateFleeState() {
 
-    function warp() {
-      if (!active.landscape) return;
-
-      kt.brightness($canvas, kt.randInt(350, 150));
-      kt.hutate($canvas, kt.randInt(360));
-
-      setTimeout(function() {
-        kt.brightness($canvas, 100);
-        kt.hutate($canvas, 0);
-        setTimeout(warp, kt.randInt(1200, 600));
-      }, kt.randInt(350, 100));
-    }
   }
 
-  function initiateShower() {
-    if (history.startedShower) return;
+  function enterHeavenState() {
 
-    history.startedShower = true;
+  }
 
-    dylanWrestler.discombobulate(function() {
-
-    });
-
-    kevinWrestler.discombobulate(function() {
-      var backCameraAwayInterval = setInterval(function() {
-        camera.cam.position.z += 0.85;
-        if (camera.cam.position.z > 555) {
-          clearInterval(backCameraAwayInterval);
-          fadeToWhite();
-        }
-      }, 20);
-    });
-
-    var otherObjects = [boxingRing];
-    fitnessTowers.forEach(function(tower) { otherObjects.push(tower); });
-    weights.forEach(function(weight) { otherObjects.push(weight); });
-    otherObjects.forEach(function(otherObject) {
-      otherObject.fallToFloor(-200, 5);
-    });
-
-    function fadeToWhite() {
-      $('.overlay').fadeIn(9000, function() {
-          changeToShowerMode();
-      });
-    }
-
-    function changeToShowerMode() {
-      clearScene();
-      renderer.setClearColor(0xffff99, 1);
-      camera.cam.position.set(0, 1, 0);
-
-      shower = new Shower({x: 0, y: 0, z: -10}, 1.15);
-      shower.addTo(scene);
-
-      for (var i = 0; i < 4; i++) {
-        var x = 0;
-        if (i < 2) {
-          x = (i - 2) * 4;
-        } else {
-          x = (i - 1) * 4;
-        }
-
-        var locker = new Locker({x: x, y: 2, z: -25}, 0.35);
-        locker.addTo(scene);
-        lockers.push(locker);
-      }
-
-      $('.overlay').fadeOut(5000, function() {
-        startAddingComputers();
-      });
-    }
-
-    function startAddingComputers() {
-      addComputer();
-
-      function addComputer() {
-        var skyPos = {x: (Math.random() - 0.5) * 10, y: kt.randInt(12, 8), z: Math.random() * -10 - 2};
-        var scale = 1;
-        var computer;
-
-        if (Math.random() < 0.99999) {
-          scale = Math.random() * 0.3 + 0.05;
-          computer = new Phone(skyPos, scale);
-        } else {
-          scale = 0.2;
-          computer = new Computer(skyPos, scale);
-        }
-
-        computer.addTo(scene);
-        computer.fallToFloor();
-        computers.push(computer);
-
-        if (computers.length < 44) {
-          setTimeout(addComputer, 1000);
-        } else {
-          growComputersForever();
-        }
-      }
-    }
-
-    function growComputersForever() {
-      computers.forEach(function(computer) {
-        computer.melting = true;
-      });
-
-      var scale = 1.05;
-      scaleComputers();
-      function scaleComputers() {
-        scale *= 1.03;
-        computers.forEach(function(computer) {
-          computer.scaleMultiply(scale);
-          computer.move(0.03 * scale, 0.025 * scale, 0);
-        });
-
-        camera.cam.position.z = Math.min(60, camera.cam.position.z + 0.05);
-
-        if (scale < 666) {
-          setTimeout(scaleComputers, 30);
-        } else {
-          enterEndgameState();
-        }
-      }
-    }
-
-    function enterEndgameState() {
-      setTimeout(function() {
-        fadeToRed();
-      }, 10000);
-
-      function fadeToRed() {
-        $('.overlay').css('background-color', 'rgb(160, 10, 10)');
-        $('.overlay').fadeIn(5000, function() {
-          makeItRain();
-        });
-      }
-
-      function makeItRain() {
-        clearScene();
-        renderer.setClearColor(0x000000, 1);
-        camera.cam.position.set(0, 0, 0);
-
-        var particleSettings = {
-          positionStyle    : Type.CUBE,
-          positionBase     : new THREE.Vector3( 0, 50, 0 ),
-          positionSpread   : new THREE.Vector3( 200, 200, 200 ),
-
-          velocityStyle    : Type.CUBE,
-          velocityBase     : new THREE.Vector3( 0, -400, 0),
-          velocitySpread   : new THREE.Vector3( 50, 50, 50 ),
-          accelerationBase : new THREE.Vector3( 0, -5, 0 ),
-
-          particleTexture : THREE.ImageUtils.loadTexture( 'images/raindrop2flip.png' ),
-
-          sizeBase    : 4.0,
-          sizeSpread  : 2.0,
-          colorBase   : new THREE.Vector3(0.66, 1.0, 0.7), // H,S,L
-          colorSpread : new THREE.Vector3(0.00, 0.0, 0.2),
-          opacityBase : 0.6,
-
-          particlesPerSecond : 3600,
-          particleDeathAge   : 1.0,
-          emitterDeathAge    : 60
-        };
-
-        particleEngine = new ParticleEngine();
-        particleEngine.setValues(particleSettings);
-        particleEngine.initialize(scene);
-
-        var phone = new Phone({x: 0, y: 5, z: -64}, 3);
-        phone.addTo(scene);
-        setInterval(function() {
-          phone.rotate(0, 0.02, 0);
-        }, 20);
-
-        var weight = new Weights({x: 0, y: 0, z: -50}, 4);
-        weight.addTo(scene);
-
-        active.lighting = false;
-
-        $('.overlay').fadeOut(5000);
-      }
-    }
+  function enterEndgameState() {
 
   }
 
 });
 
-},{"./boxing_ring":4,"./camera":5,"./character":6,"./computer":7,"./fitness_tower":8,"./io":12,"./lib/kutility":14,"./locker":15,"./phone":18,"./shower":19,"./skybox":20,"./weights":21}],17:[function(require,module,exports){
+},{"./character":4,"./lib/kutility":9,"./ronald_word":12}],11:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2540,106 +1589,103 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],18:[function(require,module,exports){
-
+},{}],12:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
-var modelNames = require('./model_names');
+module.exports = RonaldWord;
 
-var BodyPart = require('./bodypart');
+var phraseBank = [
+  'RONALD',
+  'MY FRIEND RONALD LIVES INSIDE THE COMPUTER',
+  'MY FRIEND RONALD',
+  'MY FRIEND RONALD LIVES IN THE COMPUTER TRASH CAN',
+  'RONALD EATS ALL THE COMPUTER TRASH',
+  'MY FRIEND RONALD SMOKES WEED'
+];
 
-module.exports = Phone;
-
-function Phone(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.modelChoices = [modelNames.IPHONE/*, modelNames.PHONE, modelNames.OFFICE_PHONE*/];
+function negrand(scalar) {
+  return (Math.random() - 0.5) * scalar;
 }
 
-Phone.prototype.__proto__ = BodyPart.prototype;
+function RonaldWord(phrase, position, velocity) {
+  if (!phrase) {
+    phrase = kt.choice(phraseBank);
+  }
+  if (!position) {
+    position = {x: Math.random() * 80 - 40, y: Math.random() * 80, z: Math.random() * -100};
+  }
+  if (!velocity) {
+    velocity = {x: negrand(30), y: negrand(30), z: negrand(30)};
+  }
 
-Phone.prototype.additionalInit = function() {
+  this.phrase = phrase;
+  this.position = position;
+  this.velocity = velocity;
 
-};
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],19:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = Shower;
-
-function Shower(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.specificModelName = modelNames.SHOWER;
-}
-
-Shower.prototype.__proto__ = BodyPart.prototype;
-
-Shower.prototype.additionalInit = function() {
-  this.rotate(0, Math.PI, 0);
-};
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}],20:[function(require,module,exports){
-
-
-module.exports = Skybox;
-
-function Skybox() {
-  var size = 15000;
-  var sections = 22;
-  this.geometry = new THREE.BoxGeometry(size, size, size, sections, sections, sections);
-
-  this.material = new THREE.MeshBasicMaterial({
-    color: 0x777777,
-    wireframe: true,
-    wireframeLinewidth: 0.2,
-    opacity: 0.15,
-    transparent: true
+  this.geometry = new THREE.TextGeometry(this.phrase, {
+    size: 1.5
+    , height: 0.01
+    , curveSegments: 1
+    , font: "droid sans"
+    , bevelThickness: 0.35
+    , bevelSize: 0.15
+    , bevelSegments: 1
+    , bevelEnabled: true
   });
 
-  this.mesh = new THREE.Mesh(this.geometry, this.material);
+  this.material = Physijs.createMaterial(
+    new THREE.MeshPhongMaterial({
+      ambient: 0xffffff
+      , color: 0xffffff
+      , combine: THREE.MixOperation
+      , shading: THREE.FlatShading
+      , shininess: 60
+      , reflectivity: 0.5
+      , side: THREE.DoubleSide
+    }),
+    .4, // low friction
+    .6 // high restitution
+  );
+
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material);
+  this.mesh.castShadow = this.mesh.receiveShadow = true;
 }
 
-Skybox.prototype.addTo = function(scene) {
+RonaldWord.prototype.move = function(x, y, z) {
+  if (!this.mesh) return;
+
+  this.mesh.position.x += x;
+  this.mesh.position.y += y;
+  this.mesh.position.z += z;
+
+  this.mesh.__dirtyPosition = true;
+}
+
+RonaldWord.prototype.rotate = function(rx, ry, rz) {
+  if (!this.mesh) return;
+
+  this.mesh.rotation.x += rx;
+  this.mesh.rotation.y += ry;
+  this.mesh.rotation.z += rz;
+}
+
+RonaldWord.prototype.moveTo = function(x, y, z) {
+  if (!this.mesh) return;
+
+  this.mesh.position.set(x, y, z);
+
+  this.mesh.__dirtyPosition = true;
+}
+
+RonaldWord.prototype.addTo = function(scene, callback) {
   scene.add(this.mesh);
+
+  this.moveTo(this.position.x, this.position.y, this.position.z);
+  this.mesh.setLinearVelocity(this.velocity);
 }
 
-},{}],21:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = Weights;
-
-function Weights(startPos, scale) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-
-  this.specificModelName = modelNames.WEIGHTS;
+RonaldWord.prototype.render = function() {
+  //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-Weights.prototype.__proto__ = BodyPart.prototype;
-
-},{"./bodypart":3,"./lib/kutility":14,"./model_names":17}]},{},[16])
+},{"./lib/kutility":9}]},{},[10])

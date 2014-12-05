@@ -11,15 +11,27 @@ var phraseBank = [
   'MY FRIEND RONALD SMOKES WEED'
 ];
 
-function RonaldWord(phrase) {
+function negrand(scalar) {
+  return (Math.random() - 0.5) * scalar;
+}
+
+function RonaldWord(phrase, position, velocity) {
   if (!phrase) {
     phrase = kt.choice(phraseBank);
   }
+  if (!position) {
+    position = {x: Math.random() * 80 - 40, y: Math.random() * 80, z: Math.random() * -100};
+  }
+  if (!velocity) {
+    velocity = {x: negrand(30), y: negrand(30), z: negrand(30)};
+  }
 
   this.phrase = phrase;
+  this.position = position;
+  this.velocity = velocity;
 
   this.geometry = new THREE.TextGeometry(this.phrase, {
-    size: 2.2
+    size: 1.5
     , height: 0.01
     , curveSegments: 1
     , font: "droid sans"
@@ -38,7 +50,7 @@ function RonaldWord(phrase) {
       , shininess: 60
       , reflectivity: 0.5
       , side: THREE.DoubleSide
-    },
+    }),
     .4, // low friction
     .6 // high restitution
   );
@@ -53,6 +65,8 @@ RonaldWord.prototype.move = function(x, y, z) {
   this.mesh.position.x += x;
   this.mesh.position.y += y;
   this.mesh.position.z += z;
+
+  this.mesh.__dirtyPosition = true;
 }
 
 RonaldWord.prototype.rotate = function(rx, ry, rz) {
@@ -68,13 +82,16 @@ RonaldWord.prototype.moveTo = function(x, y, z) {
 
   this.mesh.position.set(x, y, z);
 
-  this.move(0, 0, 0);
+  this.mesh.__dirtyPosition = true;
 }
 
 RonaldWord.prototype.addTo = function(scene, callback) {
   scene.add(this.mesh);
+
+  this.moveTo(this.position.x, this.position.y, this.position.z);
+  this.mesh.setLinearVelocity(this.velocity);
 }
 
 RonaldWord.prototype.render = function() {
-
+  //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
