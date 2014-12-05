@@ -16,6 +16,8 @@ BodyPart.prototype.move = function(x, y, z) {
   this.mesh.position.x += x;
   this.mesh.position.y += y;
   this.mesh.position.z += z;
+
+  this.mesh.__dirtyPosition = true;
 }
 
 BodyPart.prototype.rotate = function(rx, ry, rz) {

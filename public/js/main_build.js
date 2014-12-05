@@ -87,6 +87,8 @@ BodyPart.prototype.move = function(x, y, z) {
   this.mesh.position.x += x;
   this.mesh.position.y += y;
   this.mesh.position.z += z;
+
+  this.mesh.__dirtyPosition = true;
 }
 
 BodyPart.prototype.rotate = function(rx, ry, rz) {
@@ -304,7 +306,7 @@ function Character(startPos, scale) {
 
   this.torso = new Body({x: this.startX, y: this.startY, z: this.startZ}, scale);
 
-  this.head = new Head({x: this.startX, y: this.startY + 0.25 * scale, z: this.startZ}, scale);
+  this.head = new Head({x: this.startX, y: this.startY + 0.75 * scale, z: this.startZ}, scale);
 
   this.bodyParts = [this.leftArm, this.rightArm,
                     this.leftHand, this.rightHand,
@@ -499,19 +501,37 @@ var BodyPart = require('./bodypart');
 
 module.exports = Head;
 
+var headNames = ['/images/dylan.jpg', '/images/kevin.jpg'];
+var headIndex = 0;
+
 function Head(startPos, scale) {
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
   this.startX = startPos.x;
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.scale = scale || 1;
-  this.scale *= 0.3;
+  this.textureName = headNames[++headIndex % headNames.length];
 
-  this.modelChoices = [modelNames.LOWPOLY_HEAD];
+  this.scale = scale || 20;
+  this.scale *= 0.4;
+
+  this.geometry = new THREE.SphereGeometry(1, 32, 32);
+
+  this.material = new THREE.MeshPhongMaterial();
+  this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
+
+  this.mesh = new THREE.Mesh(this.geometry, this.material);
 }
 
 Head.prototype.__proto__ = BodyPart.prototype;
+
+Head.prototype.addTo = function(scene, callback) {
+  this.scaleBody(this.scale);
+  this.moveTo(this.startX, this.startY, this.startZ);
+
+  scene.add(this.mesh);
+  if (callback) callback();
+};
 
 Head.prototype.additionalInit = function() {
   var self = this;

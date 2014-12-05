@@ -34,7 +34,7 @@ function Character(startPos, scale) {
 
   this.torso = new Body({x: this.startX, y: this.startY, z: this.startZ}, scale);
 
-  this.head = new Head({x: this.startX, y: this.startY + 0.25 * scale, z: this.startZ}, scale);
+  this.head = new Head({x: this.startX, y: this.startY + 0.75 * scale, z: this.startZ}, scale);
 
   this.bodyParts = [this.leftArm, this.rightArm,
                     this.leftHand, this.rightHand,
