@@ -21,12 +21,12 @@ $(function() {
     scene.simulate(undefined, 1);
   });
 
-  var camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
   scene.add(camera);
 
   // mainLight shinin from above casting shadows and the like
   var mainLight = new THREE.DirectionalLight(0xffffff);
-  mainLight.position.set(20, 20, 0);
+  mainLight.position.set(20, 20, -10);
   mainLight.target.position.copy(scene.position);
   mainLight.castShadow = true;
   scene.add(mainLight);
@@ -41,7 +41,7 @@ $(function() {
   var phrases = [];
 
   var ground_material = Physijs.createMaterial(
-    new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.5}),
+    new THREE.MeshBasicMaterial({color: 0x111111, side: THREE.DoubleSide, transparent: true, opacity: 0.2}),
     .8, // high friction
     .4 // low restitution
   );
@@ -226,13 +226,13 @@ $(function() {
   function enterPhrasesState() {
     active.phrases = true;
 
-    setCameraPosition(0, 40, 50);
+    setCameraPosition(0, 40, 10);
 
     setInterval(function() {
       var rw = new RonaldWord();
       rw.addTo(scene);
       phrases.push(rw);
-    }, 1000);
+    }, 500);
   }
 
   function enterTrappedState() {

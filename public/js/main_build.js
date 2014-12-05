@@ -1251,12 +1251,12 @@ $(function() {
     scene.simulate(undefined, 1);
   });
 
-  var camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 1000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
   scene.add(camera);
 
   // mainLight shinin from above casting shadows and the like
   var mainLight = new THREE.DirectionalLight(0xffffff);
-  mainLight.position.set(20, 20, 0);
+  mainLight.position.set(20, 20, -10);
   mainLight.target.position.copy(scene.position);
   mainLight.castShadow = true;
   scene.add(mainLight);
@@ -1271,7 +1271,7 @@ $(function() {
   var phrases = [];
 
   var ground_material = Physijs.createMaterial(
-    new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.5}),
+    new THREE.MeshBasicMaterial({color: 0x111111, side: THREE.DoubleSide, transparent: true, opacity: 0.2}),
     .8, // high friction
     .4 // low restitution
   );
@@ -1456,13 +1456,13 @@ $(function() {
   function enterPhrasesState() {
     active.phrases = true;
 
-    setCameraPosition(0, 40, 50);
+    setCameraPosition(0, 40, 10);
 
     setInterval(function() {
       var rw = new RonaldWord();
       rw.addTo(scene);
       phrases.push(rw);
-    }, 1000);
+    }, 500);
   }
 
   function enterTrappedState() {
@@ -1607,23 +1607,36 @@ function negrand(scalar) {
   return (Math.random() - 0.5) * scalar;
 }
 
-function RonaldWord(phrase, position, velocity) {
+function randcolor() {
+  var r = kt.randInt(255);
+  var g = kt.randInt(255);
+  var b = kt.randInt(255);
+  return new THREE.Color(r, g, b);
+}
+
+function RonaldWord(phrase, config) {
   if (!phrase) {
     phrase = kt.choice(phraseBank);
   }
-  if (!position) {
-    position = {x: Math.random() * 80 - 40, y: Math.random() * 80, z: Math.random() * -100};
+
+  if (!config) config = {};
+  if (!config.position) {
+    config.position = {x: Math.random() * 80 - 40, y: Math.random() * 80, z: Math.random() * -100};
   }
-  if (!velocity) {
-    velocity = {x: negrand(30), y: negrand(30), z: negrand(30)};
+  if (!config.velocity) {
+    config.velocity = {x: negrand(50), y: negrand(50), z: negrand(50)};
+  }
+  if (!config.decay) {
+    config.decay = 60000;
   }
 
   this.phrase = phrase;
-  this.position = position;
-  this.velocity = velocity;
+  this.position = config.position;
+  this.velocity = config.velocity;
+  this.decay = config.decay;
 
   this.geometry = new THREE.TextGeometry(this.phrase, {
-    size: 1.5
+    size: 1.5 + negrand(1)
     , height: 0.01
     , curveSegments: 1
     , font: "droid sans"
@@ -1633,14 +1646,13 @@ function RonaldWord(phrase, position, velocity) {
     , bevelEnabled: true
   });
 
+  var color = randcolor();
   this.material = Physijs.createMaterial(
-    new THREE.MeshPhongMaterial({
-      ambient: 0xffffff
-      , color: 0xffffff
-      , combine: THREE.MixOperation
-      , shading: THREE.FlatShading
-      , shininess: 60
-      , reflectivity: 0.5
+    new THREE.MeshLambertMaterial({
+      ambient: color
+      , color: color
+      , shininess: 5
+      , reflectivity: 0.1
       , side: THREE.DoubleSide
     }),
     .4, // low friction
@@ -1682,6 +1694,11 @@ RonaldWord.prototype.addTo = function(scene, callback) {
 
   this.moveTo(this.position.x, this.position.y, this.position.z);
   this.mesh.setLinearVelocity(this.velocity);
+
+  var self = this;
+  setTimeout(function() {
+    scene.remove(self.mesh);
+  }, this.decay);
 }
 
 RonaldWord.prototype.render = function() {
