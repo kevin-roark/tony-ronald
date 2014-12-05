@@ -7,7 +7,6 @@ var Leg = require('./leg');
 var Head = require('./head');
 var Body = require('./body');
 var Hand = require('./hand');
-var Foot = require('./foot');
 
 module.exports = Character;
 
@@ -33,10 +32,6 @@ function Character(startPos, scale) {
 
   this.rightLeg = new Leg({x: this.startX + scale * 0.4, y: this.startY - scale * 0.75, z: this.startZ}, scale);
 
-  this.leftFoot = new Foot({x: this.startX - scale * 0.5, y: this.startY - scale * 1.5, z: this.startZ}, scale, 'left');
-
-  this.rightFoot = new Foot({x: this.startX + scale * 0.5, y: this.startY - scale * 1.5, z: this.startZ}, scale, 'right');
-
   this.torso = new Body({x: this.startX, y: this.startY, z: this.startZ}, scale);
 
   this.head = new Head({x: this.startX, y: this.startY + 0.25 * scale, z: this.startZ}, scale);
@@ -44,7 +39,6 @@ function Character(startPos, scale) {
   this.bodyParts = [this.leftArm, this.rightArm,
                     this.leftHand, this.rightHand,
                     this.leftLeg, this.rightLeg,
-                    this.leftFoot, this.rightFoot,
                     this.torso, this.head];
 
   this.twitching = false; // random motion and rotation
