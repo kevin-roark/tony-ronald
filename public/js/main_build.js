@@ -318,11 +318,19 @@ function Character(startPos, scale) {
   this.melting = false; // bone shaking
 }
 
-Character.prototype.addTo = function(scene) {
+Character.prototype.addTo = function(scene, callback) {
+  var self = this;
+
   this.scene = scene;
 
+  var bodyCount = 0;
   this.bodyParts.forEach(function(part) {
-    part.addTo(scene);
+    part.addTo(scene, function() {
+      bodyCount += 1;
+      if (bodyCount == self.bodyParts.length) {
+        if (callback) callback();
+      }
+    });
   });
 }
 
@@ -517,7 +525,7 @@ function Head(startPos, scale) {
 
   this.geometry = new THREE.SphereGeometry(1, 32, 32);
 
-  this.material = new THREE.MeshPhongMaterial();
+  this.material = new THREE.MeshBasicMaterial();
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
 
   this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -542,6 +550,10 @@ Head.prototype.additionalInit = function() {
     self.move(0, -15, 0);
   }
 };
+
+Head.prototype.render = function() {
+  this.mesh.rotation.y += 0.02;
+}
 
 },{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],7:[function(require,module,exports){
 
@@ -1415,14 +1427,16 @@ $(function() {
           phraseMeshes.push(phrase.mesh);
         });
         clearScene(phraseMeshes);
-
+        active.phrases = false;
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 4000);
+    }, 1000);
   }
 
   function enterTrappedState() {
+    active.ronalds = true;
+
     setCameraPosition(0, 0, 0);
 
     mainLight.position.set(0, 20, 0);
@@ -1433,8 +1447,12 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -50, y: 5, z: -140}, 20);
-    dylanRonald = new Character({x: 50, y: 5, z: -140}, 20);
+    kevinRonald = new Character({x: -100, y: 5, z: -140}, 20);
+    kevinRonald.addTo(scene, function() {
+      kevinRonald.rotate(0, 0, 0);
+    });
+
+    dylanRonald = new Character({x: 100, y: 5, z: -140}, 20);
     ronalds = [kevinRonald, dylanRonald];
 
     for (var i = 0; i < ronalds.length; i++) {

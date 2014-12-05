@@ -23,7 +23,7 @@ function Head(startPos, scale) {
 
   this.geometry = new THREE.SphereGeometry(1, 32, 32);
 
-  this.material = new THREE.MeshPhongMaterial();
+  this.material = new THREE.MeshBasicMaterial();
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
 
   this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -48,3 +48,7 @@ Head.prototype.additionalInit = function() {
     self.move(0, -15, 0);
   }
 };
+
+Head.prototype.render = function() {
+  this.mesh.rotation.y += 0.02;
+}

@@ -46,11 +46,19 @@ function Character(startPos, scale) {
   this.melting = false; // bone shaking
 }
 
-Character.prototype.addTo = function(scene) {
+Character.prototype.addTo = function(scene, callback) {
+  var self = this;
+
   this.scene = scene;
 
+  var bodyCount = 0;
   this.bodyParts.forEach(function(part) {
-    part.addTo(scene);
+    part.addTo(scene, function() {
+      bodyCount += 1;
+      if (bodyCount == self.bodyParts.length) {
+        if (callback) callback();
+      }
+    });
   });
 }
 

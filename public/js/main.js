@@ -272,14 +272,16 @@ $(function() {
           phraseMeshes.push(phrase.mesh);
         });
         clearScene(phraseMeshes);
-
+        active.phrases = false;
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 4000);
+    }, 1000);
   }
 
   function enterTrappedState() {
+    active.ronalds = true;
+
     setCameraPosition(0, 0, 0);
 
     mainLight.position.set(0, 20, 0);
@@ -290,8 +292,12 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -50, y: 5, z: -140}, 20);
-    dylanRonald = new Character({x: 50, y: 5, z: -140}, 20);
+    kevinRonald = new Character({x: -100, y: 5, z: -140}, 20);
+    kevinRonald.addTo(scene, function() {
+      kevinRonald.rotate(0, 0, 0);
+    });
+
+    dylanRonald = new Character({x: 100, y: 5, z: -140}, 20);
     ronalds = [kevinRonald, dylanRonald];
 
     for (var i = 0; i < ronalds.length; i++) {
