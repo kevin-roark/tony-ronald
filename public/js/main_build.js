@@ -19,33 +19,13 @@ function Arm(startPos, scale, side) {
 
   this.side = side || 'left';
 
-  this.modelChoices = [modelNames.BABY_ARM, modelNames.FOOTBALL_ARM, modelNames.LOWPOLY_ARM];
+  this.modelChoices = [modelNames.LOWPOLY_ARM];
 }
 
 Arm.prototype.__proto__ = BodyPart.prototype;
 
 Arm.prototype.additionalInit = function() {
-  //this.rotate(0, -Math.PI / 2, 0);
-
-  if (this.modelName == modelNames.BABY_ARM) {
-    this.rotate(0, Math.PI / 2, 0);
-    this.move(0, 19, -20);
-    if (this.side == 'left') {
-      this.move(20, 0, 0);
-    } else {
-      this.move(11.5, 0, 0);
-    }
-  } else if (this.modelName == modelNames.FOOTBALL_ARM) {
-    this.scale *= 15;
-    this.scaleBody(this.scale);
-    this.move(0, -10, 0);
-    if (this.side == 'left') {
-      this.move(16, 0, 0);
-    } else {
-      this.move(-10, 0, 0);
-      this.mesh.scale.x *= -1;
-    }
-  } else if (this.modelName == modelNames.LOWPOLY_ARM) {
+  if (this.modelName == modelNames.LOWPOLY_ARM) {
     this.move(0, 10, 0);
     if (this.side == 'left') {
       this.move(13, 0, 0);
@@ -56,7 +36,7 @@ Arm.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],2:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -75,7 +55,7 @@ function Body(startPos, scale) {
   this.scale = scale || 1;
   this.scale *= 0.5;
 
-  this.modelChoices = [modelNames.BABY_TORSO, /*modelNames.FOOTBALL_TORSO,*/ modelNames.LOWPOLY_TORSO];
+  this.modelChoices = [modelNames.LOWPOLY_TORSO];
 }
 
 Body.prototype.__proto__ = BodyPart.prototype;
@@ -83,20 +63,12 @@ Body.prototype.__proto__ = BodyPart.prototype;
 Body.prototype.additionalInit = function() {
   var self = this;
 
-  if (self.modelName == modelNames.BABY_TORSO) {
-    self.scale *= 0.75;
-    self.scaleBody(self.scale);
-    self.move(1.5, 6, 0);
-  } else if (self.modelName == modelNames.FOOTBALL_TORSO) {
-    self.scale *= 7.5;
-    self.scaleBody(self.scale);
-    self.move(-2, -24, 0);
-  } else if (self.modelName == modelNames.LOWPOLY_TORSO) {
+  if (self.modelName == modelNames.LOWPOLY_TORSO) {
     self.move(0, -15, -4);
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],3:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],3:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -295,7 +267,7 @@ BodyPart.prototype.fallToFloor = function(threshold, speed) {
 BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 
-},{"./lib/kutility":9,"./model_names":11}],4:[function(require,module,exports){
+},{"./lib/kutility":8,"./model_names":10}],4:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -305,7 +277,6 @@ var Leg = require('./leg');
 var Head = require('./head');
 var Body = require('./body');
 var Hand = require('./hand');
-var Foot = require('./foot');
 
 module.exports = Character;
 
@@ -331,10 +302,6 @@ function Character(startPos, scale) {
 
   this.rightLeg = new Leg({x: this.startX + scale * 0.4, y: this.startY - scale * 0.75, z: this.startZ}, scale);
 
-  this.leftFoot = new Foot({x: this.startX - scale * 0.5, y: this.startY - scale * 1.5, z: this.startZ}, scale, 'left');
-
-  this.rightFoot = new Foot({x: this.startX + scale * 0.5, y: this.startY - scale * 1.5, z: this.startZ}, scale, 'right');
-
   this.torso = new Body({x: this.startX, y: this.startY, z: this.startZ}, scale);
 
   this.head = new Head({x: this.startX, y: this.startY + 0.25 * scale, z: this.startZ}, scale);
@@ -342,7 +309,6 @@ function Character(startPos, scale) {
   this.bodyParts = [this.leftArm, this.rightArm,
                     this.leftHand, this.rightHand,
                     this.leftLeg, this.rightLeg,
-                    this.leftFoot, this.rightFoot,
                     this.torso, this.head];
 
   this.twitching = false; // random motion and rotation
@@ -482,54 +448,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":2,"./foot":5,"./hand":6,"./head":7,"./leg":8,"./lib/kutility":9,"./model_names":11}],5:[function(require,module,exports){
-
-var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
-
-var BodyPart = require('./bodypart');
-
-module.exports = Foot;
-
-function Foot(startPos, scale, side) {
-  if (!startPos) startPos = {x: 0, y: 0, z: 0};
-  this.startX = startPos.x;
-  this.startY = startPos.y;
-  this.startZ = startPos.z;
-
-  this.scale = scale || 1;
-  this.scale *= 0.1;
-
-  this.side == side || 'left';
-
-  this.modelChoices = [modelNames.FOOT, modelNames.FOOTBALL_FOOT];
-}
-
-Foot.prototype.__proto__ = BodyPart.prototype;
-
-Foot.prototype.additionalInit = function() {
-  if (this.modelName == modelNames.FOOT) {
-    this.rotate(0, -Math.PI / 2, 0);
-    this.scale *= 1.5;
-    this.scaleBody(this.scale);
-    this.move(0, -5, 0);
-
-    if (this.side == 'right') {
-      this.mesh.scale.x *= -1;
-    }
-  } else if (this.modelName == modelNames.FOOTBALL_FOOT) {
-    this.scale *= 60;
-    this.scaleBody(this.scale);
-    this.move(0, -13, 0);
-
-    if (this.side == 'right') {
-      this.mesh.scale.x *= -1;
-    }
-  }
-};
-
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],6:[function(require,module,exports){
+},{"./arm":1,"./body":2,"./hand":5,"./head":6,"./leg":7,"./lib/kutility":8,"./model_names":10}],5:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -550,23 +469,13 @@ function Hand(startPos, scale, side) {
   this.scale = scale || 1;
   this.scale *= 0.1;
 
-  this.modelChoices = [modelNames.HAND, modelNames.FOOTBALL_HAND];
+  this.modelChoices = [modelNames.FOOTBALL_HAND];
 }
 
 Hand.prototype.__proto__ = BodyPart.prototype;
 
 Hand.prototype.additionalInit = function() {
-
-
-  if (this.modelName == modelNames.HAND) {
-    this.move(0, 9, 0);
-
-    if (this.side == 'left') {
-      this.rotate(-Math.PI / 2, Math.PI / 2, 0);
-    } else {
-      this.rotate(-Math.PI / 2, Math.PI / 2, 0);
-    }
-  } else if (this.modelName == modelNames.FOOTBALL_HAND) {
+  if (this.modelName == modelNames.FOOTBALL_HAND) {
     this.scale *= 45;
     this.scaleBody(this.scale);
     this.move(0, -6, 0);
@@ -580,7 +489,7 @@ Hand.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],7:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -599,7 +508,7 @@ function Head(startPos, scale) {
   this.scale = scale || 1;
   this.scale *= 0.3;
 
-  this.modelChoices = [modelNames.HEAD, modelNames.BABY_HEAD/*, modelNames.FOOTBALL_HEAD,modelNames.LOWPOLY_HEAD*/];
+  this.modelChoices = [modelNames.LOWPOLY_HEAD];
 }
 
 Head.prototype.__proto__ = BodyPart.prototype;
@@ -607,26 +516,14 @@ Head.prototype.__proto__ = BodyPart.prototype;
 Head.prototype.additionalInit = function() {
   var self = this;
 
-  if (self.modelName == modelNames.HEAD) {
-    self.scale *= 0.35;
-    self.scaleBody(self.scale);
-    self.move(0, 12, 0);
-  } else if (self.modelName == modelNames.BABY_HEAD) {
-    self.scale *= 1.2;
-    self.scaleBody(self.scale);
-    self.move(0, 0, 1.4);
-  } else if (self.modelName == modelNames.FOOTBALL_HEAD) {
-    self.scale *= 25;
-    self.scaleBody(self.scale);
-    self.move(1.5, -63, 0);
-  } else if (self.modelName == modelNames.LOWPOLY_HEAD) {
+  if (self.modelName == modelNames.LOWPOLY_HEAD) {
     self.scale *= 1.5;
     self.scaleBody(self.scale);
     self.move(0, -15, 0);
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],8:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -645,7 +542,7 @@ function Leg(startPos, scale) {
   this.scale = scale || 1;
   this.scale *= 0.25;
 
-  this.modelChoices = [modelNames.FOOTBALL_LEG,/* modelNames.LOWPOLY_LEG*/];
+  this.modelChoices = [modelNames.LOWPOLY_LEG];
 }
 
 Leg.prototype.__proto__ = BodyPart.prototype;
@@ -653,16 +550,12 @@ Leg.prototype.__proto__ = BodyPart.prototype;
 Leg.prototype.additionalInit = function() {
   var self = this;
 
-  if (self.modelName == modelNames.FOOTBALL_LEG) {
-    self.scale *= 15;
-    self.scaleBody(self.scale);
-    self.move(3, -20, 0);
-  } else if (self.modelName == modelNames.LOWPOLY_LEG) {
+  if (self.modelName == modelNames.LOWPOLY_LEG) {
 
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],9:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],8:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1227,7 +1120,7 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
@@ -1335,8 +1228,11 @@ $(function() {
 
   var cameraFollowState = {
     obj: null,
-    cameraOffset: {x: 0, y: 0, z: 0},
-    lightOffset: {x: 0, y: 0, z: 0}
+    offset: {x: 0, y: 0, z: 0},
+  };
+  var lightFollowState = {
+    obj: null,
+    offset: {x: 0, y: 0, z: 0}
   };
 
   var kevinRonald;
@@ -1394,11 +1290,12 @@ $(function() {
     }
 
     if (cameraFollowState.obj) {
-      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.cameraOffset);
+      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.obj.position);
-
-      light.target.position.copy(cameraFollowState.obj.position);
-      light.position.addVectors(light.target.position, lightOffset);
+    }
+    if (lightFollowState.obj) {
+      light.target.position.copy(lightFollowState.obj.position);
+      light.position.addVectors(light.target.position, lightFollowState.offset);
     }
 
     renderer.render(scene, camera);
@@ -1448,6 +1345,7 @@ $(function() {
   function fadeOverlay(fadein, callback, color, time) {
     if (!color) color = 'rgb(255, 255, 255)';
     if (!time) time = 4000;
+    if (!callback) callback = function(){};
 
     if (fadein) {
       $('.overlay').css('background-color', color);
@@ -1475,7 +1373,7 @@ $(function() {
 
     setCameraPosition(0, 40, 10);
 
-    setInterval(function() {
+    var phraseInterval = setInterval(function() {
       var rw = new RonaldWord();
       rw.addTo(scene);
       phraseState.phrases.push(rw);
@@ -1483,20 +1381,40 @@ $(function() {
 
     setTimeout(function() {
       fadeOverlay(true, function() {
-        var phraseMeshes = [];
+        clearInterval(phraseInterval);
+
+        var phraseMeshes = [
+          phraseState.leftWall,
+          phraseState.rightWall,
+          phraseState.backWall,
+          phraseState.frontWall,
+          phraseState.ceiling,
+          phraseState.ground
+        ];
         phraseState.phrases.forEach(function(phrase) {
           phraseMeshes.push(phrase.mesh);
         });
         clearScene(phraseMeshes);
 
-        // here I would enter the trapped state
+        enterTrappedState();
+        fadeOverlay(false);
       });
-    }, 10000);
+    }, 4000);
   }
 
   function enterTrappedState() {
-    kevinRonald = new Character({x: -25, y: 5, z: -25}, 20);
-    dylanRonald = new Character({x: 25, y: 5, z: -25}, 20);
+    setCameraPosition(0, 0, 0);
+
+    mainLight.position.set(0, 20, 0);
+    mainLight.target.position.set(0, 5, -100);
+    mainLight.intensity = 5.0;
+
+    trappedState.ambientLight = new THREE.PointLight(0x40404, 1, 200);
+    trappedState.ambientLight.position.set(0, 20, -100);
+    scene.add(trappedState.ambientLight);
+
+    kevinRonald = new Character({x: -50, y: 5, z: -140}, 20);
+    dylanRonald = new Character({x: 50, y: 5, z: -140}, 20);
     ronalds = [kevinRonald, dylanRonald];
 
     for (var i = 0; i < ronalds.length; i++) {
@@ -1518,7 +1436,7 @@ $(function() {
 
 });
 
-},{"./character":4,"./lib/kutility":9,"./ronald_word":12}],11:[function(require,module,exports){
+},{"./character":4,"./lib/kutility":8,"./ronald_word":11}],10:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -1528,33 +1446,13 @@ function pre(text) {
 
 /* LEGS */
 
-module.exports.ANIMAL_LEGS = pre('animal_legs.js');
-
-module.exports.BABY_LEG = pre('baby_leg.js');
-
-module.exports.FOOTBALL_LEG = pre('football_leg.js');
-
 module.exports.LOWPOLY_LEG = pre('low_poly_leg.js');
 
 /* HEADS */
 
-module.exports.ANIME_HEAD = pre('anime_heads.js');
-
-module.exports.HEAD = pre('head.js');
-
-module.exports.BABY_HEAD = pre('baby_head.js');
-
-module.exports.FOOTBALL_HEAD = pre('football_head.js');
-
 module.exports.LOWPOLY_HEAD = pre('low_poly_head.js');
 
 /* ARMS */
-
-module.exports.ARM = pre('arm.js');
-
-module.exports.ARMS = pre('arms.js');
-
-module.exports.BABY_ARM = pre('baby_arm.js');
 
 module.exports.FOOTBALL_ARM = pre('football_arm.js');
 
@@ -1562,31 +1460,15 @@ module.exports.LOWPOLY_ARM = pre('low_poly_arm.js');
 
 /* BODIES */
 
-module.exports.CHILD = pre('child.js');
-
-module.exports.FEMALE = pre('female.js');
-
-module.exports.MALE = pre('male.js');
-
-module.exports.TORSO = pre('torso.js');
-
-module.exports.FOOTBALL_PLAYER = pre('football_player.js');
-
-module.exports.BABY_TORSO = pre('baby_torso.js');
-
 module.exports.FOOTBALL_TORSO = pre('football_torso.js');
 
 module.exports.LOWPOLY_TORSO = pre('low_poly_torso.js');
 
 /* HANDS */
 
-module.exports.HAND = pre('hand.js');
-
 module.exports.FOOTBALL_HAND = pre('football_hand.js');
 
 /* FEET */
-
-module.exports.FOOT = pre('foot.js');
 
 module.exports.FOOTBALL_FOOT = pre('football_foot.js');
 
@@ -1618,7 +1500,7 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
@@ -1734,4 +1616,4 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":9}]},{},[10])
+},{"./lib/kutility":8}]},{},[9])

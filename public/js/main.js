@@ -105,8 +105,11 @@ $(function() {
 
   var cameraFollowState = {
     obj: null,
-    cameraOffset: {x: 0, y: 0, z: 0},
-    lightOffset: {x: 0, y: 0, z: 0}
+    offset: {x: 0, y: 0, z: 0},
+  };
+  var lightFollowState = {
+    obj: null,
+    offset: {x: 0, y: 0, z: 0}
   };
 
   var kevinRonald;
@@ -164,11 +167,12 @@ $(function() {
     }
 
     if (cameraFollowState.obj) {
-      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.cameraOffset);
+      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.obj.position);
-
-      light.target.position.copy(cameraFollowState.obj.position);
-      light.position.addVectors(light.target.position, lightOffset);
+    }
+    if (lightFollowState.obj) {
+      light.target.position.copy(lightFollowState.obj.position);
+      light.position.addVectors(light.target.position, lightFollowState.offset);
     }
 
     renderer.render(scene, camera);
@@ -218,6 +222,7 @@ $(function() {
   function fadeOverlay(fadein, callback, color, time) {
     if (!color) color = 'rgb(255, 255, 255)';
     if (!time) time = 4000;
+    if (!callback) callback = function(){};
 
     if (fadein) {
       $('.overlay').css('background-color', color);
@@ -245,7 +250,7 @@ $(function() {
 
     setCameraPosition(0, 40, 10);
 
-    setInterval(function() {
+    var phraseInterval = setInterval(function() {
       var rw = new RonaldWord();
       rw.addTo(scene);
       phraseState.phrases.push(rw);
@@ -253,20 +258,40 @@ $(function() {
 
     setTimeout(function() {
       fadeOverlay(true, function() {
-        var phraseMeshes = [];
+        clearInterval(phraseInterval);
+
+        var phraseMeshes = [
+          phraseState.leftWall,
+          phraseState.rightWall,
+          phraseState.backWall,
+          phraseState.frontWall,
+          phraseState.ceiling,
+          phraseState.ground
+        ];
         phraseState.phrases.forEach(function(phrase) {
           phraseMeshes.push(phrase.mesh);
         });
         clearScene(phraseMeshes);
 
-        // here I would enter the trapped state
+        enterTrappedState();
+        fadeOverlay(false);
       });
-    }, 10000);
+    }, 4000);
   }
 
   function enterTrappedState() {
-    kevinRonald = new Character({x: -25, y: 5, z: -25}, 20);
-    dylanRonald = new Character({x: 25, y: 5, z: -25}, 20);
+    setCameraPosition(0, 0, 0);
+
+    mainLight.position.set(0, 20, 0);
+    mainLight.target.position.set(0, 5, -100);
+    mainLight.intensity = 5.0;
+
+    trappedState.ambientLight = new THREE.PointLight(0x40404, 1, 200);
+    trappedState.ambientLight.position.set(0, 20, -100);
+    scene.add(trappedState.ambientLight);
+
+    kevinRonald = new Character({x: -50, y: 5, z: -140}, 20);
+    dylanRonald = new Character({x: 50, y: 5, z: -140}, 20);
     ronalds = [kevinRonald, dylanRonald];
 
     for (var i = 0; i < ronalds.length; i++) {
