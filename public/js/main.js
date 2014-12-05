@@ -4,6 +4,7 @@ $(function() {
   var Character = require('./character');
   //var io = require('./io');
   var RonaldWord = require('./ronald_word');
+  var Computer = require('./computer');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -292,17 +293,32 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -100, y: 5, z: -140}, 20);
+    kevinRonald = new Character({x: -100, y: 5, z: -170}, 20);
     kevinRonald.addTo(scene, function() {
-      kevinRonald.rotate(0, 0, 0);
+      kevinRonald.rotate(0, Math.PI/4, 0);
     });
 
-    dylanRonald = new Character({x: 100, y: 5, z: -140}, 20);
+    dylanRonald = new Character({x: 100, y: 5, z: -170}, 20);
+    dylanRonald.addTo(scene, function() {
+      dylanRonald.rotate(0, -Math.PI/4, 0);
+    });
+
     ronalds = [kevinRonald, dylanRonald];
 
-    for (var i = 0; i < ronalds.length; i++) {
-      ronalds[i].addTo(scene);
-    }
+    var mac = new Computer({x: -50, y: 0, z: -80}, 60);
+    mac.addTo(scene, function() {
+      mac.rotate(0, Math.PI/6, 0);
+    });
+
+    var pc = new Computer({x: 50, y: 0, z: -80}, 60);
+    pc.addTo(scene, function() {
+      pc.rotate(0, -Math.PI/6, 0);
+    });
+
+    setTimeout(function() {
+      mac.becomeTransparent(0.002);
+      pc.becomeTransparent(0.002);
+    }, 6666);
   }
 
   function enterDesperateFleeState() {

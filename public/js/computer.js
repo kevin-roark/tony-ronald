@@ -26,7 +26,7 @@ function Computer(startPos, scale) {
 
   this.geometry = new THREE.BoxGeometry(1, 0.75, 0.25);
 
-  this.material = new THREE.MeshPhongMaterial({transparent: true, opacity: 1.0});
+  this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 1.0});
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
 
   this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -42,12 +42,15 @@ Computer.prototype.addTo = function(scene, callback) {
   if (callback) callback();
 };
 
-Computer.prototype.becomeTransparent = function() {
+Computer.prototype.becomeTransparent = function(delta, thresh) {
   var self = this;
 
+  if (!delta) delta = 0.01;
+  if (!thresh) thresh = 0.5;
+
   var int = setInterval(function() {
-    self.material.opacity -= 0.01;
-    if (self.material.opacity <= 0.5) {
+    self.material.opacity -= delta;
+    if (self.material.opacity <= thresh) {
       clearInterval(int);
     }
   }, 30);

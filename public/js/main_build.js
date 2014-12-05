@@ -36,7 +36,7 @@ Arm.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],2:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -68,7 +68,7 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],3:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],3:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -269,7 +269,7 @@ BodyPart.prototype.fallToFloor = function(threshold, speed) {
 BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 
-},{"./lib/kutility":8,"./model_names":10}],4:[function(require,module,exports){
+},{"./lib/kutility":9,"./model_names":11}],4:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -458,7 +458,66 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":2,"./hand":5,"./head":6,"./leg":7,"./lib/kutility":8,"./model_names":10}],5:[function(require,module,exports){
+},{"./arm":1,"./body":2,"./hand":6,"./head":7,"./leg":8,"./lib/kutility":9,"./model_names":11}],5:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var modelNames = require('./model_names');
+
+var BodyPart = require('./bodypart');
+
+module.exports = Computer;
+
+var MAC = '/images/mac_monitor.jpg';
+var PC = '/images/pc_monitor.jpg';
+
+module.exports.computerNames = [MAC, PC];
+var computerNames = module.exports.computerNames;
+var computerIndex = 0;
+
+function Computer(startPos, scale) {
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.textureName = computerNames[++computerIndex % computerNames.length];
+
+  this.scale = scale || 20;
+
+  this.geometry = new THREE.BoxGeometry(1, 0.75, 0.25);
+
+  this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 1.0});
+  this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
+
+  this.mesh = new THREE.Mesh(this.geometry, this.material);
+}
+
+Computer.prototype.__proto__ = BodyPart.prototype;
+
+Computer.prototype.addTo = function(scene, callback) {
+  this.scaleBody(this.scale);
+  this.moveTo(this.startX, this.startY, this.startZ);
+
+  scene.add(this.mesh);
+  if (callback) callback();
+};
+
+Computer.prototype.becomeTransparent = function(delta, thresh) {
+  var self = this;
+
+  if (!delta) delta = 0.01;
+  if (!thresh) thresh = 0.5;
+
+  var int = setInterval(function() {
+    self.material.opacity -= delta;
+    if (self.material.opacity <= thresh) {
+      clearInterval(int);
+    }
+  }, 30);
+}
+
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -499,7 +558,7 @@ Hand.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],6:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -555,7 +614,7 @@ Head.prototype.render = function() {
   this.mesh.rotation.y += 0.02;
 }
 
-},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],7:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -587,7 +646,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":8,"./model_names":10}],8:[function(require,module,exports){
+},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],9:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1152,13 +1211,14 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
   var Character = require('./character');
   //var io = require('./io');
   var RonaldWord = require('./ronald_word');
+  var Computer = require('./computer');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1447,17 +1507,32 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -100, y: 5, z: -140}, 20);
+    kevinRonald = new Character({x: -100, y: 5, z: -170}, 20);
     kevinRonald.addTo(scene, function() {
-      kevinRonald.rotate(0, 0, 0);
+      kevinRonald.rotate(0, Math.PI/4, 0);
     });
 
-    dylanRonald = new Character({x: 100, y: 5, z: -140}, 20);
+    dylanRonald = new Character({x: 100, y: 5, z: -170}, 20);
+    dylanRonald.addTo(scene, function() {
+      dylanRonald.rotate(0, -Math.PI/4, 0);
+    });
+
     ronalds = [kevinRonald, dylanRonald];
 
-    for (var i = 0; i < ronalds.length; i++) {
-      ronalds[i].addTo(scene);
-    }
+    var mac = new Computer({x: -50, y: 0, z: -80}, 60);
+    mac.addTo(scene, function() {
+      mac.rotate(0, Math.PI/6, 0);
+    });
+
+    var pc = new Computer({x: 50, y: 0, z: -80}, 60);
+    pc.addTo(scene, function() {
+      pc.rotate(0, -Math.PI/6, 0);
+    });
+
+    setTimeout(function() {
+      mac.becomeTransparent(0.002);
+      pc.becomeTransparent(0.002);
+    }, 6666);
   }
 
   function enterDesperateFleeState() {
@@ -1474,7 +1549,7 @@ $(function() {
 
 });
 
-},{"./character":4,"./lib/kutility":8,"./ronald_word":11}],10:[function(require,module,exports){
+},{"./character":4,"./computer":5,"./lib/kutility":9,"./ronald_word":12}],11:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -1538,7 +1613,7 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
@@ -1654,4 +1729,4 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":8}]},{},[9])
+},{"./lib/kutility":9}]},{},[10])
