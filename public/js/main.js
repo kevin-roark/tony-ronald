@@ -50,65 +50,6 @@ $(function() {
   var heavenState = {};
   var finalState = {};
 
-  phraseState.phrases = [];
-
-  phraseState.ground_material = Physijs.createMaterial(
-    new THREE.MeshBasicMaterial({color: 0x111111, side: THREE.DoubleSide, transparent: true, opacity: 0.2}),
-    .8, // high friction
-    .4 // low restitution
-  );
-
-  phraseState.ground_geometry = new THREE.PlaneGeometry(100, 100);
-  calculateGeometryThings(phraseState.ground_geometry);
-
-  phraseState.leftWallGeometry = new THREE.BoxGeometry(1, 80, 100);
-  phraseState.rightWallGeometry = new THREE.BoxGeometry(1, 80, 100);
-  phraseState.backWallGeometry = new THREE.BoxGeometry(100, 80, 1);
-  phraseState.frontWallGeometry = new THREE.BoxGeometry(100, 80, 1);
-  phraseState.wallGeometries = [phraseState.leftWallGeometry, phraseState.rightWallGeometry, phraseState.backWallGeometry, phraseState.frontWallGeometry];
-  phraseState.wallGeometries.forEach(function(geometry) {
-    calculateGeometryThings(geometry);
-  });
-
-  phraseState.leftWall = new Physijs.BoxMesh(phraseState.leftWallGeometry, phraseState.ground_material.clone(), 0);
-  phraseState.leftWall.position.z = -50;
-  phraseState.leftWall.position.y = 40;
-  phraseState.leftWall.position.x = -50;
-  phraseState.leftWall.__dirtyPosition = true;
-  scene.add(phraseState.leftWall);
-
-  phraseState.rightWall = new Physijs.BoxMesh(phraseState.rightWallGeometry, phraseState.ground_material.clone(), 0);
-  phraseState.rightWall.position.z = -50;
-  phraseState.rightWall.position.y = 40;
-  phraseState.rightWall.position.x = 50;
-  phraseState.rightWall.__dirtyPosition = true;
-  scene.add(phraseState.rightWall);
-
-  phraseState.backWall = new Physijs.BoxMesh(phraseState.backWallGeometry, phraseState.ground_material.clone(), 0);
-  phraseState.backWall.position.z = -100;
-  phraseState.backWall.position.y = 40;
-  phraseState.backWall.__dirtyPosition = true;
-  scene.add(phraseState.backWall);
-
-  phraseState.frontWall = new Physijs.BoxMesh(phraseState.frontWallGeometry, phraseState.ground_material.clone(), 0);
-  phraseState.frontWall.position.y = 40;
-  phraseState.frontWall.__dirtyPosition = true;
-  scene.add(phraseState.frontWall);
-
-  phraseState.ground = new Physijs.BoxMesh(phraseState.ground_geometry, phraseState.ground_material, 0);
-  phraseState.ground.rotation.x = -Math.PI / 2;
-  phraseState.ground.position.z = -50;
-  phraseState.ground.position.y = 0;
-  phraseState.ground.__dirtyPosition = true;
-  scene.add(phraseState.ground);
-
-  phraseState.ceiling = new Physijs.BoxMesh(phraseState.ground_geometry.clone(), phraseState.ground_material.clone(), 0);
-  phraseState.ceiling.rotation.x = -Math.PI / 2;
-  phraseState.ceiling.position.z = -50;
-  phraseState.ceiling.position.y = 80;
-  phraseState.ceiling.__dirtyPosition = true;
-  scene.add(phraseState.ceiling);
-
   var cameraFollowState = {
     target: null,
     offset: {x: 0, y: 0, z: 0},
@@ -293,6 +234,65 @@ $(function() {
   function enterPhrasesState() {
     active.phrases = true;
 
+    phraseState.phrases = [];
+
+    phraseState.ground_material = Physijs.createMaterial(
+      new THREE.MeshBasicMaterial({color: 0x111111, side: THREE.DoubleSide, transparent: true, opacity: 0.2}),
+      .8, // high friction
+      .4 // low restitution
+    );
+
+    phraseState.ground_geometry = new THREE.PlaneGeometry(100, 100);
+    calculateGeometryThings(phraseState.ground_geometry);
+
+    phraseState.leftWallGeometry = new THREE.BoxGeometry(1, 80, 100);
+    phraseState.rightWallGeometry = new THREE.BoxGeometry(1, 80, 100);
+    phraseState.backWallGeometry = new THREE.BoxGeometry(100, 80, 1);
+    phraseState.frontWallGeometry = new THREE.BoxGeometry(100, 80, 1);
+    phraseState.wallGeometries = [phraseState.leftWallGeometry, phraseState.rightWallGeometry, phraseState.backWallGeometry, phraseState.frontWallGeometry];
+    phraseState.wallGeometries.forEach(function(geometry) {
+      calculateGeometryThings(geometry);
+    });
+
+    phraseState.leftWall = new Physijs.BoxMesh(phraseState.leftWallGeometry, phraseState.ground_material.clone(), 0);
+    phraseState.leftWall.position.z = -50;
+    phraseState.leftWall.position.y = 40;
+    phraseState.leftWall.position.x = -50;
+    phraseState.leftWall.__dirtyPosition = true;
+    scene.add(phraseState.leftWall);
+
+    phraseState.rightWall = new Physijs.BoxMesh(phraseState.rightWallGeometry, phraseState.ground_material.clone(), 0);
+    phraseState.rightWall.position.z = -50;
+    phraseState.rightWall.position.y = 40;
+    phraseState.rightWall.position.x = 50;
+    phraseState.rightWall.__dirtyPosition = true;
+    scene.add(phraseState.rightWall);
+
+    phraseState.backWall = new Physijs.BoxMesh(phraseState.backWallGeometry, phraseState.ground_material.clone(), 0);
+    phraseState.backWall.position.z = -100;
+    phraseState.backWall.position.y = 40;
+    phraseState.backWall.__dirtyPosition = true;
+    scene.add(phraseState.backWall);
+
+    phraseState.frontWall = new Physijs.BoxMesh(phraseState.frontWallGeometry, phraseState.ground_material.clone(), 0);
+    phraseState.frontWall.position.y = 40;
+    phraseState.frontWall.__dirtyPosition = true;
+    scene.add(phraseState.frontWall);
+
+    phraseState.ground = new Physijs.BoxMesh(phraseState.ground_geometry, phraseState.ground_material, 0);
+    phraseState.ground.rotation.x = -Math.PI / 2;
+    phraseState.ground.position.z = -50;
+    phraseState.ground.position.y = 0;
+    phraseState.ground.__dirtyPosition = true;
+    scene.add(phraseState.ground);
+
+    phraseState.ceiling = new Physijs.BoxMesh(phraseState.ground_geometry.clone(), phraseState.ground_material.clone(), 0);
+    phraseState.ceiling.rotation.x = -Math.PI / 2;
+    phraseState.ceiling.position.z = -50;
+    phraseState.ceiling.position.y = 80;
+    phraseState.ceiling.__dirtyPosition = true;
+    scene.add(phraseState.ceiling);
+
     setCameraPosition(0, 40, 10);
 
     var phraseInterval = setInterval(function() {
@@ -321,7 +321,7 @@ $(function() {
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 1000);
+    }, 12000);
   }
 
   function enterTrappedState() {
@@ -376,7 +376,7 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 2000);
+    }, 10000);
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
@@ -435,8 +435,8 @@ $(function() {
     var walkCount = 0;
     var dummyForwardInterval = setInterval(function() {
       var z = Math.random() * 0.5 + 0.75;
-      kevinRonald.walk(negrand(2), 0, z);
-      dylanRonald.walk(negrand(2), 0, z);
+      kevinRonald.walk(negrand(6), 0, z);
+      dylanRonald.walk(negrand(6), 0, z);
     }, 30);
 
     desperateState.artifacts = [];
