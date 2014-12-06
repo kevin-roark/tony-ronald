@@ -36,5 +36,5 @@ Arm.prototype.additionalInit = function() {
 };
 
 Arm.prototype.collisonHandle = function() {
-  this.move(-1, 0, -1);
+  if (this.collisionHandler) this.collisionHandler();
 }

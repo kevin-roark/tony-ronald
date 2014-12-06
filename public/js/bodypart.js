@@ -141,14 +141,15 @@ BodyPart.prototype.addTo = function(scene, callback) {
 
   self.createMesh(function() {
     self.mesh.addEventListener('collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+      console.log('got collison')
       if (self.ignoreCollisons) {
+        console.log(' i ignore them');
         self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
         self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
         self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
         self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
       }
 
-      console.log('callin collison');
       self.collisonHandle(other_object, relative_velocity, relative_rotation, contact_normal);
     });
 
@@ -178,7 +179,7 @@ BodyPart.prototype.addTo = function(scene, callback) {
     }
 
     self.resetMeltParameters();
-    self.meltIntensity = 0.1;
+    if (!self.meltIntensity) self.meltIntensity = 0.1;
 
     scene.add(self.mesh);
 

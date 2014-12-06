@@ -324,6 +324,10 @@ $(function() {
 
     trappedState.renderObjects = [mac, pc];
 
+    kevinRonald.leftArm.collisionHandler = function() {
+      kevinRonald.leftArm.move(-1, 0, -1);
+    };
+
     setTimeout(function() {
       mac.becomeTransparent(0.002);
       pc.becomeTransparent(0.002);

@@ -27,6 +27,8 @@ function Computer(startPos, scale) {
   this.scale = scale || 20;
 
   this.ignoreCollisons = true;
+
+  this.meltIntensity = 0.5;
 }
 
 Computer.prototype.__proto__ = BodyPart.prototype;
@@ -38,7 +40,10 @@ Computer.prototype.createMesh = function(callback) {
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
   this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1000);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1);
+
+  this.knockable = true;
+  this.shatterable = false;
 
   callback();
 }
@@ -53,16 +58,35 @@ Computer.prototype.becomeTransparent = function(delta, thresh) {
     self.material.opacity -= delta;
     if (self.material.opacity <= thresh) {
       clearInterval(int);
+      self.shatterable = true;
+      console.log('SHATTERABLE');
     }
   }, 30);
 }
 
-Computer.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
-  console.log('got my computer collison dog: KNOCK KNOCK');
+function negrand(scalar, min) {
+  var r = (Math.random() - 0.5) * scalar;
+  if (r < 0) return r - min;
+  else return r + min;
+}
 
+Computer.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
   var self = this;
-  this.twitching = true;
-  setTimeout(function() {
-    self.twitching = false;
-  }, 200);
+
+  if (this.shattering) return;
+
+  if (this.shatterable) {
+    this.shattering = true;
+    this.ignoreCollisons = false;
+    this.mesh.setLinearVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
+    this.mesh.setAngularVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
+    console.log('SHATTERED');
+  }
+  else if (this.knockable) {
+    console.log('KNOCK KNOCK');
+    this.twitching = true;
+    setTimeout(function() {
+      self.twitching = false;
+    }, 200);
+  }
 }
