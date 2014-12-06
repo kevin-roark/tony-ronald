@@ -131,6 +131,8 @@ BodyPart.prototype.swell = function(s) {
 
   this.scaleMultiply(s);
 
+  if (!this.materials) return;
+
   this.materials.forEach(function(material, index) {
     var initialColor = self.initialMaterialColors[index];
 
@@ -520,6 +522,8 @@ module.exports.computerNames = [MAC, PC];
 var computerNames = module.exports.computerNames;
 var computerIndex = 0;
 
+var allComputers = [];
+
 function Computer(startPos, scale) {
   var self = this;
 
@@ -535,6 +539,8 @@ function Computer(startPos, scale) {
   this.ignoreCollisons = true;
 
   this.meltIntensity = 0.5;
+
+  allComputers.push(this);
 }
 
 Computer.prototype.__proto__ = BodyPart.prototype;
@@ -582,11 +588,9 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
   if (this.shattering) return;
 
   if (this.shatterable) {
-    this.shattering = true;
-    this.ignoreCollisons = false;
-    this.mesh.setLinearVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
-    this.mesh.setAngularVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
-    console.log('SHATTERED');
+    allComputers.forEach(function(computer) {
+      computer.shatter();
+    });
   }
   else if (this.knockable) {
     console.log('KNOCK KNOCK');
@@ -595,6 +599,14 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
       self.twitching = false;
     }, 200);
   }
+}
+
+Computer.prototype.shatter = function() {
+  this.shattering = true;
+  this.ignoreCollisons = false;
+  this.mesh.setLinearVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
+  this.mesh.setAngularVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
+  console.log('SHATTERED');
 }
 
 },{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],6:[function(require,module,exports){
@@ -1313,6 +1325,7 @@ $(function() {
   });
 
   var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+  camera.target = {x: 0, y: 0, z: 0};
   scene.add(camera);
 
   // mainLight shinin from above casting shadows and the like
@@ -1516,6 +1529,21 @@ $(function() {
     camera.position.z = z;
   }
 
+  function tweenCameraToTarget(position) {
+    var tween1 = new TWEEN.Tween(camera.position).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+      camera.lookAt(camera.target);
+    }).onComplete(function() {
+      camera.lookAt(position);
+    }).start();
+
+    var tween2 = new TWEEN.Tween(camera.target).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+    }).onComplete(function() {
+      camera.lookAt(position);
+    }).start();
+  }
+
   function fadeOverlay(fadein, callback, color, time) {
     if (!color) color = 'rgb(255, 255, 255)';
     if (!time) time = 4000;
@@ -1621,7 +1649,25 @@ $(function() {
     setTimeout(function() {
       mac.becomeTransparent(0.002);
       pc.becomeTransparent(0.002);
+
+      var shatterChecker = setInterval(function() {
+        if (mac.shattering && pc.shattering) {
+          clearInterval(shatterChecker);
+          endScene();
+        }
+      }, 100);
     }, 2000);
+
+    function endScene() {
+      console.log('IM DONE WITH COMPUTER!!!');
+
+      kevinRonald.reset(); dylanRonald.reset();
+
+      var cameraPosition = {x: 0, y: 70, z: -500};
+      setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      camera.lookAt({x: 0, y: 0, z: -100});
+      //tweenCameraToTarget(cameraPosition);
+    }
 
     $('body').keypress(function(ev) {
       ev.preventDefault();

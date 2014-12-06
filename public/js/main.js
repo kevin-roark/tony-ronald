@@ -23,6 +23,7 @@ $(function() {
   });
 
   var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+  camera.target = {x: 0, y: 0, z: 0};
   scene.add(camera);
 
   // mainLight shinin from above casting shadows and the like
@@ -226,6 +227,21 @@ $(function() {
     camera.position.z = z;
   }
 
+  function tweenCameraToTarget(position) {
+    var tween1 = new TWEEN.Tween(camera.position).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+      camera.lookAt(camera.target);
+    }).onComplete(function() {
+      camera.lookAt(position);
+    }).start();
+
+    var tween2 = new TWEEN.Tween(camera.target).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+    }).onComplete(function() {
+      camera.lookAt(position);
+    }).start();
+  }
+
   function fadeOverlay(fadein, callback, color, time) {
     if (!color) color = 'rgb(255, 255, 255)';
     if (!time) time = 4000;
@@ -331,7 +347,25 @@ $(function() {
     setTimeout(function() {
       mac.becomeTransparent(0.002);
       pc.becomeTransparent(0.002);
+
+      var shatterChecker = setInterval(function() {
+        if (mac.shattering && pc.shattering) {
+          clearInterval(shatterChecker);
+          endScene();
+        }
+      }, 100);
     }, 2000);
+
+    function endScene() {
+      console.log('IM DONE WITH COMPUTER!!!');
+
+      kevinRonald.reset(); dylanRonald.reset();
+
+      var cameraPosition = {x: 0, y: 70, z: -500};
+      setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+      camera.lookAt({x: 0, y: 0, z: -100});
+      //tweenCameraToTarget(cameraPosition);
+    }
 
     $('body').keypress(function(ev) {
       ev.preventDefault();

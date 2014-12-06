@@ -56,6 +56,8 @@ BodyPart.prototype.swell = function(s) {
 
   this.scaleMultiply(s);
 
+  if (!this.materials) return;
+
   this.materials.forEach(function(material, index) {
     var initialColor = self.initialMaterialColors[index];
 

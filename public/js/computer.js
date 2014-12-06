@@ -14,6 +14,8 @@ module.exports.computerNames = [MAC, PC];
 var computerNames = module.exports.computerNames;
 var computerIndex = 0;
 
+var allComputers = [];
+
 function Computer(startPos, scale) {
   var self = this;
 
@@ -29,6 +31,8 @@ function Computer(startPos, scale) {
   this.ignoreCollisons = true;
 
   this.meltIntensity = 0.5;
+
+  allComputers.push(this);
 }
 
 Computer.prototype.__proto__ = BodyPart.prototype;
@@ -76,11 +80,9 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
   if (this.shattering) return;
 
   if (this.shatterable) {
-    this.shattering = true;
-    this.ignoreCollisons = false;
-    this.mesh.setLinearVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
-    this.mesh.setAngularVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
-    console.log('SHATTERED');
+    allComputers.forEach(function(computer) {
+      computer.shatter();
+    });
   }
   else if (this.knockable) {
     console.log('KNOCK KNOCK');
@@ -89,4 +91,12 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
       self.twitching = false;
     }, 200);
   }
+}
+
+Computer.prototype.shatter = function() {
+  this.shattering = true;
+  this.ignoreCollisons = false;
+  this.mesh.setLinearVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
+  this.mesh.setAngularVelocity({x: negrand(36, 15), y: Math.random() * 36, z: negrand(36, 15)});
+  console.log('SHATTERED');
 }
