@@ -36,6 +36,10 @@ Arm.prototype.additionalInit = function() {
   }
 };
 
+Arm.prototype.collisonHandle = function() {
+  this.move(-1, 0, -1);
+}
+
 },{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
@@ -79,6 +83,7 @@ function BodyPart(startPos, scale) {
   this.modelChoices = [];
 
   this.melting = false;
+  this.twitching = false;
 }
 
 BodyPart.prototype.move = function(x, y, z) {
@@ -145,6 +150,12 @@ BodyPart.prototype.reset = function() {
   this.mesh.rotation.x = this.initialRotation.x;
   this.mesh.rotation.y = this.initialRotation.y;
   this.mesh.rotation.z = this.initialRotation.z;
+  this.mesh.__dirtyRotation = true;
+
+  if (this.mesh.setAngularVelocity) {
+    this.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
+    this.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
+  }
 
   this.cancelMelt();
 
@@ -182,7 +193,7 @@ BodyPart.prototype.meltValue = function() {
   return (Math.random() - 0.5) * this.meltIntensity;
 }
 
-BodyPart.prototype.addTo = function(scene, callback) {
+BodyPart.prototype.createMesh = function(callback) {
   var self = this;
 
   self.modelName = self.specificModelName || kt.choice(self.modelChoices);
@@ -196,6 +207,26 @@ BodyPart.prototype.addTo = function(scene, callback) {
 
     self.mesh = new Physijs.ConvexMesh(geometry, self.material);
 
+    callback();
+  });
+}
+
+BodyPart.prototype.addTo = function(scene, callback) {
+  var self = this;
+
+  self.createMesh(function() {
+    self.mesh.addEventListener('collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+      if (self.ignoreCollisons) {
+        self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
+        self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
+        self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
+        self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
+      }
+
+      console.log('callin collison');
+      self.collisonHandle(other_object, relative_velocity, relative_rotation, contact_normal);
+    });
+
     self.scaleBody(self.scale);
 
     self.moveTo(self.startX, self.startY, self.startZ);
@@ -206,12 +237,14 @@ BodyPart.prototype.addTo = function(scene, callback) {
     self.initialScale = {x: self.mesh.scale.x, y: self.mesh.scale.y, z: self.mesh.scale.z};
     self.initialRotation = {x: self.mesh.rotation.x, y: self.mesh.rotation.y, z: self.mesh.rotation.z};
 
-    self.initialMaterialColors = [];
-    self.materials.forEach(function(mat) {
-      self.initialMaterialColors.push(mat.color);
-    });
+    if (self.materials) {
+      self.initialMaterialColors = [];
+      self.materials.forEach(function(mat) {
+        self.initialMaterialColors.push(mat.color);
+      });
+    }
 
-    self.verts = geometry.vertices;
+    self.verts = self.geometry.vertices;
 
     self.originalVertices = [];
     for (var i = 0; i < self.verts.length; i++) {
@@ -251,6 +284,13 @@ BodyPart.prototype.render = function() {
     }
   }
 
+  if (this.twitching) {
+    var x = (Math.random() - 0.5);
+    var y = (Math.random() - 0.5);
+    var z = (Math.random() - 0.5);
+    this.move(x, y, z);
+  }
+
   this.additionalRender();
 }
 
@@ -273,6 +313,7 @@ BodyPart.prototype.fallToFloor = function(threshold, speed) {
 
 BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
+BodyPart.prototype.collisonHandle = function() {}
 
 },{"./lib/kutility":9,"./model_names":11}],4:[function(require,module,exports){
 
@@ -312,6 +353,9 @@ function Character(startPos, scale) {
   this.bodyParts = [this.leftArm, this.rightArm,
                     this.leftLeg, this.rightLeg,
                     this.torso, this.head];
+  this.bodyParts.forEach(function(bodyPart) {
+    bodyPart.ignoreCollisons = true;
+  });
 
   this.twitching = false; // random motion and rotation
 
@@ -476,6 +520,8 @@ var computerNames = module.exports.computerNames;
 var computerIndex = 0;
 
 function Computer(startPos, scale) {
+  var self = this;
+
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
   this.startX = startPos.x;
   this.startY = startPos.y;
@@ -485,24 +531,22 @@ function Computer(startPos, scale) {
 
   this.scale = scale || 20;
 
-  this.geometry = new THREE.BoxGeometry(1, 0.75, 0.25);
+  this.ignoreCollisons = true;
+}
+
+Computer.prototype.__proto__ = BodyPart.prototype;
+
+Computer.prototype.createMesh = function(callback) {
+  this.geometry = new THREE.BoxGeometry(1, 0.75, 0.1);
 
   this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 1.0});
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
   this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new Physijs.BoxMesh(this.geometry, this.material);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1000);
+
+  callback();
 }
-
-Computer.prototype.__proto__ = BodyPart.prototype;
-
-Computer.prototype.addTo = function(scene, callback) {
-  this.scaleBody(this.scale);
-  this.moveTo(this.startX, this.startY, this.startZ);
-
-  scene.add(this.mesh);
-  if (callback) callback();
-};
 
 Computer.prototype.becomeTransparent = function(delta, thresh) {
   var self = this;
@@ -516,6 +560,16 @@ Computer.prototype.becomeTransparent = function(delta, thresh) {
       clearInterval(int);
     }
   }, 30);
+}
+
+Computer.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
+  console.log('got my computer collison dog: KNOCK KNOCK');
+
+  var self = this;
+  this.twitching = true;
+  setTimeout(function() {
+    self.twitching = false;
+  }, 200);
 }
 
 },{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],6:[function(require,module,exports){
@@ -582,24 +636,20 @@ function Head(startPos, scale) {
 
   this.scale = scale || 20;
   this.scale *= 0.4;
+}
 
+Head.prototype.__proto__ = BodyPart.prototype;
+
+Head.prototype.createMesh = function(callback) {
   this.geometry = new THREE.SphereGeometry(1, 32, 32);
 
   this.material = new THREE.MeshBasicMaterial();
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
 
   this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+  callback();
 }
-
-Head.prototype.__proto__ = BodyPart.prototype;
-
-Head.prototype.addTo = function(scene, callback) {
-  this.scaleBody(this.scale);
-  this.moveTo(this.startX, this.startY, this.startZ);
-
-  scene.add(this.mesh);
-  if (callback) callback();
-};
 
 Head.prototype.additionalInit = function() {
   var self = this;
@@ -1382,6 +1432,12 @@ $(function() {
       });
     }
 
+    if (active.trapped) {
+      trappedState.renderObjects.forEach(function(obj) {
+        obj.render();
+      });
+    }
+
     if (cameraFollowState.obj) {
       camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.obj.position);
@@ -1497,6 +1553,7 @@ $(function() {
 
   function enterTrappedState() {
     active.ronalds = true;
+    active.trapped = true;
 
     setCameraPosition(0, 0, 0);
 
@@ -1530,10 +1587,23 @@ $(function() {
       pc.rotate(0, -Math.PI/6, 0);
     });
 
+    trappedState.renderObjects = [mac, pc];
+
     setTimeout(function() {
       mac.becomeTransparent(0.002);
       pc.becomeTransparent(0.002);
-    }, 6666);
+    }, 2000);
+
+    $('body').keypress(function(ev) {
+      ev.preventDefault();
+
+      if (ev.which == 98) { // b
+        kevinRonald.leftArm.move(1, 0, 1);
+      }
+      else if (ev.which == 110)  { // n
+        kevinRonald.leftArm.move(-1, 0, -1);
+      }
+    });
   }
 
   function enterDesperateFleeState() {

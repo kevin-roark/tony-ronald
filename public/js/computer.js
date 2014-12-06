@@ -15,6 +15,8 @@ var computerNames = module.exports.computerNames;
 var computerIndex = 0;
 
 function Computer(startPos, scale) {
+  var self = this;
+
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
   this.startX = startPos.x;
   this.startY = startPos.y;
@@ -24,24 +26,22 @@ function Computer(startPos, scale) {
 
   this.scale = scale || 20;
 
-  this.geometry = new THREE.BoxGeometry(1, 0.75, 0.25);
+  this.ignoreCollisons = true;
+}
+
+Computer.prototype.__proto__ = BodyPart.prototype;
+
+Computer.prototype.createMesh = function(callback) {
+  this.geometry = new THREE.BoxGeometry(1, 0.75, 0.1);
 
   this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 1.0});
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
   this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new Physijs.BoxMesh(this.geometry, this.material);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1000);
+
+  callback();
 }
-
-Computer.prototype.__proto__ = BodyPart.prototype;
-
-Computer.prototype.addTo = function(scene, callback) {
-  this.scaleBody(this.scale);
-  this.moveTo(this.startX, this.startY, this.startZ);
-
-  scene.add(this.mesh);
-  if (callback) callback();
-};
 
 Computer.prototype.becomeTransparent = function(delta, thresh) {
   var self = this;
@@ -55,4 +55,14 @@ Computer.prototype.becomeTransparent = function(delta, thresh) {
       clearInterval(int);
     }
   }, 30);
+}
+
+Computer.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
+  console.log('got my computer collison dog: KNOCK KNOCK');
+
+  var self = this;
+  this.twitching = true;
+  setTimeout(function() {
+    self.twitching = false;
+  }, 200);
 }

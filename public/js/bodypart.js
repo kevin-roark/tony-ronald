@@ -8,6 +8,7 @@ function BodyPart(startPos, scale) {
   this.modelChoices = [];
 
   this.melting = false;
+  this.twitching = false;
 }
 
 BodyPart.prototype.move = function(x, y, z) {
@@ -74,6 +75,12 @@ BodyPart.prototype.reset = function() {
   this.mesh.rotation.x = this.initialRotation.x;
   this.mesh.rotation.y = this.initialRotation.y;
   this.mesh.rotation.z = this.initialRotation.z;
+  this.mesh.__dirtyRotation = true;
+
+  if (this.mesh.setAngularVelocity) {
+    this.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
+    this.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
+  }
 
   this.cancelMelt();
 
@@ -111,7 +118,7 @@ BodyPart.prototype.meltValue = function() {
   return (Math.random() - 0.5) * this.meltIntensity;
 }
 
-BodyPart.prototype.addTo = function(scene, callback) {
+BodyPart.prototype.createMesh = function(callback) {
   var self = this;
 
   self.modelName = self.specificModelName || kt.choice(self.modelChoices);
@@ -125,6 +132,26 @@ BodyPart.prototype.addTo = function(scene, callback) {
 
     self.mesh = new Physijs.ConvexMesh(geometry, self.material);
 
+    callback();
+  });
+}
+
+BodyPart.prototype.addTo = function(scene, callback) {
+  var self = this;
+
+  self.createMesh(function() {
+    self.mesh.addEventListener('collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+      if (self.ignoreCollisons) {
+        self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
+        self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
+        self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
+        self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
+      }
+
+      console.log('callin collison');
+      self.collisonHandle(other_object, relative_velocity, relative_rotation, contact_normal);
+    });
+
     self.scaleBody(self.scale);
 
     self.moveTo(self.startX, self.startY, self.startZ);
@@ -135,12 +162,14 @@ BodyPart.prototype.addTo = function(scene, callback) {
     self.initialScale = {x: self.mesh.scale.x, y: self.mesh.scale.y, z: self.mesh.scale.z};
     self.initialRotation = {x: self.mesh.rotation.x, y: self.mesh.rotation.y, z: self.mesh.rotation.z};
 
-    self.initialMaterialColors = [];
-    self.materials.forEach(function(mat) {
-      self.initialMaterialColors.push(mat.color);
-    });
+    if (self.materials) {
+      self.initialMaterialColors = [];
+      self.materials.forEach(function(mat) {
+        self.initialMaterialColors.push(mat.color);
+      });
+    }
 
-    self.verts = geometry.vertices;
+    self.verts = self.geometry.vertices;
 
     self.originalVertices = [];
     for (var i = 0; i < self.verts.length; i++) {
@@ -180,6 +209,13 @@ BodyPart.prototype.render = function() {
     }
   }
 
+  if (this.twitching) {
+    var x = (Math.random() - 0.5);
+    var y = (Math.random() - 0.5);
+    var z = (Math.random() - 0.5);
+    this.move(x, y, z);
+  }
+
   this.additionalRender();
 }
 
@@ -202,3 +238,4 @@ BodyPart.prototype.fallToFloor = function(threshold, speed) {
 
 BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
+BodyPart.prototype.collisonHandle = function() {}

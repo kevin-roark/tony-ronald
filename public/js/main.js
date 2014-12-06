@@ -167,6 +167,12 @@ $(function() {
       });
     }
 
+    if (active.trapped) {
+      trappedState.renderObjects.forEach(function(obj) {
+        obj.render();
+      });
+    }
+
     if (cameraFollowState.obj) {
       camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.obj.position);
@@ -282,6 +288,7 @@ $(function() {
 
   function enterTrappedState() {
     active.ronalds = true;
+    active.trapped = true;
 
     setCameraPosition(0, 0, 0);
 
@@ -315,10 +322,23 @@ $(function() {
       pc.rotate(0, -Math.PI/6, 0);
     });
 
+    trappedState.renderObjects = [mac, pc];
+
     setTimeout(function() {
       mac.becomeTransparent(0.002);
       pc.becomeTransparent(0.002);
-    }, 6666);
+    }, 2000);
+
+    $('body').keypress(function(ev) {
+      ev.preventDefault();
+
+      if (ev.which == 98) { // b
+        kevinRonald.leftArm.move(1, 0, 1);
+      }
+      else if (ev.which == 110)  { // n
+        kevinRonald.leftArm.move(-1, 0, -1);
+      }
+    });
   }
 
   function enterDesperateFleeState() {

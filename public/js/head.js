@@ -20,24 +20,20 @@ function Head(startPos, scale) {
 
   this.scale = scale || 20;
   this.scale *= 0.4;
+}
 
+Head.prototype.__proto__ = BodyPart.prototype;
+
+Head.prototype.createMesh = function(callback) {
   this.geometry = new THREE.SphereGeometry(1, 32, 32);
 
   this.material = new THREE.MeshBasicMaterial();
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
 
   this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+  callback();
 }
-
-Head.prototype.__proto__ = BodyPart.prototype;
-
-Head.prototype.addTo = function(scene, callback) {
-  this.scaleBody(this.scale);
-  this.moveTo(this.startX, this.startY, this.startZ);
-
-  scene.add(this.mesh);
-  if (callback) callback();
-};
 
 Head.prototype.additionalInit = function() {
   var self = this;

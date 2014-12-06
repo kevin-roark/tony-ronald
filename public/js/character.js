@@ -35,6 +35,9 @@ function Character(startPos, scale) {
   this.bodyParts = [this.leftArm, this.rightArm,
                     this.leftLeg, this.rightLeg,
                     this.torso, this.head];
+  this.bodyParts.forEach(function(bodyPart) {
+    bodyPart.ignoreCollisons = true;
+  });
 
   this.twitching = false; // random motion and rotation
 
