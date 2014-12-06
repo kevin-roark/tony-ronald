@@ -70,6 +70,13 @@ Character.prototype.move = function(x, y, z) {
   });
 }
 
+Character.prototype.walk = function(x, y, z) {
+  this.move(x, y, z);
+
+  this.leftLeg.twitch();
+  this.rightLeg.twitch();
+}
+
 Character.prototype.moveTo = function(x, y, z) {
   var dx = x - this.position.x;
   var dy = y - this.position.y;

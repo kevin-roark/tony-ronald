@@ -106,11 +106,11 @@ $(function() {
   scene.add(phraseState.ceiling);
 
   var cameraFollowState = {
-    obj: null,
+    target: null,
     offset: {x: 0, y: 0, z: 0},
   };
   var lightFollowState = {
-    obj: null,
+    target: null,
     offset: {x: 0, y: 0, z: 0}
   };
 
@@ -150,6 +150,12 @@ $(function() {
       else if (ev.which == 115)  { // down
         moveCameraPosition(0, 0, -1);
       }
+      else if (ev.which == 113) { // q
+        moveCameraPosition(0, 1, 0);
+      }
+      else if (ev.which == 101) { // e
+        moveCameraPosition(0, -1, 0);
+      }
     });
   }
 
@@ -174,12 +180,16 @@ $(function() {
       });
     }
 
-    if (cameraFollowState.obj) {
-      camera.position.copy(cameraFollowState.obj.position).add(cameraFollowState.offset);
-      camera.lookAt(cameraFollowState.obj.position);
+    if (active.desperate) {
+      desperateState.render();
+    }
+
+    if (cameraFollowState.target) {
+      camera.position.copy(cameraFollowState.target).add(cameraFollowState.offset);
+      camera.lookAt(cameraFollowState.target);
     }
     if (lightFollowState.obj) {
-      light.target.position.copy(lightFollowState.obj.position);
+      light.target.position.copy(lightFollowState.target);
       light.position.addVectors(light.target.position, lightFollowState.offset);
     }
 
@@ -262,6 +272,14 @@ $(function() {
   function calculateGeometryThings(geometry) {
     geometry.computeFaceNormals();
     geometry.computeVertexNormals();
+  }
+
+  function middlePosition(p1, p2) {
+    return {x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2, z: (p1.z + p2.z) / 2}
+  }
+
+  function negrand(scalar) {
+    return (Math.random() - 0.5) * scalar;
   }
 
   /*
@@ -361,10 +379,13 @@ $(function() {
 
       kevinRonald.reset(); dylanRonald.reset();
 
-      var cameraPosition = {x: 0, y: 70, z: -500};
+      var cameraPosition = {x: 0, y: 40, z: -370};
       setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
       camera.lookAt({x: 0, y: 0, z: -100});
       //tweenCameraToTarget(cameraPosition);
+
+      active.trapped = false;
+      enterDesperateFleeState();
     }
 
     $('body').keypress(function(ev) {
@@ -380,7 +401,21 @@ $(function() {
   }
 
   function enterDesperateFleeState() {
+    console.log('I AM DESPERATE NOW');
 
+    active.desperate = true;
+    desperateState.render = function() {
+      var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
+      middle.z += 70;
+      cameraFollowState.target = middle;
+      cameraFollowState.offset = {x: 0, y: 40, z: -270};
+    };
+
+    var dummyForwardInterval = setInterval(function() {
+      var z = Math.random() * 0.5 + 0.75;
+      kevinRonald.walk(negrand(2), 0, z);
+      dylanRonald.walk(negrand(2), 0, z);
+    }, 30);
   }
 
   function enterHeavenState() {

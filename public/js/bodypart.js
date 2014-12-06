@@ -213,13 +213,17 @@ BodyPart.prototype.render = function() {
   }
 
   if (this.twitching) {
-    var x = (Math.random() - 0.5);
-    var y = (Math.random() - 0.5);
-    var z = (Math.random() - 0.5);
-    this.move(x, y, z);
+    this.twitch();
   }
 
   this.additionalRender();
+}
+
+BodyPart.prototype.twitch = function() {
+  var x = (Math.random() - 0.5);
+  var y = (Math.random() - 0.5);
+  var z = (Math.random() - 0.5);
+  this.move(x, y, z);
 }
 
 BodyPart.prototype.fallToFloor = function(threshold, speed) {
