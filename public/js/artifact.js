@@ -55,5 +55,5 @@ Artifact.prototype.createMesh = function(callback) {
 
 Artifact.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
   var self = this;
-  console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
+  //console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
 }
