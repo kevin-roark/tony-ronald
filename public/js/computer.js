@@ -28,8 +28,9 @@ function Computer(startPos, scale) {
 
   this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 1.0});
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
+  this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new THREE.Mesh(this.geometry, this.material);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material);
 }
 
 Computer.prototype.__proto__ = BodyPart.prototype;

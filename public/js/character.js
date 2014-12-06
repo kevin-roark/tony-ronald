@@ -24,10 +24,6 @@ function Character(startPos, scale) {
 
   this.rightArm = new Arm({x: this.startX + scale, y: this.startY - scale, z: this.startZ}, scale, 'right');
 
-  this.leftHand = new Hand({x: this.startX - scale, y: this.startY - scale, z: this.startZ}, scale, 'left');
-
-  this.rightHand = new Hand({x: this.startX + scale, y: this.startY - scale, z: this.startZ}, scale, 'right');
-
   this.leftLeg = new Leg({x: this.startX - scale * 0.4, y: this.startY - scale * 0.75, z: this.startZ}, scale);
 
   this.rightLeg = new Leg({x: this.startX + scale * 0.4, y: this.startY - scale * 0.75, z: this.startZ}, scale);
@@ -37,7 +33,6 @@ function Character(startPos, scale) {
   this.head = new Head({x: this.startX, y: this.startY + 0.75 * scale, z: this.startZ}, scale);
 
   this.bodyParts = [this.leftArm, this.rightArm,
-                    this.leftHand, this.rightHand,
                     this.leftLeg, this.rightLeg,
                     this.torso, this.head];
 

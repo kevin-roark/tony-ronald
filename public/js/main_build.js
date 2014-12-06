@@ -97,6 +97,8 @@ BodyPart.prototype.rotate = function(rx, ry, rz) {
   this.mesh.rotation.x += rx;
   this.mesh.rotation.y += ry;
   this.mesh.rotation.z += rz;
+
+  this.mesh.__dirtyRotation = true;
 }
 
 BodyPart.prototype.moveTo = function(x, y, z) {
@@ -189,7 +191,10 @@ BodyPart.prototype.addTo = function(scene, callback) {
     self.geometry = geometry;
     self.materials = materials;
 
-    self.mesh = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
+    self.faceMaterial = new THREE.MeshFaceMaterial(materials);
+    self.material = Physijs.createMaterial(self.faceMaterial, .4, .6);
+
+    self.mesh = new Physijs.ConvexMesh(geometry, self.material);
 
     self.scaleBody(self.scale);
 
@@ -296,10 +301,6 @@ function Character(startPos, scale) {
 
   this.rightArm = new Arm({x: this.startX + scale, y: this.startY - scale, z: this.startZ}, scale, 'right');
 
-  this.leftHand = new Hand({x: this.startX - scale, y: this.startY - scale, z: this.startZ}, scale, 'left');
-
-  this.rightHand = new Hand({x: this.startX + scale, y: this.startY - scale, z: this.startZ}, scale, 'right');
-
   this.leftLeg = new Leg({x: this.startX - scale * 0.4, y: this.startY - scale * 0.75, z: this.startZ}, scale);
 
   this.rightLeg = new Leg({x: this.startX + scale * 0.4, y: this.startY - scale * 0.75, z: this.startZ}, scale);
@@ -309,7 +310,6 @@ function Character(startPos, scale) {
   this.head = new Head({x: this.startX, y: this.startY + 0.75 * scale, z: this.startZ}, scale);
 
   this.bodyParts = [this.leftArm, this.rightArm,
-                    this.leftHand, this.rightHand,
                     this.leftLeg, this.rightLeg,
                     this.torso, this.head];
 
@@ -489,8 +489,9 @@ function Computer(startPos, scale) {
 
   this.material = new THREE.MeshBasicMaterial({transparent: true, opacity: 1.0});
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
+  this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new THREE.Mesh(this.geometry, this.material);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material);
 }
 
 Computer.prototype.__proto__ = BodyPart.prototype;

@@ -26,6 +26,8 @@ BodyPart.prototype.rotate = function(rx, ry, rz) {
   this.mesh.rotation.x += rx;
   this.mesh.rotation.y += ry;
   this.mesh.rotation.z += rz;
+
+  this.mesh.__dirtyRotation = true;
 }
 
 BodyPart.prototype.moveTo = function(x, y, z) {
@@ -118,7 +120,10 @@ BodyPart.prototype.addTo = function(scene, callback) {
     self.geometry = geometry;
     self.materials = materials;
 
-    self.mesh = new THREE.SkinnedMesh(geometry, new THREE.MeshFaceMaterial(materials));
+    self.faceMaterial = new THREE.MeshFaceMaterial(materials);
+    self.material = Physijs.createMaterial(self.faceMaterial, .4, .6);
+
+    self.mesh = new Physijs.ConvexMesh(geometry, self.material);
 
     self.scaleBody(self.scale);
 
