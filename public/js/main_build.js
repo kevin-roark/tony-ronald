@@ -40,7 +40,68 @@ Arm.prototype.collisonHandle = function() {
   if (this.collisionHandler) this.collisionHandler();
 }
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],2:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],2:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var modelNames = require('./model_names');
+
+var BodyPart = require('./bodypart');
+
+module.exports = Artifact;
+
+var COMPUTER_TYPE = 'COMPUTER';
+var SPORT_TYPE = 'SPORT';
+var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE];
+
+var artifactTextureNames = {};
+artifactTextureNames[COMPUTER_TYPE] = [
+  '/images/finder.jpg'
+];
+artifactTextureNames[SPORT_TYPE] = [];
+
+function Artifact(startPos, scale) {
+  var self = this;
+
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.artifactType = ARTIFACT_TYPES[0];
+  this.textureName = kt.choice(artifactTextureNames[this.artifactType]);
+
+  this.scale = scale || 20;
+
+  this.ignoreCollisons = false;
+}
+
+Artifact.prototype.__proto__ = BodyPart.prototype;
+
+Artifact.prototype.createMesh = function(callback) {
+  if (Math.random() < 0.3) {
+    this.geometry = new THREE.SphereGeometry(1);
+  }
+  else {
+    this.geometry = new THREE.BoxGeometry(1, 1, 1);
+  }
+
+  this.material = new THREE.MeshBasicMaterial();
+  this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
+  this.material = Physijs.createMaterial(this.material, .4, .6);
+
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1);
+  this.mesh.artifact = true;
+
+  callback();
+}
+
+Artifact.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
+  var self = this;
+  console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
+}
+
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],3:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -72,7 +133,7 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],3:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],4:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -207,10 +268,20 @@ BodyPart.prototype.createMesh = function(callback) {
     self.faceMaterial = new THREE.MeshFaceMaterial(materials);
     self.material = Physijs.createMaterial(self.faceMaterial, .4, .6);
 
-    self.mesh = new Physijs.ConvexMesh(geometry, self.material);
+    self.mesh = new Physijs.ConvexMesh(geometry, self.material, 20);
 
     callback();
   });
+}
+
+BodyPart.prototype.resetMovement = function() {
+  var self = this;
+  if (!self.mesh || !self.mesh.setLinearVelocity) return;
+
+  self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
+  self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
+  self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
+  self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
 }
 
 BodyPart.prototype.addTo = function(scene, callback) {
@@ -218,13 +289,8 @@ BodyPart.prototype.addTo = function(scene, callback) {
 
   self.createMesh(function() {
     self.mesh.addEventListener('collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-      console.log('got collison')
       if (self.ignoreCollisons) {
-        console.log(' i ignore them');
-        self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
-        self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
-        self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
-        self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
+        self.resetMovement();
       }
 
       self.collisonHandle(other_object, relative_velocity, relative_rotation, contact_normal);
@@ -288,16 +354,16 @@ BodyPart.prototype.render = function() {
   }
 
   if (this.twitching) {
-    this.twitch();
+    this.twitch(1);
   }
 
   this.additionalRender();
 }
 
-BodyPart.prototype.twitch = function() {
-  var x = (Math.random() - 0.5);
-  var y = (Math.random() - 0.5);
-  var z = (Math.random() - 0.5);
+BodyPart.prototype.twitch = function(scalar) {
+  var x = (Math.random() - 0.5) * scalar;
+  var y = (Math.random() - 0.5) * scalar;
+  var z = (Math.random() - 0.5) * scalar;
   this.move(x, y, z);
 }
 
@@ -322,7 +388,7 @@ BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 BodyPart.prototype.collisonHandle = function() {}
 
-},{"./lib/kutility":9,"./model_names":11}],4:[function(require,module,exports){
+},{"./lib/kutility":10,"./model_names":12}],5:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -398,8 +464,8 @@ Character.prototype.move = function(x, y, z) {
 Character.prototype.walk = function(x, y, z) {
   this.move(x, y, z);
 
-  this.leftLeg.twitch();
-  this.rightLeg.twitch();
+  this.leftLeg.twitch(0.9);
+  this.rightLeg.twitch(0.9);
 }
 
 Character.prototype.moveTo = function(x, y, z) {
@@ -408,6 +474,12 @@ Character.prototype.moveTo = function(x, y, z) {
   var dz = z - this.position.z;
 
   this.move(dx, dy, dz);
+}
+
+Character.prototype.resetMovement = function() {
+  this.bodyParts.forEach(function(part) {
+    part.resetMovement();
+  });
 }
 
 Character.prototype.rotate = function(rx, ry, rz) {
@@ -516,7 +588,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":2,"./hand":6,"./head":7,"./leg":8,"./lib/kutility":9,"./model_names":11}],5:[function(require,module,exports){
+},{"./arm":1,"./body":3,"./hand":7,"./head":8,"./leg":9,"./lib/kutility":10,"./model_names":12}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -620,7 +692,7 @@ Computer.prototype.shatter = function() {
   console.log('SHATTERED');
 }
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],6:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -661,7 +733,7 @@ Hand.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],7:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -713,7 +785,7 @@ Head.prototype.render = function() {
   this.mesh.rotation.y += 0.02;
 }
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],8:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],9:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -745,7 +817,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":3,"./lib/kutility":9,"./model_names":11}],9:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],10:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1310,7 +1382,7 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
@@ -1318,6 +1390,7 @@ $(function() {
   //var io = require('./io');
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
+  var Artifact = require('./artifact');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1331,6 +1404,9 @@ $(function() {
   scene.setGravity(new THREE.Vector3(0, 0, 0));
   scene.addEventListener('update', function() {
     // here wanna apply new forces to objects and things based on state
+    if (active.desperate) {
+      desperateState.physicsUpdate();
+    }
 
     scene.simulate(undefined, 1);
   });
@@ -1723,12 +1799,47 @@ $(function() {
       cameraFollowState.target = middle;
       cameraFollowState.offset = {x: 0, y: 40, z: -270};
     };
+    desperateState.physicsUpdate = function() {
+      dylanRonald.resetMovement();
+      kevinRonald.resetMovement();
+    };
 
+    desperateState.ground_material = Physijs.createMaterial(
+      new THREE.MeshBasicMaterial({color: 0xeeeeee, side: THREE.DoubleSide}),
+      .8, .4
+    );
+    desperateState.ground_geometry = new THREE.PlaneGeometry(10000, 10000);
+    desperateState.ground = new Physijs.BoxMesh(desperateState.ground_geometry, desperateState.ground_material, 0);
+    desperateState.ground.rotation.x = -Math.PI / 2;
+    desperateState.ground.position.y = -30;
+    desperateState.ground.ground = true;
+    scene.add(desperateState.ground);
+
+    scene.setGravity(new THREE.Vector3(0, -100, 0));
+
+    var walkCount = 0;
     var dummyForwardInterval = setInterval(function() {
       var z = Math.random() * 0.5 + 0.75;
       kevinRonald.walk(negrand(2), 0, z);
       dylanRonald.walk(negrand(2), 0, z);
     }, 30);
+
+    desperateState.artifacts = [];
+    rainArtifacts();
+    function rainArtifacts() {
+      var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
+      var future = {x: negrand(400), y: 10 + negrand(20), z: middle.z + Math.random() * 200 + 20};
+      var artifact = new Artifact(future, Math.random() * 9 + 3);
+      desperateState.artifacts.push(artifact);
+      artifact.addTo(scene);
+
+      if (desperateState.artifacts.length > 300) {
+        var firstArtifact = desperateState.artifacts.shift();
+        scene.remove(firstArtifact.mesh);
+      }
+
+      setTimeout(rainArtifacts, kt.randInt(300, 50));
+    }
   }
 
   function enterHeavenState() {
@@ -1741,7 +1852,7 @@ $(function() {
 
 });
 
-},{"./character":4,"./computer":5,"./lib/kutility":9,"./ronald_word":12}],11:[function(require,module,exports){
+},{"./artifact":2,"./character":5,"./computer":6,"./lib/kutility":10,"./ronald_word":13}],12:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -1805,7 +1916,7 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
@@ -1921,4 +2032,4 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":9}]},{},[10])
+},{"./lib/kutility":10}]},{},[11])

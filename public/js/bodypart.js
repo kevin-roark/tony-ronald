@@ -132,10 +132,20 @@ BodyPart.prototype.createMesh = function(callback) {
     self.faceMaterial = new THREE.MeshFaceMaterial(materials);
     self.material = Physijs.createMaterial(self.faceMaterial, .4, .6);
 
-    self.mesh = new Physijs.ConvexMesh(geometry, self.material);
+    self.mesh = new Physijs.ConvexMesh(geometry, self.material, 20);
 
     callback();
   });
+}
+
+BodyPart.prototype.resetMovement = function() {
+  var self = this;
+  if (!self.mesh || !self.mesh.setLinearVelocity) return;
+
+  self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
+  self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
+  self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
+  self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
 }
 
 BodyPart.prototype.addTo = function(scene, callback) {
@@ -143,13 +153,8 @@ BodyPart.prototype.addTo = function(scene, callback) {
 
   self.createMesh(function() {
     self.mesh.addEventListener('collision', function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-      console.log('got collison')
       if (self.ignoreCollisons) {
-        console.log(' i ignore them');
-        self.mesh.setLinearVelocity({x: 0, y: 0, z: 0});
-        self.mesh.setLinearFactor({x: 0, y: 0, z: 0});
-        self.mesh.setAngularVelocity({x: 0, y: 0, z: 0});
-        self.mesh.setAngularFactor({x: 0, y: 0, z: 0});
+        self.resetMovement();
       }
 
       self.collisonHandle(other_object, relative_velocity, relative_rotation, contact_normal);
@@ -213,16 +218,16 @@ BodyPart.prototype.render = function() {
   }
 
   if (this.twitching) {
-    this.twitch();
+    this.twitch(1);
   }
 
   this.additionalRender();
 }
 
-BodyPart.prototype.twitch = function() {
-  var x = (Math.random() - 0.5);
-  var y = (Math.random() - 0.5);
-  var z = (Math.random() - 0.5);
+BodyPart.prototype.twitch = function(scalar) {
+  var x = (Math.random() - 0.5) * scalar;
+  var y = (Math.random() - 0.5) * scalar;
+  var z = (Math.random() - 0.5) * scalar;
   this.move(x, y, z);
 }
 

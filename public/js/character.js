@@ -73,8 +73,8 @@ Character.prototype.move = function(x, y, z) {
 Character.prototype.walk = function(x, y, z) {
   this.move(x, y, z);
 
-  this.leftLeg.twitch();
-  this.rightLeg.twitch();
+  this.leftLeg.twitch(0.9);
+  this.rightLeg.twitch(0.9);
 }
 
 Character.prototype.moveTo = function(x, y, z) {
@@ -83,6 +83,12 @@ Character.prototype.moveTo = function(x, y, z) {
   var dz = z - this.position.z;
 
   this.move(dx, dy, dz);
+}
+
+Character.prototype.resetMovement = function() {
+  this.bodyParts.forEach(function(part) {
+    part.resetMovement();
+  });
 }
 
 Character.prototype.rotate = function(rx, ry, rz) {

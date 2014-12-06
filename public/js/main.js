@@ -5,6 +5,7 @@ $(function() {
   //var io = require('./io');
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
+  var Artifact = require('./artifact');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -18,6 +19,9 @@ $(function() {
   scene.setGravity(new THREE.Vector3(0, 0, 0));
   scene.addEventListener('update', function() {
     // here wanna apply new forces to objects and things based on state
+    if (active.desperate) {
+      desperateState.physicsUpdate();
+    }
 
     scene.simulate(undefined, 1);
   });
@@ -410,12 +414,47 @@ $(function() {
       cameraFollowState.target = middle;
       cameraFollowState.offset = {x: 0, y: 40, z: -270};
     };
+    desperateState.physicsUpdate = function() {
+      dylanRonald.resetMovement();
+      kevinRonald.resetMovement();
+    };
 
+    desperateState.ground_material = Physijs.createMaterial(
+      new THREE.MeshBasicMaterial({color: 0xeeeeee, side: THREE.DoubleSide}),
+      .8, .4
+    );
+    desperateState.ground_geometry = new THREE.PlaneGeometry(10000, 10000);
+    desperateState.ground = new Physijs.BoxMesh(desperateState.ground_geometry, desperateState.ground_material, 0);
+    desperateState.ground.rotation.x = -Math.PI / 2;
+    desperateState.ground.position.y = -30;
+    desperateState.ground.ground = true;
+    scene.add(desperateState.ground);
+
+    scene.setGravity(new THREE.Vector3(0, -100, 0));
+
+    var walkCount = 0;
     var dummyForwardInterval = setInterval(function() {
       var z = Math.random() * 0.5 + 0.75;
       kevinRonald.walk(negrand(2), 0, z);
       dylanRonald.walk(negrand(2), 0, z);
     }, 30);
+
+    desperateState.artifacts = [];
+    rainArtifacts();
+    function rainArtifacts() {
+      var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
+      var future = {x: negrand(400), y: 10 + negrand(20), z: middle.z + Math.random() * 200 + 20};
+      var artifact = new Artifact(future, Math.random() * 9 + 3);
+      desperateState.artifacts.push(artifact);
+      artifact.addTo(scene);
+
+      if (desperateState.artifacts.length > 300) {
+        var firstArtifact = desperateState.artifacts.shift();
+        scene.remove(firstArtifact.mesh);
+      }
+
+      setTimeout(rainArtifacts, kt.randInt(300, 50));
+    }
   }
 
   function enterHeavenState() {
