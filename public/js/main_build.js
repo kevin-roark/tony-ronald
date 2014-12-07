@@ -1725,7 +1725,7 @@ $(function() {
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 12000);
+    }, 1000);
   }
 
   function enterTrappedState() {
@@ -1780,7 +1780,7 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 10000);
+    }, 1000);
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
@@ -1849,7 +1849,7 @@ $(function() {
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 2.75;
+      var z = Math.random() * 0.5 + 6.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
     }, 30);
@@ -1894,23 +1894,29 @@ $(function() {
     }
   }
 
-  function enterHeavenState(startGrassZ, heavenGroundZ) {
+  function enterHeavenState(startGrassZ) {
     console.log('I AM HEAVEN NOW');
 
     if (!startGrassZ) startGrassZ = 4500;
-    if (!heavenGroundZ) heavenGroundZ = 6000;
 
     var groundLength = 3000;
+
+    var heavenGroundZ = startGrassZ + groundLength / 2;
+
+    var massiveComputerZ = startGrassZ + groundLength;
 
     active.heaven = true;
     var grassMeshes = [];
     heavenState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
-      cameraFollowState.target = middle;
-      cameraFollowState.offset = {x: 0, y: 40, z: -270};
-      lightFollowState.target = middle;
-      lightFollowState.offset = {x: 10, y: 20, z: -60};
+
+      if (!heavenState.reachedComputer) {
+        cameraFollowState.target = middle;
+        cameraFollowState.offset = {x: 0, y: 40, z: -270};
+        lightFollowState.target = middle;
+        lightFollowState.offset = {x: 10, y: 20, z: -60};
+      }
 
       var distFromStartGrass = startGrassZ - middle.z;
 
@@ -1940,6 +1946,11 @@ $(function() {
           });
         }
       }
+
+      if (middle.z >= massiveComputerZ - 250 && !heavenState.reachedComputer) {
+        heavenState.reachedComputer = true;
+        reachedComputer();
+      }
     };
     heavenState.physicsUpdate = function() {
       dylanRonald.resetMovement();
@@ -1958,13 +1969,13 @@ $(function() {
     heavenState.ground.ground = true;
     scene.add(heavenState.ground);
 
-    heavenState.massiveComputer = new Computer({x: 0, y: 300, z: 7400}, 600, 1000);
+    heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.addTo(scene, function() {
       heavenState.massiveComputer.material.opacity = 0.5;
     });
 
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 2.75;
+      var z = Math.random() * 0.5 + 6.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
       console.log(kevinRonald.head.mesh.position.z);
@@ -1993,6 +2004,24 @@ $(function() {
           });
         }, 10000);
       }
+    }
+
+    function reachedComputer() {
+      console.log('I AM AT LINUX NOW');
+      clearInterval(dummyForwardInterval);
+
+      var currentTarget = cameraFollowState.target;
+      var initY = currentTarget.y;
+      cameraFollowState.target = null;
+      cameraFollowState.offset = null;
+      var aimCameraUpInterval = setInterval(function() {
+        currentTarget.y += 0.03;
+        camera.lookAt(currentTarget);
+
+        if (currentTarget.y >= initY + 40) {
+          clearInterval(aimCameraUpInterval);
+        }
+      }, 10);
     }
   }
 
