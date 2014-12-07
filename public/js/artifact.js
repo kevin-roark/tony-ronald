@@ -14,7 +14,9 @@ var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
-  '/images/finder.jpg'
+  '/images/finder.jpg',
+  '/images/pc_monitor.jpg',
+  '/images/mac_monitor.jpg'
 ];
 artifactTextureNames[SPORT_TYPE] = [];
 artifactTextureNames[MONEY_TYPE] = [

@@ -452,7 +452,7 @@ $(function() {
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 0.75;
+      var z = Math.random() * 0.5 + 2.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
     }, 30);
@@ -501,9 +501,9 @@ $(function() {
     console.log('I AM HEAVEN NOW');
 
     if (!startGrassZ) startGrassZ = 4500;
-    if (!heavenGroundZ) heavenGroundZ = 7000;
+    if (!heavenGroundZ) heavenGroundZ = 6000;
 
-    var groundLength = 5000;
+    var groundLength = 3000;
 
     active.heaven = true;
     var grassMeshes = [];
@@ -561,10 +561,16 @@ $(function() {
     heavenState.ground.ground = true;
     scene.add(heavenState.ground);
 
+    heavenState.massiveComputer = new Computer({x: 0, y: 300, z: 7400}, 600, 1000);
+    heavenState.massiveComputer.addTo(scene, function() {
+      heavenState.massiveComputer.material.opacity = 0.5;
+    });
+
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 0.75;
+      var z = Math.random() * 0.5 + 2.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
+      console.log(kevinRonald.head.mesh.position.z);
     }, 30);
 
     heavenState.artifacts = [];

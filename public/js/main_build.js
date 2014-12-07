@@ -57,7 +57,9 @@ var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
-  '/images/finder.jpg'
+  '/images/finder.jpg',
+  '/images/pc_monitor.jpg',
+  '/images/mac_monitor.jpg'
 ];
 artifactTextureNames[SPORT_TYPE] = [];
 artifactTextureNames[MONEY_TYPE] = [
@@ -607,14 +609,15 @@ module.exports = Computer;
 
 var MAC = '/images/mac_monitor.jpg';
 var PC = '/images/pc_monitor.jpg';
+var LINUX = '/images/linux_monitor.jpg';
 
-module.exports.computerNames = [MAC, PC];
+module.exports.computerNames = [MAC, PC, LINUX];
 var computerNames = module.exports.computerNames;
 var computerIndex = 0;
 
 var allComputers = [];
 
-function Computer(startPos, scale) {
+function Computer(startPos, scale, mass) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -622,9 +625,11 @@ function Computer(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.textureName = computerNames[++computerIndex % computerNames.length];
+  this.textureName = computerNames[computerIndex % computerNames.length];
+  computerIndex += 1;
 
   this.scale = scale || 20;
+  this.mass = mass || 1;
 
   this.ignoreCollisons = true;
 
@@ -642,7 +647,7 @@ Computer.prototype.createMesh = function(callback) {
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
   this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, this.mass);
 
   this.knockable = true;
   this.shatterable = false;
@@ -1844,7 +1849,7 @@ $(function() {
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 0.75;
+      var z = Math.random() * 0.5 + 2.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
     }, 30);
@@ -1853,7 +1858,7 @@ $(function() {
     rainArtifacts();
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 36};
+      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
       var artifact = new Artifact(future, Math.random() * 9 + 3, 0);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
@@ -1893,9 +1898,9 @@ $(function() {
     console.log('I AM HEAVEN NOW');
 
     if (!startGrassZ) startGrassZ = 4500;
-    if (!heavenGroundZ) heavenGroundZ = 7000;
+    if (!heavenGroundZ) heavenGroundZ = 6000;
 
-    var groundLength = 5000;
+    var groundLength = 3000;
 
     active.heaven = true;
     var grassMeshes = [];
@@ -1911,10 +1916,6 @@ $(function() {
 
       if (distFromStartGrass > 0) {
         var count = Math.min(10, Math.max(1, (800 - distFromStartGrass) / 100));
-
-        console.log(distFromStartGrass);
-        console.log(count);
-
         for (var i = 0; i < count; i++) {
           var size = kt.randInt(9, 1);
           var grassGeometry = new THREE.PlaneGeometry(size, size);
@@ -1957,16 +1958,22 @@ $(function() {
     heavenState.ground.ground = true;
     scene.add(heavenState.ground);
 
+    heavenState.massiveComputer = new Computer({x: 0, y: 300, z: 7400}, 600, 1000);
+    heavenState.massiveComputer.addTo(scene, function() {
+      heavenState.massiveComputer.material.opacity = 0.5;
+    });
+
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 0.75;
+      var z = Math.random() * 0.5 + 2.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
+      console.log(kevinRonald.head.mesh.position.z);
     }, 30);
 
     heavenState.artifacts = [];
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 36};
+      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
       var artifact = new Artifact(future, Math.random() * 9 + 3, 2);
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);

@@ -9,14 +9,15 @@ module.exports = Computer;
 
 var MAC = '/images/mac_monitor.jpg';
 var PC = '/images/pc_monitor.jpg';
+var LINUX = '/images/linux_monitor.jpg';
 
-module.exports.computerNames = [MAC, PC];
+module.exports.computerNames = [MAC, PC, LINUX];
 var computerNames = module.exports.computerNames;
 var computerIndex = 0;
 
 var allComputers = [];
 
-function Computer(startPos, scale) {
+function Computer(startPos, scale, mass) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -24,9 +25,11 @@ function Computer(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.textureName = computerNames[++computerIndex % computerNames.length];
+  this.textureName = computerNames[computerIndex % computerNames.length];
+  computerIndex += 1;
 
   this.scale = scale || 20;
+  this.mass = mass || 1;
 
   this.ignoreCollisons = true;
 
@@ -44,7 +47,7 @@ Computer.prototype.createMesh = function(callback) {
   this.material.map = THREE.ImageUtils.loadTexture(this.textureName);
   this.material = Physijs.createMaterial(this.material, .4, .6);
 
-  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, 1);
+  this.mesh = new Physijs.BoxMesh(this.geometry, this.material, this.mass);
 
   this.knockable = true;
   this.shatterable = false;
