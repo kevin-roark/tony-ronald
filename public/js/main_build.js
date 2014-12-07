@@ -52,15 +52,20 @@ module.exports = Artifact;
 
 var COMPUTER_TYPE = 'COMPUTER';
 var SPORT_TYPE = 'SPORT';
-var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE];
+var MONEY_TYPE = 'MONEY';
+var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
   '/images/finder.jpg'
 ];
 artifactTextureNames[SPORT_TYPE] = [];
+artifactTextureNames[MONEY_TYPE] = [
+  '/images/coin.jpg',
+  '/images/dollar.jpg'
+];
 
-function Artifact(startPos, scale) {
+function Artifact(startPos, scale, typeIndex) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -68,7 +73,9 @@ function Artifact(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.artifactType = ARTIFACT_TYPES[0];
+  if (typeIndex === undefined) typeIndex = 0;
+
+  this.artifactType = ARTIFACT_TYPES[typeIndex];
   this.textureName = kt.choice(artifactTextureNames[this.artifactType]);
 
   this.scale = scale || 20;
@@ -1799,17 +1806,22 @@ $(function() {
   function enterDesperateFleeState() {
     console.log('I AM DESPERATE NOW');
 
+    var groundLength = 2500;
+    var darkLength = 1000;
+
     active.desperate = true;
     desperateState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
       cameraFollowState.target = middle;
       cameraFollowState.offset = {x: 0, y: 40, z: -270};
+      lightFollowState.target = middle;
+      lightFollowState.offset = {x: 10, y: 20, z: -60};
 
-      if (middle.z > 5000 / 2 + 1000) {
+      if (middle.z > groundLength + darkLength) {
         endState();
       }
-      else if (!desperateState.dark && middle.z > 5000 / 2) {
+      else if (!desperateState.dark && middle.z > groundLength) {
         darkTime();
       }
     };
@@ -1822,7 +1834,7 @@ $(function() {
       new THREE.MeshBasicMaterial({color: 0xeeeeee, side: THREE.DoubleSide}),
       .8, .4
     );
-    desperateState.ground_geometry = new THREE.PlaneGeometry(5000, 5000);
+    desperateState.ground_geometry = new THREE.PlaneGeometry(500, groundLength * 2);
     desperateState.ground = new Physijs.BoxMesh(desperateState.ground_geometry, desperateState.ground_material, 0);
     desperateState.ground.rotation.x = -Math.PI / 2;
     desperateState.ground.position.y = -30;
@@ -1841,8 +1853,8 @@ $(function() {
     rainArtifacts();
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 20};
-      var artifact = new Artifact(future, Math.random() * 9 + 3);
+      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 36};
+      var artifact = new Artifact(future, Math.random() * 9 + 3, 0);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -1853,6 +1865,13 @@ $(function() {
 
       if (!desperateState.stopRaining) {
         setTimeout(rainArtifacts, kt.randInt(300, 50));
+      }
+      else {
+        setTimeout(function() {
+          desperateState.artifacts.forEach(function(artifact) {
+            scene.remove(artifact.mesh);
+          });
+        }, 10000);
       }
     }
 
@@ -1870,21 +1889,28 @@ $(function() {
     }
   }
 
-  function enterHeavenState() {
+  function enterHeavenState(startGrassZ, heavenGroundZ) {
     console.log('I AM HEAVEN NOW');
 
+    if (!startGrassZ) startGrassZ = 4500;
+    if (!heavenGroundZ) heavenGroundZ = 7000;
+
+    var groundLength = 5000;
+
     active.heaven = true;
+    var grassMeshes = [];
     heavenState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
       cameraFollowState.target = middle;
       cameraFollowState.offset = {x: 0, y: 40, z: -270};
+      lightFollowState.target = middle;
+      lightFollowState.offset = {x: 10, y: 20, z: -60};
 
-      var startGrassZ = 4500;
       var distFromStartGrass = startGrassZ - middle.z;
 
       if (distFromStartGrass > 0) {
-        var count = Math.min(10, Math.max(1, (600 - distFromStartGrass) / 5));
+        var count = Math.min(10, Math.max(1, (800 - distFromStartGrass) / 100));
 
         console.log(distFromStartGrass);
         console.log(count);
@@ -1901,6 +1927,18 @@ $(function() {
           scene.add(grassMesh);
         }
       }
+      else {
+        if (!heavenState.startedRaining) {
+          rainArtifacts();
+          heavenState.startedRaining = true;
+        }
+
+        if (distFromStartGrass < -100) {
+          grassMeshes.forEach(function(grassMesh) {
+            scene.remove(grassMesh);
+          });
+        }
+      }
     };
     heavenState.physicsUpdate = function() {
       dylanRonald.resetMovement();
@@ -1911,11 +1949,11 @@ $(function() {
       new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide}),
       .8, .4
     );
-    heavenState.ground_geometry = new THREE.PlaneGeometry(5000, 5000);
+    heavenState.ground_geometry = new THREE.PlaneGeometry(500, groundLength);
     heavenState.ground = new Physijs.BoxMesh(heavenState.ground_geometry, heavenState.ground_material, 0);
     heavenState.ground.rotation.x = -Math.PI / 2;
     heavenState.ground.position.y = -30;
-    heavenState.ground.position.z = 7000;
+    heavenState.ground.position.z = heavenGroundZ;
     heavenState.ground.ground = true;
     scene.add(heavenState.ground);
 
@@ -1924,6 +1962,31 @@ $(function() {
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
     }, 30);
+
+    heavenState.artifacts = [];
+    function rainArtifacts() {
+      var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
+      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 36};
+      var artifact = new Artifact(future, Math.random() * 9 + 3, 2);
+      heavenState.artifacts.push(artifact);
+      artifact.addTo(scene);
+
+      if (heavenState.artifacts.length > 300) {
+        var firstArtifact = heavenState.artifacts.shift();
+        scene.remove(firstArtifact.mesh);
+      }
+
+      if (!heavenState.stopRaining) {
+        setTimeout(rainArtifacts, kt.randInt(300, 50));
+      }
+      else {
+        setTimeout(function() {
+          heavenState.artifacts.forEach(function(artifact) {
+            scene.remove(artifact.mesh);
+          });
+        }, 10000);
+      }
+    }
   }
 
   function enterEndgameState() {

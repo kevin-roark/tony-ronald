@@ -9,15 +9,20 @@ module.exports = Artifact;
 
 var COMPUTER_TYPE = 'COMPUTER';
 var SPORT_TYPE = 'SPORT';
-var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE];
+var MONEY_TYPE = 'MONEY';
+var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
   '/images/finder.jpg'
 ];
 artifactTextureNames[SPORT_TYPE] = [];
+artifactTextureNames[MONEY_TYPE] = [
+  '/images/coin.jpg',
+  '/images/dollar.jpg'
+];
 
-function Artifact(startPos, scale) {
+function Artifact(startPos, scale, typeIndex) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -25,7 +30,9 @@ function Artifact(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.artifactType = ARTIFACT_TYPES[0];
+  if (typeIndex === undefined) typeIndex = 0;
+
+  this.artifactType = ARTIFACT_TYPES[typeIndex];
   this.textureName = kt.choice(artifactTextureNames[this.artifactType]);
 
   this.scale = scale || 20;
