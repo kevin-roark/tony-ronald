@@ -6,6 +6,8 @@ $(function() {
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
   var Artifact = require('./artifact');
+  var mn = require('./model_names');
+  var Hand = require('./hand');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -554,6 +556,10 @@ $(function() {
         heavenState.reachedComputer = true;
         reachedComputer();
       }
+
+      if (heavenState.bigGirlHand) {
+        heavenState.bigGirlHand.render();
+      }
     };
     heavenState.physicsUpdate = function() {
       dylanRonald.resetMovement();
@@ -574,14 +580,13 @@ $(function() {
 
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.addTo(scene, function() {
-      heavenState.massiveComputer.material.opacity = 0.5;
+      heavenState.massiveComputer.material.opacity = 0.33;
     });
 
     var dummyForwardInterval = setInterval(function() {
       var z = Math.random() * 0.5 + 6.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
-      console.log(kevinRonald.head.mesh.position.z);
     }, 30);
 
     heavenState.artifacts = [];
@@ -618,13 +623,31 @@ $(function() {
       cameraFollowState.target = null;
       cameraFollowState.offset = null;
       var aimCameraUpInterval = setInterval(function() {
-        currentTarget.y += 0.03;
+        currentTarget.y += 0.4;
         camera.lookAt(currentTarget);
 
         if (currentTarget.y >= initY + 40) {
           clearInterval(aimCameraUpInterval);
+          addHand();
         }
       }, 10);
+
+      function addHand() {
+        heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: massiveComputerZ + 64}, 90);
+        heavenState.bigGirlHand.mass = 500;
+        heavenState.bigGirlHand.ignoreCollisons = true;
+        heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
+        heavenState.bigGirlHand.addTo(scene, function() {
+          heavenState.bigGirlHand.twitching = true;
+          heavenState.bigGirlHand.fluctuating = true;
+
+          var material = heavenState.bigGirlHand.materials[0];
+          console.log(material);
+          material.color = new THREE.Color(198, 120, 86);
+          material.needsUpdate = true;
+        });
+      }
+
     }
   }
 

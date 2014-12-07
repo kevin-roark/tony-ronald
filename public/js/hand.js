@@ -16,9 +16,8 @@ function Hand(startPos, scale, side) {
   this.side = side || 'left';
 
   this.scale = scale || 1;
-  this.scale *= 0.1;
 
-  this.modelChoices = [modelNames.FOOTBALL_HAND];
+  this.modelChoices = [modelNames.FOOTBALL_HAND, modelNames.BASE_HAND];
 }
 
 Hand.prototype.__proto__ = BodyPart.prototype;
@@ -35,5 +34,8 @@ Hand.prototype.additionalInit = function() {
       this.move(-10, 0, 0);
       this.mesh.scale.x *= -1;
     }
+  }
+  else if (this.modelName == modelNames.BASE_HAND) {
+    this.rotate(0, 0, Math.PI);
   }
 };

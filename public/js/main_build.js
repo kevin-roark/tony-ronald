@@ -268,6 +268,8 @@ BodyPart.prototype.meltValue = function() {
 BodyPart.prototype.createMesh = function(callback) {
   var self = this;
 
+  if (self.mass === undefined) self.mass = 20;
+
   self.modelName = self.specificModelName || kt.choice(self.modelChoices);
 
   modelNames.loadModel(self.modelName, function (geometry, materials) {
@@ -277,7 +279,7 @@ BodyPart.prototype.createMesh = function(callback) {
     self.faceMaterial = new THREE.MeshFaceMaterial(materials);
     self.material = Physijs.createMaterial(self.faceMaterial, .4, .6);
 
-    self.mesh = new Physijs.ConvexMesh(geometry, self.material, 20);
+    self.mesh = new Physijs.ConvexMesh(geometry, self.material, self.mass);
 
     callback();
   });
@@ -365,6 +367,9 @@ BodyPart.prototype.render = function() {
   if (this.twitching) {
     this.twitch(1);
   }
+  if (this.fluctuating) {
+    this.fluctuate(1);
+  }
 
   this.additionalRender();
 }
@@ -374,6 +379,13 @@ BodyPart.prototype.twitch = function(scalar) {
   var y = (Math.random() - 0.5) * scalar;
   var z = (Math.random() - 0.5) * scalar;
   this.move(x, y, z);
+}
+
+BodyPart.prototype.fluctuate = function(scalar) {
+  var x = (Math.random() - 0.5) * scalar;
+  var y = (Math.random() - 0.5) * scalar;
+  var z = (Math.random() - 0.5) * scalar;
+  this.rotate(x, y, z);
 }
 
 BodyPart.prototype.fallToFloor = function(threshold, speed) {
@@ -723,9 +735,8 @@ function Hand(startPos, scale, side) {
   this.side = side || 'left';
 
   this.scale = scale || 1;
-  this.scale *= 0.1;
 
-  this.modelChoices = [modelNames.FOOTBALL_HAND];
+  this.modelChoices = [modelNames.FOOTBALL_HAND, modelNames.BASE_HAND];
 }
 
 Hand.prototype.__proto__ = BodyPart.prototype;
@@ -742,6 +753,9 @@ Hand.prototype.additionalInit = function() {
       this.move(-10, 0, 0);
       this.mesh.scale.x *= -1;
     }
+  }
+  else if (this.modelName == modelNames.BASE_HAND) {
+    this.rotate(0, 0, Math.PI);
   }
 };
 
@@ -1403,6 +1417,8 @@ $(function() {
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
   var Artifact = require('./artifact');
+  var mn = require('./model_names');
+  var Hand = require('./hand');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1951,6 +1967,10 @@ $(function() {
         heavenState.reachedComputer = true;
         reachedComputer();
       }
+
+      if (heavenState.bigGirlHand) {
+        heavenState.bigGirlHand.render();
+      }
     };
     heavenState.physicsUpdate = function() {
       dylanRonald.resetMovement();
@@ -1971,14 +1991,13 @@ $(function() {
 
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.addTo(scene, function() {
-      heavenState.massiveComputer.material.opacity = 0.5;
+      heavenState.massiveComputer.material.opacity = 0.33;
     });
 
     var dummyForwardInterval = setInterval(function() {
       var z = Math.random() * 0.5 + 6.75;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
-      console.log(kevinRonald.head.mesh.position.z);
     }, 30);
 
     heavenState.artifacts = [];
@@ -2015,13 +2034,31 @@ $(function() {
       cameraFollowState.target = null;
       cameraFollowState.offset = null;
       var aimCameraUpInterval = setInterval(function() {
-        currentTarget.y += 0.03;
+        currentTarget.y += 0.4;
         camera.lookAt(currentTarget);
 
         if (currentTarget.y >= initY + 40) {
           clearInterval(aimCameraUpInterval);
+          addHand();
         }
       }, 10);
+
+      function addHand() {
+        heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: massiveComputerZ + 64}, 90);
+        heavenState.bigGirlHand.mass = 500;
+        heavenState.bigGirlHand.ignoreCollisons = true;
+        heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
+        heavenState.bigGirlHand.addTo(scene, function() {
+          heavenState.bigGirlHand.twitching = true;
+          heavenState.bigGirlHand.fluctuating = true;
+
+          var material = heavenState.bigGirlHand.materials[0];
+          console.log(material);
+          material.color = new THREE.Color(198, 120, 86);
+          material.needsUpdate = true;
+        });
+      }
+
     }
   }
 
@@ -2031,7 +2068,7 @@ $(function() {
 
 });
 
-},{"./artifact":2,"./character":5,"./computer":6,"./lib/kutility":10,"./ronald_word":13}],12:[function(require,module,exports){
+},{"./artifact":2,"./character":5,"./computer":6,"./hand":7,"./lib/kutility":10,"./model_names":12,"./ronald_word":13}],12:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2062,6 +2099,8 @@ module.exports.LOWPOLY_TORSO = pre('low_poly_torso.js');
 /* HANDS */
 
 module.exports.FOOTBALL_HAND = pre('football_hand.js');
+
+module.exports.BASE_HAND = pre('base_hand.js');
 
 /* FEET */
 

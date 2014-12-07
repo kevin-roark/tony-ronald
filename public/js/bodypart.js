@@ -123,6 +123,8 @@ BodyPart.prototype.meltValue = function() {
 BodyPart.prototype.createMesh = function(callback) {
   var self = this;
 
+  if (self.mass === undefined) self.mass = 20;
+
   self.modelName = self.specificModelName || kt.choice(self.modelChoices);
 
   modelNames.loadModel(self.modelName, function (geometry, materials) {
@@ -132,7 +134,7 @@ BodyPart.prototype.createMesh = function(callback) {
     self.faceMaterial = new THREE.MeshFaceMaterial(materials);
     self.material = Physijs.createMaterial(self.faceMaterial, .4, .6);
 
-    self.mesh = new Physijs.ConvexMesh(geometry, self.material, 20);
+    self.mesh = new Physijs.ConvexMesh(geometry, self.material, self.mass);
 
     callback();
   });
@@ -220,6 +222,9 @@ BodyPart.prototype.render = function() {
   if (this.twitching) {
     this.twitch(1);
   }
+  if (this.fluctuating) {
+    this.fluctuate(1);
+  }
 
   this.additionalRender();
 }
@@ -229,6 +234,13 @@ BodyPart.prototype.twitch = function(scalar) {
   var y = (Math.random() - 0.5) * scalar;
   var z = (Math.random() - 0.5) * scalar;
   this.move(x, y, z);
+}
+
+BodyPart.prototype.fluctuate = function(scalar) {
+  var x = (Math.random() - 0.5) * scalar;
+  var y = (Math.random() - 0.5) * scalar;
+  var z = (Math.random() - 0.5) * scalar;
+  this.rotate(x, y, z);
 }
 
 BodyPart.prototype.fallToFloor = function(threshold, speed) {
