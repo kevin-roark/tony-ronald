@@ -44,7 +44,6 @@ Hand.prototype.pokeUntilCollision = function(backwardsDistance, callback) {
   var self = this;
 
   var startZ = self.mesh.position.z;
-  console.log('starting poke at ' + startZ);
   function moveback(cb) {
     var backInterval = setInterval(function() {
       self.move(0, 0, 2);
@@ -61,7 +60,6 @@ Hand.prototype.pokeUntilCollision = function(backwardsDistance, callback) {
     }, 20);
 
     self.pokeCollisonHandler = function() {
-      console.log('U GOT POKED!!!');
       clearInterval(forwardInterval);
       self.pokeCollisonHandler = null;
 

@@ -94,21 +94,39 @@ $(function() {
       }
       else if (ev.which == 97)  { // left
         moveCameraPosition(-1, 0, 0);
+        if (cameraFollowState.offset) {
+          cameraFollowState.offset.x += -1;
+        }
       }
       else if (ev.which == 119)  { // up
         moveCameraPosition(0, 0, 1);
+        if (cameraFollowState.offset) {
+          cameraFollowState.offset.y += 1;
+        }
       }
       else if (ev.which == 100)  { // right
         moveCameraPosition(1, 0, 0);
+        if (cameraFollowState.offset) {
+          cameraFollowState.offset.x += 1;
+        }
       }
       else if (ev.which == 115)  { // down
         moveCameraPosition(0, 0, -1);
+        if (cameraFollowState.offset) {
+          cameraFollowState.offset.y += -1;
+        }
       }
       else if (ev.which == 113) { // q
         moveCameraPosition(0, 1, 0);
+        if (cameraFollowState.offset) {
+          cameraFollowState.offset.z += 1;
+        }
       }
       else if (ev.which == 101) { // e
         moveCameraPosition(0, -1, 0);
+        if (cameraFollowState.offset) {
+          cameraFollowState.offset.z += -1;
+        }
       }
     });
   }
@@ -672,7 +690,7 @@ $(function() {
         heavenState.massiveComputer.knockable = false;
         heavenState.stopRaining = true;
 
-        var time = 12000;
+        var time = 11000;
 
         var ascendInterval = setInterval(function() {
           kevinRonald.move(0, 0.5, 1);
@@ -694,12 +712,10 @@ $(function() {
         poke();
         function poke() {
           hand.pokeUntilCollision(dist, function() {
-            console.log('DID A POKE!!');
             pokeCount += 1;
             if (pokeCount < 8) {
               setTimeout(poke, 1);
             } else {
-              console.log('DONE POKING!!!');
               donePoking();
             }
           });
@@ -721,16 +737,22 @@ $(function() {
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 
+    // modify things from previous state y not
+    heavenState.bigGirlHand.move(-300, 170, 400);
+    heavenState.massiveComputer.material.opacity = 0.95;
+    kevinRonald.move(0, -5, -25);
+    dylanRonald.move(0, -5, -25);
+
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
-    cameraFollowState.offset = {x: 300, y: 25, z: 0};
+    cameraFollowState.offset = {x: 400, y: 25, z: 0};
     lightFollowState.target = cameraFollowState.target;
-    lightFollowState.offset = {x: 0, y: 40, z: 0};
+    lightFollowState.offset = {x: 100, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 0, y: 50, z: girlZ}, 20, 'girl');
+    finalState.girl = new Human({x: 20, y: 50, z: girlZ}, 35, 'girl');
     finalState.girl.addTo(scene);
 
-    finalState.boy = new Human({x: 60, y: 50, z: girlZ}, 20, 'boy');
+    finalState.boy = new Human({x: -300, y: 50, z: girlZ}, 50, 'boy');
     finalState.boy.addTo(scene);
 
     fadeOverlay(false, function() {
