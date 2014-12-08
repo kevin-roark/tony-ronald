@@ -1757,6 +1757,30 @@ $(function() {
     return (Math.random() - 0.5) * scalar;
   }
 
+  function moveTowardsTarget(pos, target, amt) {
+    if (pos.x < target.x) {
+      pos.x += amt.x;
+    } else if (pos.x > target.x) {
+      pos.x -= amt.x;
+    }
+
+    if (pos.y < target.y) {
+      pos.y += amt.y;
+    } else if (pos.y > target.y) {
+      pos.y -= amt.y;
+    }
+
+    if (pos.z < target.z) {
+      pos.z += amt.z;
+    } else if (pos.z > target.z) {
+      pos.z -= amt.z;
+    }
+  }
+
+  function distanceMagnitude(pos1, pos2) {
+    return Math.abs(pos1.x - pos2.x) + Math.abs(pos1.y - pos2.y) + Math.abs(pos1.z - pos2.z);
+  }
+
   /*
    * * * * * STATE CHANGES * * * * *
    */
@@ -2203,12 +2227,13 @@ $(function() {
         var dist = 60;
         var hand = heavenState.bigGirlHand;
         var pokeCount = 0;
+        var maxPokes = 3;
 
         poke();
         function poke() {
           hand.pokeUntilCollision(dist, function() {
             pokeCount += 1;
-            if (pokeCount < 8) {
+            if (pokeCount < maxPokes) {
               setTimeout(poke, 1);
             } else {
               donePoking();
@@ -2234,7 +2259,9 @@ $(function() {
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    heavenState.massiveComputer.material.opacity = 0.95;
+    heavenState.massiveComputer.material.opacity = 0.99;
+    heavenState.massiveComputer.reset();
+    heavenState.massiveComputer.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
 
@@ -2244,14 +2271,14 @@ $(function() {
     lightFollowState.target = cameraFollowState.target;
     lightFollowState.offset = {x: 100, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 20, y: 50, z: girlZ}, 35, 'girl');
+    finalState.girl = new Human({x: 220, y: 50, z: girlZ}, 35, 'girl');
     finalState.girl.addTo(scene);
 
-    finalState.boy = new Human({x: -300, y: 50, z: girlZ}, 50, 'boy');
+    finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
 
     fadeOverlay(false, function() {
-      console.log('can you see me, ronald?');
+      girlGonnaTalkNow();
     }, null);
 
     finalState.render = function() {
@@ -2260,6 +2287,44 @@ $(function() {
     finalState.physicsUpdate = function() {
 
     };
+
+    function girlGonnaTalkNow() {
+      console.log('can you see me, ronald?');
+
+      setTimeout(function() {
+        panToShowScreen();
+      }, 4444);
+    }
+
+    function panToShowScreen() {
+      var camTarget = {x: 0, z: girlZ, y: 120};
+      var camOffset = {x: 0, z: 275, y: 6};
+      var lightTarget = camTarget;
+      var lightOffset = {x: 20, y: 40, z: 100};
+
+      var amt = {x: 0.75, y: 0.15, z: 0.65};
+      var thresh = 1;
+      var panInterval = setInterval(function() {
+        moveTowardsTarget(cameraFollowState.target, camTarget, amt);
+        moveTowardsTarget(cameraFollowState.offset, camOffset, amt);
+        moveTowardsTarget(lightFollowState.target, lightTarget, amt);
+        moveTowardsTarget(lightFollowState.offset, lightOffset, amt);
+
+        if (distanceMagnitude(cameraFollowState.target, camTarget) <= thresh &&
+            distanceMagnitude(cameraFollowState.offset, camOffset) <= thresh &&
+            distanceMagnitude(lightFollowState.target, lightTarget) <= thresh &&
+            distanceMagnitude(lightFollowState.offset, lightOffset) <= thresh) {
+              console.log('DONE PANNING');
+              clearInterval(panInterval);
+              startComputerActivity();
+        }
+      }, 20);
+    }
+
+    function startComputerActivity() {
+      console.log('can u see the video and dress my ronald?');
+    }
+
   }
 
 });
