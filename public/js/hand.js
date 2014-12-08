@@ -39,3 +39,39 @@ Hand.prototype.additionalInit = function() {
     this.rotate(0, 0, Math.PI);
   }
 };
+
+Hand.prototype.pokeUntilCollision = function(backwardsDistance, callback) {
+  var self = this;
+
+  var startZ = self.mesh.position.z;
+  console.log('starting poke at ' + startZ);
+  function moveback(cb) {
+    var backInterval = setInterval(function() {
+      self.move(0, 0, 2);
+      if (self.mesh.position.z >= startZ + backwardsDistance) {
+        clearInterval(backInterval);
+        cb();
+      }
+    }, 20);
+  }
+
+  moveback(function() {
+    var forwardInterval = setInterval(function() {
+      self.move(0, 0, -2);
+    }, 20);
+
+    self.pokeCollisonHandler = function() {
+      console.log('U GOT POKED!!!');
+      clearInterval(forwardInterval);
+      self.pokeCollisonHandler = null;
+
+      callback();
+    };
+  });
+};
+
+Hand.prototype.collisonHandle = function() {
+  if (this.pokeCollisonHandler) {
+    this.pokeCollisonHandler();
+  }
+};

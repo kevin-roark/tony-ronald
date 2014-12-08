@@ -220,7 +220,7 @@ BodyPart.prototype.render = function() {
   }
 
   if (this.twitching) {
-    this.twitch(1);
+    this.twitch(this.twitchIntensity || 1);
   }
   if (this.fluctuating) {
     this.fluctuate(1);

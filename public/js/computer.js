@@ -34,6 +34,7 @@ function Computer(startPos, scale, mass) {
   this.ignoreCollisons = true;
 
   this.meltIntensity = 0.5;
+  this.twitchIntensity = 3;
 
   allComputers.push(this);
 }

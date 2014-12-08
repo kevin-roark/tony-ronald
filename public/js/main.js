@@ -376,8 +376,8 @@ $(function() {
     };
 
     setTimeout(function() {
-      mac.becomeTransparent(0.002);
-      pc.becomeTransparent(0.002);
+      mac.becomeTransparent(0.02);
+      pc.becomeTransparent(0.02);
 
       var shatterChecker = setInterval(function() {
         if (mac.shattering && pc.shattering) {
@@ -405,10 +405,10 @@ $(function() {
       ev.preventDefault();
 
       if (ev.which == 98) { // b
-        kevinRonald.leftArm.move(1, 0, 1);
+        kevinRonald.leftArm.move(3, 0, 3);
       }
       else if (ev.which == 110)  { // n
-        kevinRonald.leftArm.move(-1, 0, -1);
+        kevinRonald.leftArm.move(-3, 0, -3);
       }
     });
   }
@@ -454,7 +454,7 @@ $(function() {
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 6.75;
+      var z = Math.random() * 0.5 + 10;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
     }, 30);
@@ -560,10 +560,17 @@ $(function() {
       if (heavenState.bigGirlHand) {
         heavenState.bigGirlHand.render();
       }
+      if (heavenState.massiveComputer) {
+        heavenState.massiveComputer.render();
+      }
     };
     heavenState.physicsUpdate = function() {
       dylanRonald.resetMovement();
       kevinRonald.resetMovement();
+
+      if (heavenState.bigGirlHand) {
+        heavenState.bigGirlHand.resetMovement();
+      }
     };
 
     heavenState.ground_material = Physijs.createMaterial(
@@ -579,12 +586,13 @@ $(function() {
     scene.add(heavenState.ground);
 
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
+    heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
       heavenState.massiveComputer.material.opacity = 0.33;
     });
 
     var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 6.75;
+      var z = Math.random() * 0.5 + 10;
       kevinRonald.walk(negrand(3), 0, z);
       dylanRonald.walk(negrand(3), 0, z);
     }, 30);
@@ -633,26 +641,75 @@ $(function() {
       }, 10);
 
       function addHand() {
-        heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: massiveComputerZ + 64}, 90);
+        var z = massiveComputerZ + 150;
+        heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: z}, 90);
         heavenState.bigGirlHand.mass = 500;
         heavenState.bigGirlHand.ignoreCollisons = true;
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {
-          heavenState.bigGirlHand.twitching = true;
-          heavenState.bigGirlHand.fluctuating = true;
-
           var material = heavenState.bigGirlHand.materials[0];
           console.log(material);
           material.color = new THREE.Color(198, 120, 86);
           material.needsUpdate = true;
+
+          pokeHandMany(z, function() {
+            setTimeout(function() { // lets give some time to twitch
+              endState();
+            }, 10000);
+          });
         });
+      }
+
+      function endState() {
+        heavenState.massiveComputer.knockable = false;
+        heavenState.stopRaining = true;
+
+        var time = 12000;
+
+        var ascendInterval = setInterval(function() {
+          kevinRonald.move(0, 0.5, 1);
+          dylanRonald.move(0, 0.5, 1);
+        }, 30);
+
+        fadeOverlay(true, function() {
+          clearInterval(ascendInterval);
+          active.heaven = false;
+          enterEndgameState();
+        }, null, time);
+      }
+
+      function pokeHandMany(startZ, callback) {
+        var dist = 60;
+        var hand = heavenState.bigGirlHand;
+        var pokeCount = 0;
+
+        poke();
+        function poke() {
+          hand.pokeUntilCollision(dist, function() {
+            console.log('DID A POKE!!');
+            pokeCount += 1;
+            if (pokeCount < 8) {
+              setTimeout(poke, 1);
+            } else {
+              console.log('DONE POKING!!!');
+              donePoking();
+            }
+          });
+        }
+
+        function donePoking() {
+          heavenState.bigGirlHand.twitching = true;
+          heavenState.bigGirlHand.fluctuating = true;
+          callback();
+        }
       }
 
     }
   }
 
   function enterEndgameState() {
-
+    console.log('IT IS TIME TO DANCE, RONALD');
+    active.endgame = true;
   }
 
 });
