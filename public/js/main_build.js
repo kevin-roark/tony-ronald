@@ -40,7 +40,7 @@ Arm.prototype.collisonHandle = function() {
   if (this.collisionHandler) this.collisionHandler();
 }
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],2:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -110,7 +110,69 @@ Artifact.prototype.collisonHandle = function(other_object, relative_velocity, re
   //console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
 }
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],3:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],3:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var modelNames = require('./model_names');
+
+var BodyPart = require('./bodypart');
+
+module.exports = Billboard;
+
+var VID_WIDTH = 300;
+var VID_HEIGHT = 240;
+
+function Billboard(startPos, scale, videoDomElementObject) {
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.scale = scale || 1;
+
+  this.video = videoDomElementObject.vid;
+
+  this.videoImage = document.createElement('canvas');
+  this.videoImage.width = videoDomElementObject.width;
+  this.videoImage.height = videoDomElementObject.height;
+
+  this.videoImageContext = this.videoImage.getContext('2d');
+	this.videoImageContext.fillStyle = '#ffffff'; // background color if no video present
+	this.videoImageContext.fillRect( 0, 0, VID_WIDTH, VID_HEIGHT);
+}
+
+Billboard.prototype.__proto__ = BodyPart.prototype;
+
+Billboard.prototype.createMesh = function(callback) {
+  this.videoTexture = new THREE.Texture(this.videoImage);
+  this.videoTexture.minFilter = THREE.LinearFilter;
+  this.videoTexture.magFilter = THREE.LinearFilter;
+  this.videoTexture.format = THREE.RGBFormat;
+  this.videoTexture.generateMipmaps = false;
+
+  this.material = new THREE.MeshBasicMaterial({
+    map: this.videoTexture,
+    overdraw: true
+    , side: THREE.DoubleSide
+    , color: 0xffffff
+  });
+
+  this.geometry = new THREE.PlaneGeometry(VID_WIDTH, VID_HEIGHT);
+  this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+  callback();
+}
+
+Billboard.prototype.render = function() {
+  if (this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
+    this.videoImageContext.drawImage(this.video, 0, 0);
+
+    if (this.videoTexture) this.videoTexture.needsUpdate = true;
+  }
+}
+
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],4:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -142,7 +204,7 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],4:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],5:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -409,7 +471,7 @@ BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 BodyPart.prototype.collisonHandle = function() {}
 
-},{"./lib/kutility":11,"./model_names":13}],5:[function(require,module,exports){
+},{"./lib/kutility":12,"./model_names":14}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -609,7 +671,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":3,"./hand":7,"./head":8,"./leg":10,"./lib/kutility":11,"./model_names":13}],6:[function(require,module,exports){
+},{"./arm":1,"./body":4,"./hand":8,"./head":9,"./leg":11,"./lib/kutility":12,"./model_names":14}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -717,7 +779,7 @@ Computer.prototype.shatter = function() {
   console.log('SHATTERED');
 }
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],7:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -794,7 +856,7 @@ Hand.prototype.collisonHandle = function() {
   }
 };
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],8:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],9:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -846,7 +908,7 @@ Head.prototype.render = function() {
   this.mesh.rotation.y += 0.02;
 }
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],9:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],10:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -895,7 +957,7 @@ Human.prototype.additionalInit = function() {
   var self = this;
 };
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],10:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],11:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -927,7 +989,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],11:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],12:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1492,7 +1554,7 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
@@ -1504,6 +1566,7 @@ $(function() {
   var mn = require('./model_names');
   var Hand = require('./hand');
   var Human = require('./human');
+  var Billboard = require('./billboard');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1540,6 +1603,8 @@ $(function() {
   mainLight.target.position.copy(scene.position);
   mainLight.castShadow = true;
   scene.add(mainLight);
+
+  var tonyRonaldVideo = document.querySelector('#tony-ronald');
 
   /*
    * * * * * STATE OBJECTS * * * * *
@@ -2259,9 +2324,9 @@ $(function() {
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    heavenState.massiveComputer.material.opacity = 0.99;
-    heavenState.massiveComputer.reset();
-    heavenState.massiveComputer.mesh.position.y = 200;
+    linux.material.opacity = 0.985;
+    linux.reset();
+    linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
 
@@ -2283,6 +2348,7 @@ $(function() {
 
     finalState.render = function() {
       finalState.girl.render();
+      if (finalState.tonyRonaldScreen) finalState.tonyRonaldScreen.render();
     };
     finalState.physicsUpdate = function() {
 
@@ -2323,13 +2389,20 @@ $(function() {
 
     function startComputerActivity() {
       console.log('can u see the video and dress my ronald?');
+
+      tonyRonaldVideo.play();
+      var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
+      finalState.tonyRonaldScreen = new Billboard({x: -130, y: 300, z: girlZ - 100}, 1, tonyRonaldVideoStruct);
+      finalState.tonyRonaldScreen.addTo(scene, function() {
+
+      });
     }
 
   }
 
 });
 
-},{"./artifact":2,"./character":5,"./computer":6,"./hand":7,"./human":9,"./lib/kutility":11,"./model_names":13,"./ronald_word":14}],13:[function(require,module,exports){
+},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./human":10,"./lib/kutility":12,"./model_names":14,"./ronald_word":15}],14:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2382,7 +2455,7 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
@@ -2499,4 +2572,4 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":11}]},{},[12])
+},{"./lib/kutility":12}]},{},[13])

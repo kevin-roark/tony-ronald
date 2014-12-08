@@ -9,6 +9,7 @@ $(function() {
   var mn = require('./model_names');
   var Hand = require('./hand');
   var Human = require('./human');
+  var Billboard = require('./billboard');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -45,6 +46,8 @@ $(function() {
   mainLight.target.position.copy(scene.position);
   mainLight.castShadow = true;
   scene.add(mainLight);
+
+  var tonyRonaldVideo = document.querySelector('#tony-ronald');
 
   /*
    * * * * * STATE OBJECTS * * * * *
@@ -764,9 +767,9 @@ $(function() {
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    heavenState.massiveComputer.material.opacity = 0.99;
-    heavenState.massiveComputer.reset();
-    heavenState.massiveComputer.mesh.position.y = 200;
+    linux.material.opacity = 0.985;
+    linux.reset();
+    linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
 
@@ -788,6 +791,7 @@ $(function() {
 
     finalState.render = function() {
       finalState.girl.render();
+      if (finalState.tonyRonaldScreen) finalState.tonyRonaldScreen.render();
     };
     finalState.physicsUpdate = function() {
 
@@ -828,6 +832,13 @@ $(function() {
 
     function startComputerActivity() {
       console.log('can u see the video and dress my ronald?');
+
+      tonyRonaldVideo.play();
+      var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
+      finalState.tonyRonaldScreen = new Billboard({x: -130, y: 300, z: girlZ - 100}, 1, tonyRonaldVideoStruct);
+      finalState.tonyRonaldScreen.addTo(scene, function() {
+
+      });
     }
 
   }
