@@ -8,6 +8,7 @@ $(function() {
   var Artifact = require('./artifact');
   var mn = require('./model_names');
   var Hand = require('./hand');
+  var Human = require('./human');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -720,16 +721,16 @@ $(function() {
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 
-    var girlZ = linux.mesh.position.z + 100;
+    var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
-    cameraFollowState.offset = {x: -100, y: 0, z: 0};
+    cameraFollowState.offset = {x: 300, y: 25, z: 0};
     lightFollowState.target = cameraFollowState.target;
     lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 0, y: 50, z: girlZ}, 'girl');
+    finalState.girl = new Human({x: 0, y: 50, z: girlZ}, 20, 'girl');
     finalState.girl.addTo(scene);
 
-    finalState.boy = new Human({x: 60, y: 50, z: girlZ}, 'boy');
+    finalState.boy = new Human({x: 60, y: 50, z: girlZ}, 20, 'boy');
     finalState.boy.addTo(scene);
 
     fadeOverlay(false, function() {

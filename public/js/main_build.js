@@ -40,7 +40,7 @@ Arm.prototype.collisonHandle = function() {
   if (this.collisionHandler) this.collisionHandler();
 }
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],2:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -110,7 +110,7 @@ Artifact.prototype.collisonHandle = function(other_object, relative_velocity, re
   //console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
 }
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],3:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],3:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -142,7 +142,7 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],4:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],4:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -409,7 +409,7 @@ BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 BodyPart.prototype.collisonHandle = function() {}
 
-},{"./lib/kutility":10,"./model_names":12}],5:[function(require,module,exports){
+},{"./lib/kutility":11,"./model_names":13}],5:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -609,7 +609,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":3,"./hand":7,"./head":8,"./leg":9,"./lib/kutility":10,"./model_names":12}],6:[function(require,module,exports){
+},{"./arm":1,"./body":3,"./hand":7,"./head":8,"./leg":10,"./lib/kutility":11,"./model_names":13}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -717,7 +717,7 @@ Computer.prototype.shatter = function() {
   console.log('SHATTERED');
 }
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],7:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -796,7 +796,7 @@ Hand.prototype.collisonHandle = function() {
   }
 };
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],8:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -848,7 +848,56 @@ Head.prototype.render = function() {
   this.mesh.rotation.y += 0.02;
 }
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],9:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],9:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var modelNames = require('./model_names');
+
+var BodyPart = require('./bodypart');
+
+module.exports = Human;
+
+function Human(startPos, scale, gender) {
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.scale = scale || 20;
+
+  if (!gender) gender = 'girl';
+
+  if (gender == 'girl') {
+    this.specificModelName = modelNames.TWEEN_GIRL;
+  } else {
+    this.specificModelName = modelNames.BOY;
+  }
+}
+
+Human.prototype.__proto__ = BodyPart.prototype;
+
+Human.prototype.createMesh = function(callback) {
+  var self = this;
+
+  modelNames.loadModel(self.specificModelName, function (geometry, materials) {
+    self.geometry = geometry;
+    self.materials = materials;
+
+    self.faceMaterial = new THREE.MeshFaceMaterial(materials);
+    self.material = self.faceMaterial;
+
+    self.mesh = new THREE.SkinnedMesh(geometry, self.material);
+
+    callback();
+  });
+}
+
+Human.prototype.additionalInit = function() {
+  var self = this;
+};
+
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],10:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -880,7 +929,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":4,"./lib/kutility":10,"./model_names":12}],10:[function(require,module,exports){
+},{"./bodypart":4,"./lib/kutility":11,"./model_names":13}],11:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1445,7 +1494,7 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
@@ -1456,6 +1505,7 @@ $(function() {
   var Artifact = require('./artifact');
   var mn = require('./model_names');
   var Hand = require('./hand');
+  var Human = require('./human');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1474,6 +1524,9 @@ $(function() {
     }
     if (active.heaven) {
       heavenState.physicsUpdate();
+    }
+    if (active.endgame) {
+      finalState.render();
     }
 
     scene.simulate(undefined, 1);
@@ -1584,6 +1637,10 @@ $(function() {
 
     if (active.heaven) {
       heavenState.render();
+    }
+
+    if (active.endgame) {
+      finalState.render();
     }
 
     if (cameraFollowState.target) {
@@ -2122,7 +2179,7 @@ $(function() {
         fadeOverlay(true, function() {
           clearInterval(ascendInterval);
           active.heaven = false;
-          enterEndgameState();
+          enterEndgameState(heavenState.massiveComputer);
         }, null, time);
       }
 
@@ -2155,14 +2212,39 @@ $(function() {
     }
   }
 
-  function enterEndgameState() {
-    console.log('IT IS TIME TO DANCE, RONALD');
+  function enterEndgameState(linux) {
+    console.log('IT IS TIME TO DIE RONALD');
     active.endgame = true;
+
+    scene.setGravity(new THREE.Vector3(0, 0, 0));
+
+    var girlZ = linux.mesh.position.z + 200;
+    cameraFollowState.target = {x: 0, y: 50, z: girlZ};
+    cameraFollowState.offset = {x: 300, y: 25, z: 0};
+    lightFollowState.target = cameraFollowState.target;
+    lightFollowState.offset = {x: 0, y: 40, z: 0};
+
+    finalState.girl = new Human({x: 0, y: 50, z: girlZ}, 20, 'girl');
+    finalState.girl.addTo(scene);
+
+    finalState.boy = new Human({x: 60, y: 50, z: girlZ}, 20, 'boy');
+    finalState.boy.addTo(scene);
+
+    fadeOverlay(false, function() {
+      console.log('can you see me, ronald?');
+    }, null);
+
+    finalState.render = function() {
+      finalState.girl.render();
+    };
+    finalState.physicsUpdate = function() {
+
+    };
   }
 
 });
 
-},{"./artifact":2,"./character":5,"./computer":6,"./hand":7,"./lib/kutility":10,"./model_names":12,"./ronald_word":13}],12:[function(require,module,exports){
+},{"./artifact":2,"./character":5,"./computer":6,"./hand":7,"./human":9,"./lib/kutility":11,"./model_names":13,"./ronald_word":14}],13:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2200,23 +2282,10 @@ module.exports.BASE_HAND = pre('base_hand.js');
 
 module.exports.FOOTBALL_FOOT = pre('football_foot.js');
 
-/* OBJECTS */
+/* HUMANS */
 
-module.exports.BOXING_RING = pre('boxing_ring.js');
-
-module.exports.FITNESS_TOWER = pre('fitness_tower.js');
-
-module.exports.IPHONE = pre('iPhone.js');
-module.exports.PHONE = pre('phone.js');
-module.exports.OFFICE_PHONE = pre('office_phone.js');
-
-module.exports.LAPTOP = pre('laptop.js');
-
-module.exports.SHOWER = pre('shower.js');
-
-module.exports.LOCKER = pre('locker.js');
-
-module.exports.WEIGHTS = pre('weights.js');
+module.exports.TWEEN_GIRL = pre('tween_girl.js');
+module.exports.BOY = pre('boy.js');
 
 /* FUNCTIONS */
 
@@ -2228,7 +2297,7 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
@@ -2345,4 +2414,4 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":10}]},{},[11])
+},{"./lib/kutility":11}]},{},[12])

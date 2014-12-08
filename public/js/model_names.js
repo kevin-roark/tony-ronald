@@ -35,23 +35,10 @@ module.exports.BASE_HAND = pre('base_hand.js');
 
 module.exports.FOOTBALL_FOOT = pre('football_foot.js');
 
-/* OBJECTS */
+/* HUMANS */
 
-module.exports.BOXING_RING = pre('boxing_ring.js');
-
-module.exports.FITNESS_TOWER = pre('fitness_tower.js');
-
-module.exports.IPHONE = pre('iPhone.js');
-module.exports.PHONE = pre('phone.js');
-module.exports.OFFICE_PHONE = pre('office_phone.js');
-
-module.exports.LAPTOP = pre('laptop.js');
-
-module.exports.SHOWER = pre('shower.js');
-
-module.exports.LOCKER = pre('locker.js');
-
-module.exports.WEIGHTS = pre('weights.js');
+module.exports.TWEEN_GIRL = pre('tween_girl.js');
+module.exports.BOY = pre('boy.js');
 
 /* FUNCTIONS */
 
