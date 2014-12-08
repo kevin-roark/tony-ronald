@@ -27,6 +27,9 @@ $(function() {
     if (active.heaven) {
       heavenState.physicsUpdate();
     }
+    if (active.endgame) {
+      finalState.render();
+    }
 
     scene.simulate(undefined, 1);
   });
@@ -136,6 +139,10 @@ $(function() {
 
     if (active.heaven) {
       heavenState.render();
+    }
+
+    if (active.endgame) {
+      finalState.render();
     }
 
     if (cameraFollowState.target) {
@@ -674,7 +681,7 @@ $(function() {
         fadeOverlay(true, function() {
           clearInterval(ascendInterval);
           active.heaven = false;
-          enterEndgameState();
+          enterEndgameState(heavenState.massiveComputer);
         }, null, time);
       }
 
@@ -707,9 +714,34 @@ $(function() {
     }
   }
 
-  function enterEndgameState() {
-    console.log('IT IS TIME TO DANCE, RONALD');
+  function enterEndgameState(linux) {
+    console.log('IT IS TIME TO DIE RONALD');
     active.endgame = true;
+
+    scene.setGravity(new THREE.Vector3(0, 0, 0));
+
+    var girlZ = linux.mesh.position.z + 100;
+    cameraFollowState.target = {x: 0, y: 50, z: girlZ};
+    cameraFollowState.offset = {x: -100, y: 0, z: 0};
+    lightFollowState.target = cameraFollowState.target;
+    lightFollowState.offset = {x: 0, y: 40, z: 0};
+
+    finalState.girl = new Human({x: 0, y: 50, z: girlZ}, 'girl');
+    finalState.girl.addTo(scene);
+
+    finalState.boy = new Human({x: 60, y: 50, z: girlZ}, 'boy');
+    finalState.boy.addTo(scene);
+
+    fadeOverlay(false, function() {
+      console.log('can you see me, ronald?');
+    }, null);
+
+    finalState.render = function() {
+      finalState.girl.render();
+    };
+    finalState.physicsUpdate = function() {
+
+    };
   }
 
 });
