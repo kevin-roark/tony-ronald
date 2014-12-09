@@ -40,7 +40,7 @@ Arm.prototype.collisonHandle = function() {
   if (this.collisionHandler) this.collisionHandler();
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],2:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -110,7 +110,7 @@ Artifact.prototype.collisonHandle = function(other_object, relative_velocity, re
   //console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],3:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],3:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -152,10 +152,9 @@ Billboard.prototype.createMesh = function(callback) {
   this.videoTexture.generateMipmaps = false;
 
   this.material = new THREE.MeshBasicMaterial({
-    map: this.videoTexture,
-    overdraw: true
+    map: this.videoTexture
+    , overdraw: true
     , side: THREE.DoubleSide
-    , color: 0xffffff
   });
 
   this.geometry = new THREE.PlaneGeometry(VID_WIDTH, VID_HEIGHT);
@@ -172,7 +171,7 @@ Billboard.prototype.render = function() {
   }
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],4:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],4:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -204,7 +203,7 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],5:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],5:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
@@ -471,7 +470,7 @@ BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 BodyPart.prototype.collisonHandle = function() {}
 
-},{"./lib/kutility":12,"./model_names":14}],6:[function(require,module,exports){
+},{"./lib/kutility":13,"./model_names":15}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -671,7 +670,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":4,"./hand":8,"./head":9,"./leg":11,"./lib/kutility":12,"./model_names":14}],7:[function(require,module,exports){
+},{"./arm":1,"./body":4,"./hand":8,"./head":9,"./leg":12,"./lib/kutility":13,"./model_names":15}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -779,7 +778,7 @@ Computer.prototype.shatter = function() {
   console.log('SHATTERED');
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],8:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -856,17 +855,15 @@ Hand.prototype.collisonHandle = function() {
   }
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],9:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],9:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
 
 var BodyPart = require('./bodypart');
 
 module.exports = Head;
 
-var headNames = ['/images/dylan.jpg', '/images/kevin.jpg'];
+var headNames = ['/images/kevin.jpg', '/images/dylan.jpg'];
 var headIndex = 0;
 
 function Head(startPos, scale) {
@@ -875,10 +872,13 @@ function Head(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.textureName = headNames[++headIndex % headNames.length];
+  this.textureName = headNames[headIndex % headNames.length];
+  headIndex += 1;
 
   this.scale = scale || 20;
   this.scale *= 0.4;
+
+  this.revolving = true;
 }
 
 Head.prototype.__proto__ = BodyPart.prototype;
@@ -894,21 +894,165 @@ Head.prototype.createMesh = function(callback) {
   callback();
 }
 
-Head.prototype.additionalInit = function() {
-  var self = this;
-
-  if (self.modelName == modelNames.LOWPOLY_HEAD) {
-    self.scale *= 1.5;
-    self.scaleBody(self.scale);
-    self.move(0, -15, 0);
-  }
-};
-
 Head.prototype.render = function() {
-  this.mesh.rotation.y += 0.02;
+  if (this.revolving) {
+    this.mesh.rotation.y += 0.02;
+  }
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],10:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13}],10:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var modelNames = require('./model_names');
+
+var BodyPart = require('./bodypart');
+var Head = require('./head');
+
+module.exports = Hotdog;
+
+var teeShirts = [
+  '/images/finder.jpg'
+];
+
+function Hotdog(startPos, scale) {
+  var self = this;
+
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+  this.startPos = startPos;
+
+  this.scale = scale || 1;
+
+  this.leftDogOffset = {x: -2.2 * this.scale, y: 0, z: 0};
+  this.rightDogOffset = {x: 2.2 * this.scale, y: 0, z: 0};
+  this.leftHeadOffset = {x: -3.5 * this.scale, y: 0, z: 10};
+  this.rightHeadOffset = {x: 3.5 * this.scale, y: 0, z: 10};
+}
+
+Hotdog.prototype.__proto__ = BodyPart.prototype;
+
+Hotdog.prototype.move = function(x, y, z) {
+  if (!this.hotDogs) return;
+
+  this.hotDogs.forEach(function(dog) {
+    dog.position.x += x;
+    dog.position.y += y;
+    dog.position.z += z;
+  });
+
+  this.heads.forEach(function(head) {
+    head.move(x, y, z);
+  });
+}
+
+Hotdog.prototype.rotate = function(rx, ry, rz) {
+  if (!this.hotDogs) return;
+
+  this.hotDogs.forEach(function(dog) {
+    dog.rotation.x += rx;
+    dog.rotation.y += ry;
+    dog.rotation.z += rz;
+  });
+
+  this.heads.forEach(function(head) {
+    head.rotate(rx, ry, rz);
+  });
+}
+
+Hotdog.prototype.moveTo = function(x, y, z) {
+  if (!this.hotDogs) return;
+
+  this.centerHotdogMesh.position.set(x, y, z);
+  this.leftHotdogMesh.position.set(x + this.leftDogOffset.x, y + this.leftDogOffset.y, z + this.leftDogOffset.z)
+  this.rightHotdogMesh.position.set(x + this.rightDogOffset.x, y + this.rightDogOffset.y, z + this.rightDogOffset.z)
+
+  this.move(0, 0, 0);
+
+  this.leftHead.moveTo(x + this.leftHeadOffset.x, y + this.leftHeadOffset.y, z + this.leftHeadOffset.z);
+  this.rightHead.moveTo(x + this.rightHeadOffset.x, y + this.rightHeadOffset.y, z + this.rightHeadOffset.z);
+}
+
+Hotdog.prototype.scaleBody = function(s) {
+  if (!this.hotDogs) return;
+
+  this.hotDogs.forEach(function(dog) {
+    dog.scale.set(s, s, s);
+  });
+
+  this.heads.forEach(function(head) {
+    head.scaleBody(s);
+  });
+}
+
+Hotdog.prototype.createMesh = function(callback) {
+  // radius bottom, radius top, height
+  this.leftHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
+  this.centerHotdogGeometry = new THREE.CylinderGeometry(1, 1, 4);
+  this.rightHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
+
+  this.hotdogMaterial = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
+  });
+
+  this.centerHotdogMesh = new THREE.Mesh(this.centerHotdogGeometry, this.hotdogMaterial);
+  this.leftHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.hotdogMaterial.clone());
+  this.rightHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.hotdogMaterial.clone());
+  this.hotDogs = [this.centerHotdogMesh, this.leftHotdogMesh, this.rightHotdogMesh];
+  this.hotDogs.forEach(function(dog) {
+    dog.rotation.z = -Math.PI / 2;
+  });
+
+  this.leftHead = new Head({
+    x: this.startX + this.leftHeadOffset.x,
+    y: this.startY + this.leftHeadOffset.y,
+    z: this.startZ + this.leftHeadOffset.z
+  }, this.scale * 2);
+
+  this.rightHead = new Head({
+    x: this.startX + this.rightHeadOffset.x,
+    y: this.startY + this.rightHeadOffset.y,
+    z: this.startZ + this.rightHeadOffset.z
+  }, this.scale * 2);
+
+  this.heads = [this.leftHead, this.rightHead];
+
+  callback();
+}
+
+Hotdog.prototype.changeTeeShirt = function(index) {
+  var teeShirt = teeShirts[index % teeShirts.length];
+  this.hotdogMaterial.map = THREE.ImageUtils.loadTexture(teeShirt);
+  this.hotdogMaterial.needsUpdate = true;
+};
+
+Hotdog.prototype.addTo = function(scene, callback) {
+  var self = this;
+
+  self.createMesh(function() {
+    self.scaleBody(self.scale);
+
+    self.moveTo(self.startX, self.startY, self.startZ);
+
+    scene.add(self.centerHotdogMesh);
+    scene.add(self.leftHotdogMesh);
+    scene.add(self.rightHotdogMesh);
+    self.leftHead.addTo(scene, function() {
+      self.leftHead.rotate(0, -0.6, 0);
+    });
+    self.rightHead.addTo(scene, function() {
+      self.rightHead.rotate(0, -1.5, 0);
+    });
+
+    if (callback) {
+      callback(self);
+    }
+  });
+}
+
+},{"./bodypart":5,"./head":9,"./lib/kutility":13,"./model_names":15}],11:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -957,7 +1101,7 @@ Human.prototype.additionalInit = function() {
   var self = this;
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],11:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],12:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -989,7 +1133,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],12:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":13,"./model_names":15}],13:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1554,7 +1698,7 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
@@ -1567,6 +1711,7 @@ $(function() {
   var Hand = require('./hand');
   var Human = require('./human');
   var Billboard = require('./billboard');
+  var Hotdog = require('./hotdog');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -2324,7 +2469,7 @@ $(function() {
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    linux.material.opacity = 0.985;
+    linux.material.opacity = 0.975;
     linux.reset();
     linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
@@ -2341,6 +2486,15 @@ $(function() {
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
+
+    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
+    finalState.tonyRonaldScreen = new Billboard({x: -127, y: 280, z: girlZ - 165}, 1, tonyRonaldVideoStruct);
+    finalState.tonyRonaldScreen.addTo(scene, function() {});
+
+    finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
+    finalState.hotdog.addTo(scene, function() {
+      finalState.hotdog.changeTeeShirt(0);
+    });
 
     fadeOverlay(false, function() {
       girlGonnaTalkNow();
@@ -2391,18 +2545,13 @@ $(function() {
       console.log('can u see the video and dress my ronald?');
 
       tonyRonaldVideo.play();
-      var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
-      finalState.tonyRonaldScreen = new Billboard({x: -130, y: 300, z: girlZ - 100}, 1, tonyRonaldVideoStruct);
-      finalState.tonyRonaldScreen.addTo(scene, function() {
-
-      });
     }
 
   }
 
 });
 
-},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./human":10,"./lib/kutility":12,"./model_names":14,"./ronald_word":15}],14:[function(require,module,exports){
+},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./hotdog":10,"./human":11,"./lib/kutility":13,"./model_names":15,"./ronald_word":16}],15:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2455,7 +2604,7 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
@@ -2572,4 +2721,4 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":12}]},{},[13])
+},{"./lib/kutility":13}]},{},[14])

@@ -10,6 +10,7 @@ $(function() {
   var Hand = require('./hand');
   var Human = require('./human');
   var Billboard = require('./billboard');
+  var Hotdog = require('./hotdog');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -767,7 +768,7 @@ $(function() {
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    linux.material.opacity = 0.985;
+    linux.material.opacity = 0.975;
     linux.reset();
     linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
@@ -784,6 +785,15 @@ $(function() {
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
+
+    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
+    finalState.tonyRonaldScreen = new Billboard({x: -127, y: 280, z: girlZ - 165}, 1, tonyRonaldVideoStruct);
+    finalState.tonyRonaldScreen.addTo(scene, function() {});
+
+    finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
+    finalState.hotdog.addTo(scene, function() {
+      finalState.hotdog.changeTeeShirt(0);
+    });
 
     fadeOverlay(false, function() {
       girlGonnaTalkNow();
@@ -834,11 +844,6 @@ $(function() {
       console.log('can u see the video and dress my ronald?');
 
       tonyRonaldVideo.play();
-      var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
-      finalState.tonyRonaldScreen = new Billboard({x: -130, y: 300, z: girlZ - 100}, 1, tonyRonaldVideoStruct);
-      finalState.tonyRonaldScreen.addTo(scene, function() {
-
-      });
     }
 
   }

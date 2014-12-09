@@ -1,13 +1,11 @@
 
 var kt = require('./lib/kutility');
 
-var modelNames = require('./model_names');
-
 var BodyPart = require('./bodypart');
 
 module.exports = Head;
 
-var headNames = ['/images/dylan.jpg', '/images/kevin.jpg'];
+var headNames = ['/images/kevin.jpg', '/images/dylan.jpg'];
 var headIndex = 0;
 
 function Head(startPos, scale) {
@@ -16,10 +14,13 @@ function Head(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.textureName = headNames[++headIndex % headNames.length];
+  this.textureName = headNames[headIndex % headNames.length];
+  headIndex += 1;
 
   this.scale = scale || 20;
   this.scale *= 0.4;
+
+  this.revolving = true;
 }
 
 Head.prototype.__proto__ = BodyPart.prototype;
@@ -35,16 +36,8 @@ Head.prototype.createMesh = function(callback) {
   callback();
 }
 
-Head.prototype.additionalInit = function() {
-  var self = this;
-
-  if (self.modelName == modelNames.LOWPOLY_HEAD) {
-    self.scale *= 1.5;
-    self.scaleBody(self.scale);
-    self.move(0, -15, 0);
-  }
-};
-
 Head.prototype.render = function() {
-  this.mesh.rotation.y += 0.02;
+  if (this.revolving) {
+    this.mesh.rotation.y += 0.02;
+  }
 }

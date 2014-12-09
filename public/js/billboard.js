@@ -39,10 +39,9 @@ Billboard.prototype.createMesh = function(callback) {
   this.videoTexture.generateMipmaps = false;
 
   this.material = new THREE.MeshBasicMaterial({
-    map: this.videoTexture,
-    overdraw: true
+    map: this.videoTexture
+    , overdraw: true
     , side: THREE.DoubleSide
-    , color: 0xffffff
   });
 
   this.geometry = new THREE.PlaneGeometry(VID_WIDTH, VID_HEIGHT);
