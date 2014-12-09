@@ -33,3 +33,33 @@ canvas {
   z-index: -10;
   display: none;
 }
+
+#ronald-gui {
+  position: fixed;
+  z-index: 10;
+  width: 300px;
+  height: 300px;
+  top: 61px;
+  left: 732px;
+  background-color: red;
+  display: none;
+
+  text-align: center;
+}
+
+.ronald-header {
+  margin-bottom: 10px;
+}
+
+.ronald-button {
+  cursor: pointer;
+  margin: 10px;
+  padding: 5px;
+  min-height: 20px;
+  background-color: rgba(255, 255, 255, 0.75);
+  border-color: green;
+  border-width: 10px;
+}
+  .ronald-button:hover {
+    background-color: rgba(200, 200, 200, 0.75);
+  }

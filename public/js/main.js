@@ -49,6 +49,7 @@ $(function() {
   scene.add(mainLight);
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
+  var ronaldGUI = $('#ronald-gui');
 
   /*
    * * * * * STATE OBJECTS * * * * *
@@ -844,7 +845,28 @@ $(function() {
       console.log('can u see the video and dress my ronald?');
 
       tonyRonaldVideo.play();
+      ronaldGUI.fadeIn(800);
     }
+
+    finalState.movingGUI = false;
+    $('body').keypress(function(ev) {
+      ev.preventDefault();
+
+      if (ev.which == 98) { // b
+        finalState.movingGUI = !finalState.movingGUI;
+      }
+    });
+
+    $('body').mousemove(function(ev) {
+      if (finalState.movingGUI) {
+        console.log(ev);
+        console.log(parseInt(ronaldGUI.css('left')));
+        console.log(parseInt(ronaldGUI.css('top')));
+
+        ronaldGUI.css('left', ev.clientX + 'px');
+        ronaldGUI.css('top', ev.clientY + 'px');
+      }
+    });
 
   }
 
