@@ -812,6 +812,7 @@ $(function() {
       console.log('can you see me, ronald?');
 
       setTimeout(function() {
+        tonyRonaldVideo.play();
         panToShowScreen();
       }, 4444);
     }
@@ -844,7 +845,6 @@ $(function() {
     function startComputerActivity() {
       console.log('can u see the video and dress my ronald?');
 
-      tonyRonaldVideo.play();
       ronaldGUI.fadeIn(800);
     }
 
