@@ -848,6 +848,7 @@ $(function() {
       ronaldGUI.fadeIn(800);
     }
 
+    // fallbacks to position the GUI
     finalState.movingGUI = false;
     $('body').keypress(function(ev) {
       ev.preventDefault();
@@ -856,7 +857,6 @@ $(function() {
         finalState.movingGUI = !finalState.movingGUI;
       }
     });
-
     $('body').mousemove(function(ev) {
       if (finalState.movingGUI) {
         console.log(ev);
@@ -868,6 +868,10 @@ $(function() {
       }
     });
 
+    // reacting to button clicks in the GUI
+    $('.ronald-button').click(function(ev) {
+      console.log(ev);
+    });
   }
 
 });
