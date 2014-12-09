@@ -57,11 +57,12 @@ var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
-  '/images/finder.jpg',
+  '/images/finder.jpg'
+];
+artifactTextureNames[SPORT_TYPE] = [
   '/images/pc_monitor.jpg',
   '/images/mac_monitor.jpg'
 ];
-artifactTextureNames[SPORT_TYPE] = [];
 artifactTextureNames[MONEY_TYPE] = [
   '/images/coin.jpg',
   '/images/dollar.jpg'
@@ -913,6 +914,10 @@ module.exports = Hotdog;
 
 var teeShirts = [
   '/images/finder.jpg'
+  , '/images/dollar.jpg'
+  , '/images/coin.jpg'
+  , '/images/kevin.jpg'
+  , '/images/dylan.jpg'
 ];
 
 function Hotdog(startPos, scale) {
@@ -993,13 +998,16 @@ Hotdog.prototype.createMesh = function(callback) {
   this.centerHotdogGeometry = new THREE.CylinderGeometry(1, 1, 4);
   this.rightHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
 
-  this.hotdogMaterial = new THREE.MeshBasicMaterial({
+  this.centerHotdogMaterial = new THREE.MeshBasicMaterial({
       color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
   });
+  this.sideHotdogMaterial = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
+  });
 
-  this.centerHotdogMesh = new THREE.Mesh(this.centerHotdogGeometry, this.hotdogMaterial);
-  this.leftHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.hotdogMaterial.clone());
-  this.rightHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.hotdogMaterial.clone());
+  this.centerHotdogMesh = new THREE.Mesh(this.centerHotdogGeometry, this.centerHotdogMaterial);
+  this.leftHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.sideHotdogMaterial.clone());
+  this.rightHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.sideHotdogMaterial.clone());
   this.hotDogs = [this.centerHotdogMesh, this.leftHotdogMesh, this.rightHotdogMesh];
   this.hotDogs.forEach(function(dog) {
     dog.rotation.z = -Math.PI / 2;
@@ -1024,8 +1032,8 @@ Hotdog.prototype.createMesh = function(callback) {
 
 Hotdog.prototype.changeTeeShirt = function(index) {
   var teeShirt = teeShirts[index % teeShirts.length];
-  this.hotdogMaterial.map = THREE.ImageUtils.loadTexture(teeShirt);
-  this.hotdogMaterial.needsUpdate = true;
+  this.centerHotdogMaterial.map = THREE.ImageUtils.loadTexture(teeShirt);
+  this.centerHotdogMaterial.needsUpdate = true;
 };
 
 Hotdog.prototype.addTo = function(scene, callback) {
@@ -2174,6 +2182,9 @@ $(function() {
 
     var groundLength = 2500;
     var darkLength = 1000;
+    var endRainZ = groundLength;
+    var endZ = groundLength + darkLength;
+    var numberOfArtifactTypes = 2;
 
     active.desperate = true;
     desperateState.render = function() {
@@ -2184,10 +2195,10 @@ $(function() {
       lightFollowState.target = middle;
       lightFollowState.offset = {x: 10, y: 20, z: -60};
 
-      if (middle.z > groundLength + darkLength) {
+      if (middle.z > endZ) {
         endState();
       }
-      else if (!desperateState.dark && middle.z > groundLength) {
+      else if (!desperateState.dark && middle.z > endRainZ) {
         darkTime();
       }
     };
@@ -2220,7 +2231,10 @@ $(function() {
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 0);
+
+      var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
+      var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 9 + 3, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2494,7 +2508,6 @@ $(function() {
 
     finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
     finalState.hotdog.addTo(scene, function() {
-      finalState.hotdog.changeTeeShirt(0);
     });
 
     fadeOverlay(false, function() {
@@ -2571,7 +2584,11 @@ $(function() {
 
     // reacting to button clicks in the GUI
     $('.ronald-button').click(function(ev) {
-      console.log(ev);
+      var target = $(ev.target);
+      var id = target[0].id;
+      var shirtNumber = parseInt(id.replace('shirt', ''));
+      console.log('picked shirt ' + shirtNumber);
+      finalState.hotdog.changeTeeShirt(shirtNumber);
     });
   }
 

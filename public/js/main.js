@@ -473,6 +473,9 @@ $(function() {
 
     var groundLength = 2500;
     var darkLength = 1000;
+    var endRainZ = groundLength;
+    var endZ = groundLength + darkLength;
+    var numberOfArtifactTypes = 2;
 
     active.desperate = true;
     desperateState.render = function() {
@@ -483,10 +486,10 @@ $(function() {
       lightFollowState.target = middle;
       lightFollowState.offset = {x: 10, y: 20, z: -60};
 
-      if (middle.z > groundLength + darkLength) {
+      if (middle.z > endZ) {
         endState();
       }
-      else if (!desperateState.dark && middle.z > groundLength) {
+      else if (!desperateState.dark && middle.z > endRainZ) {
         darkTime();
       }
     };
@@ -519,7 +522,10 @@ $(function() {
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 0);
+
+      var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
+      var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 9 + 3, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -793,7 +799,6 @@ $(function() {
 
     finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
     finalState.hotdog.addTo(scene, function() {
-      finalState.hotdog.changeTeeShirt(0);
     });
 
     fadeOverlay(false, function() {
@@ -870,7 +875,11 @@ $(function() {
 
     // reacting to button clicks in the GUI
     $('.ronald-button').click(function(ev) {
-      console.log(ev);
+      var target = $(ev.target);
+      var id = target[0].id;
+      var shirtNumber = parseInt(id.replace('shirt', ''));
+      console.log('picked shirt ' + shirtNumber);
+      finalState.hotdog.changeTeeShirt(shirtNumber);
     });
   }
 
