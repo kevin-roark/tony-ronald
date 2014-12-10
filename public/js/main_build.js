@@ -52,8 +52,14 @@ module.exports = Artifact;
 
 var COMPUTER_TYPE = 'COMPUTER';
 var SPORT_TYPE = 'SPORT';
+var HORSE_TYPE = 'HORSE';
+var BUZZFEED_TYPE = 'BUZZFEED';
+var HOTDOG_TYPE = 'HOTDOG';
+
 var MONEY_TYPE = 'MONEY';
-var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
+
+var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, HORSE_TYPE, BUZZFEED_TYPE, HORSE_TYPE,
+                      MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
@@ -63,6 +69,16 @@ artifactTextureNames[SPORT_TYPE] = [
   '/images/pc_monitor.jpg',
   '/images/mac_monitor.jpg'
 ];
+artifactTextureNames[HORSE_TYPE] = [
+'/images/finder.jpg'
+];
+artifactTextureNames[BUZZFEED_TYPE] = [
+'/images/finder.jpg'
+];
+artifactTextureNames[HOTDOG_TYPE] = [
+'/images/finder.jpg'
+];
+
 artifactTextureNames[MONEY_TYPE] = [
   '/images/coin.jpg',
   '/images/dollar.jpg'
@@ -913,11 +929,11 @@ var Head = require('./head');
 module.exports = Hotdog;
 
 var teeShirts = [
-  '/images/finder.jpg'
-  , '/images/dollar.jpg'
-  , '/images/coin.jpg'
-  , '/images/kevin.jpg'
-  , '/images/dylan.jpg'
+  '/images/linkin_park.jpg'
+  , '/images/trapt.jpg'
+  , '/images/soad.jpg'
+  , '/images/eminem.jpg'
+  , '/images/drowning_pool.jpg'
 ];
 
 function Hotdog(startPos, scale) {
@@ -995,11 +1011,12 @@ Hotdog.prototype.scaleBody = function(s) {
 Hotdog.prototype.createMesh = function(callback) {
   // radius bottom, radius top, height
   this.leftHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
-  this.centerHotdogGeometry = new THREE.CylinderGeometry(1, 1, 4);
+  this.centerHotdogGeometry = new THREE.BoxGeometry(4, 1.7, 1.7);
   this.rightHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
 
   this.centerHotdogMaterial = new THREE.MeshBasicMaterial({
       color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
+    , map: THREE.ImageUtils.loadTexture(teeShirts[0])
   });
   this.sideHotdogMaterial = new THREE.MeshBasicMaterial({
     color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
@@ -1009,9 +1026,9 @@ Hotdog.prototype.createMesh = function(callback) {
   this.leftHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.sideHotdogMaterial.clone());
   this.rightHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.sideHotdogMaterial.clone());
   this.hotDogs = [this.centerHotdogMesh, this.leftHotdogMesh, this.rightHotdogMesh];
-  this.hotDogs.forEach(function(dog) {
-    dog.rotation.z = -Math.PI / 2;
-  });
+
+  this.leftHotdogMesh.rotation.z = -Math.PI / 2;
+  this.rightHotdogMesh.rotation.z = -Math.PI / 2;
 
   this.leftHead = new Head({
     x: this.startX + this.leftHeadOffset.x,
@@ -1032,8 +1049,8 @@ Hotdog.prototype.createMesh = function(callback) {
 
 Hotdog.prototype.changeTeeShirt = function(index) {
   var teeShirt = teeShirts[index % teeShirts.length];
-  this.centerHotdogMaterial.map = THREE.ImageUtils.loadTexture(teeShirt);
-  this.centerHotdogMaterial.needsUpdate = true;
+  this.centerHotdogMesh.material.map = THREE.ImageUtils.loadTexture(teeShirt);
+  this.centerHotdogMesh.material.needsUpdate = true;
 };
 
 Hotdog.prototype.addTo = function(scene, callback) {

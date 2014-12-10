@@ -864,7 +864,6 @@ $(function() {
     });
     $('body').mousemove(function(ev) {
       if (finalState.movingGUI) {
-        console.log(ev);
         console.log(parseInt(ronaldGUI.css('left')));
         console.log(parseInt(ronaldGUI.css('top')));
 
@@ -878,7 +877,6 @@ $(function() {
       var target = $(ev.target);
       var id = target[0].id;
       var shirtNumber = parseInt(id.replace('shirt', ''));
-      console.log('picked shirt ' + shirtNumber);
       finalState.hotdog.changeTeeShirt(shirtNumber);
     });
   }
