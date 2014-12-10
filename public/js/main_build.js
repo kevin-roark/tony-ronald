@@ -57,34 +57,82 @@ var BUZZFEED_TYPE = 'BUZZFEED';
 var HOTDOG_TYPE = 'HOTDOG';
 
 var MONEY_TYPE = 'MONEY';
+var BALOON_TYPE = 'BALOON';
+var HALO_TYPE = 'HALO';
+var TV_TYPE = 'TV';
+var SWORD_TYPE = 'SWORD';
 
-var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, HORSE_TYPE, BUZZFEED_TYPE, HORSE_TYPE,
-                      MONEY_TYPE];
+var COMPUTER_ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, HORSE_TYPE, BUZZFEED_TYPE, HOTDOG_TYPE];
+var EARTH_ARTIFACT_TYPES = [BALOON_TYPE, HALO_TYPE, TV_TYPE, SWORD_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
-  '/images/finder.jpg'
+  '/images/finder.jpg',
+  '/images/server.jpg',
+  '/images/microsoft_word.jpg',
+  '/images/imovie.jpg',
+  '/images/computer_trash.jpg'
 ];
 artifactTextureNames[SPORT_TYPE] = [
-  '/images/pc_monitor.jpg',
-  '/images/mac_monitor.jpg'
+  '/images/basketball.jpg',
+  '/images/football.jpg',
+  '/images/frame.jpg',
+  '/images/framed_sports.jpg',
+  '/images/quarterback.jpg'
 ];
 artifactTextureNames[HORSE_TYPE] = [
-'/images/finder.jpg'
+  '/images/barn.jpg',
+  '/images/black_horse.jpg',
+  '/images/horse_diagram.jpg',
+  '/images/lasso.jpg',
+  '/images/sky_horse.jpg'
 ];
 artifactTextureNames[BUZZFEED_TYPE] = [
-'/images/finder.jpg'
+  '/images/buzzfeed_1.jpg',
+  '/images/buzzfeed_2.jpg',
+  '/images/listicle_1.jpg',
+  '/images/listicle_2.jpg',
+  '/images/fishboy.jpg'
 ];
 artifactTextureNames[HOTDOG_TYPE] = [
-'/images/finder.jpg'
+  '/images/chicago_dog.jpg',
+  '/images/turtle_dog.jpg',
+  '/images/profit_dog.jpg',
+  '/images/mom_dog.jpg',
+  '/images/hawaii_dog.jpg'
 ];
 
 artifactTextureNames[MONEY_TYPE] = [
   '/images/coin.jpg',
-  '/images/dollar.jpg'
+  '/images/dollar.jpg',
+  '/images/canada_dollar.jpg',
+  '/images/ruby.jpg',
+];
+artifactTextureNames[BALOON_TYPE] = [
+  '/images/green_baloon.jpg',
+  '/images/red_baloon.jpg',
+  '/images/blue_baloon.jpg'
+];
+artifactTextureNames[HALO_TYPE] = [
+  '/images/halo.jpg',
+  '/images/stairs.jpg',
+  '/images/angel_fig.jpg',
+  '/images/moses.jpg',
+  '/images/demon_fig.jpg'
+];
+artifactTextureNames[TV_TYPE] = [
+  '/images/remote.jpg',
+  '/images/tv_1.jpg',
+  '/images/tv_2.jpg',
+  '/images/tv_3.jpg'
+];
+artifactTextureNames[SWORD_TYPE] = [
+  '/images/sword_1.jpg',
+  '/images/sword_2.jpg',
+  '/images/daggers.jpg'
 ];
 
-function Artifact(startPos, scale, typeIndex) {
+function Artifact(startPos, scale, earthType, typeIndex) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -94,7 +142,8 @@ function Artifact(startPos, scale, typeIndex) {
 
   if (typeIndex === undefined) typeIndex = 0;
 
-  this.artifactType = ARTIFACT_TYPES[typeIndex];
+  var artifactTypes = earthType? EARTH_ARTIFACT_TYPES : COMPUTER_ARTIFACT_TYPES;
+  this.artifactType = artifactTypes[typeIndex];
   this.textureName = kt.choice(artifactTextureNames[this.artifactType]);
 
   this.scale = scale || 20;
@@ -105,7 +154,7 @@ function Artifact(startPos, scale, typeIndex) {
 Artifact.prototype.__proto__ = BodyPart.prototype;
 
 Artifact.prototype.createMesh = function(callback) {
-  if (Math.random() < 0.3) {
+  if (Math.random() < 0.24) {
     this.geometry = new THREE.SphereGeometry(1);
   }
   else {
@@ -2201,7 +2250,7 @@ $(function() {
     var darkLength = 1000;
     var endRainZ = groundLength;
     var endZ = groundLength + darkLength;
-    var numberOfArtifactTypes = 2;
+    var numberOfArtifactTypes = 5;
 
     active.desperate = true;
     desperateState.render = function() {
@@ -2251,7 +2300,7 @@ $(function() {
 
       var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
       var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
-      var artifact = new Artifact(future, Math.random() * 9 + 3, artifactIndex);
+      var artifact = new Artifact(future, Math.random() * 15 + 5, false, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2292,10 +2341,9 @@ $(function() {
     if (!startGrassZ) startGrassZ = 4500;
 
     var groundLength = 3000;
-
     var heavenGroundZ = startGrassZ + groundLength / 2;
-
     var massiveComputerZ = startGrassZ + groundLength;
+    var numberOfArtifactTypes = 5;
 
     active.heaven = true;
     var grassMeshes = [];
@@ -2388,7 +2436,10 @@ $(function() {
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 2);
+
+      var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
+      var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 15 + 5, true, artifactIndex);
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2590,7 +2641,6 @@ $(function() {
     });
     $('body').mousemove(function(ev) {
       if (finalState.movingGUI) {
-        console.log(ev);
         console.log(parseInt(ronaldGUI.css('left')));
         console.log(parseInt(ronaldGUI.css('top')));
 
@@ -2604,7 +2654,6 @@ $(function() {
       var target = $(ev.target);
       var id = target[0].id;
       var shirtNumber = parseInt(id.replace('shirt', ''));
-      console.log('picked shirt ' + shirtNumber);
       finalState.hotdog.changeTeeShirt(shirtNumber);
     });
   }

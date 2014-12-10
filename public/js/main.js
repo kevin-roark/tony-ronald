@@ -475,7 +475,7 @@ $(function() {
     var darkLength = 1000;
     var endRainZ = groundLength;
     var endZ = groundLength + darkLength;
-    var numberOfArtifactTypes = 2;
+    var numberOfArtifactTypes = 5;
 
     active.desperate = true;
     desperateState.render = function() {
@@ -525,7 +525,7 @@ $(function() {
 
       var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
       var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
-      var artifact = new Artifact(future, Math.random() * 9 + 3, artifactIndex);
+      var artifact = new Artifact(future, Math.random() * 15 + 5, false, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -566,10 +566,9 @@ $(function() {
     if (!startGrassZ) startGrassZ = 4500;
 
     var groundLength = 3000;
-
     var heavenGroundZ = startGrassZ + groundLength / 2;
-
     var massiveComputerZ = startGrassZ + groundLength;
+    var numberOfArtifactTypes = 5;
 
     active.heaven = true;
     var grassMeshes = [];
@@ -662,7 +661,10 @@ $(function() {
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 2);
+
+      var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
+      var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 15 + 5, true, artifactIndex);
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 
