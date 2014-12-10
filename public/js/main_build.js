@@ -1787,6 +1787,7 @@ $(function() {
   var Human = require('./human');
   var Billboard = require('./billboard');
   var Hotdog = require('./hotdog');
+  var SKYBOX = require('./skybox');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1813,7 +1814,7 @@ $(function() {
     scene.simulate(undefined, 1);
   });
 
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 20000);
   camera.target = {x: 0, y: 0, z: 0};
   scene.add(camera);
 
@@ -2409,6 +2410,10 @@ $(function() {
         }
       }
 
+      if (middle.z >= massiveComputerZ - 1150 && !heavenState.visualizedComputer) {
+        heavenState.visualizedComputer = true;
+        heavenState.massiveComputer.material.opacity = 0.33;
+      }
       if (middle.z >= massiveComputerZ - 250 && !heavenState.reachedComputer) {
         heavenState.reachedComputer = true;
         reachedComputer();
@@ -2450,7 +2455,7 @@ $(function() {
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
-      heavenState.massiveComputer.material.opacity = 0.33;
+      heavenState.massiveComputer.material.opacity = 0.01;
     });
 
     var dummyForwardInterval = setInterval(function() {
@@ -2586,6 +2591,10 @@ $(function() {
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
 
+    var skybox = SKYBOX.create();
+    scene.add(skybox);
+    console.log(skybox);
+
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
     cameraFollowState.offset = {x: 500, y: 25, z: 50};
@@ -2688,7 +2697,7 @@ $(function() {
 
 });
 
-},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./hotdog":10,"./human":11,"./lib/kutility":13,"./model_names":15,"./ronald_word":16}],15:[function(require,module,exports){
+},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./hotdog":10,"./human":11,"./lib/kutility":13,"./model_names":15,"./ronald_word":16,"./skybox":17}],15:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2856,6 +2865,62 @@ RonaldWord.prototype.addTo = function(scene, callback) {
 
 RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
+}
+
+},{"./lib/kutility":13}],17:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var girlRoomPath = '/images/girl_room.jpg';
+
+function cubify(url) {
+  return [url, url, url, url, url, url];
+}
+
+function makeCubemap(textureURL, repeatX, repeatY) {
+  if (!textureURL) return;
+  if (!repeatX) repeatX = 4;
+  if (!repeatY) repeatY = 4;
+
+  var textureCube = cubify(textureURL);
+
+  var cubemap = THREE.ImageUtils.loadTextureCube(textureCube); // load textures
+  cubemap.format = THREE.RGBFormat;
+  cubemap.wrapS = THREE.RepeatWrapping;
+  cubemap.wrapT = THREE.RepeatWrapping;
+  cubemap.repeat.set(repeatX, repeatY);
+
+  return cubemap;
+}
+
+function makeShader(cubemap) {
+  var shader = THREE.ShaderLib['cube']; // init cube shader from built-in lib
+  console.log(shader);
+  shader.uniforms['tCube'].value = cubemap; // apply textures to shader
+  return shader;
+}
+
+function skyboxMaterial(textureURL) {
+  var cubemap = makeCubemap(textureURL);
+  var shader = makeShader(cubemap);
+
+  return new THREE.ShaderMaterial({
+    fragmentShader: shader.fragmentShader,
+    vertexShader: shader.vertexShader,
+    uniforms: shader.uniforms,
+    depthWrite: false,
+    side: THREE.BackSide,
+    opacity: 0.5
+  });
+}
+
+module.exports.create = function(size, textureURL) {
+  if (!textureURL) textureURL = girlRoomPath;
+  if (!size) size = {x: 20000, y: 20000, z: 20000};
+
+  var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+  var material = skyboxMaterial(textureURL);
+  return new THREE.Mesh(geometry, material);
 }
 
 },{"./lib/kutility":13}]},{},[14])

@@ -11,6 +11,7 @@ $(function() {
   var Human = require('./human');
   var Billboard = require('./billboard');
   var Hotdog = require('./hotdog');
+  var SKYBOX = require('./skybox');
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -37,7 +38,7 @@ $(function() {
     scene.simulate(undefined, 1);
   });
 
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 20000);
   camera.target = {x: 0, y: 0, z: 0};
   scene.add(camera);
 
@@ -633,6 +634,10 @@ $(function() {
         }
       }
 
+      if (middle.z >= massiveComputerZ - 1150 && !heavenState.visualizedComputer) {
+        heavenState.visualizedComputer = true;
+        heavenState.massiveComputer.material.opacity = 0.33;
+      }
       if (middle.z >= massiveComputerZ - 250 && !heavenState.reachedComputer) {
         heavenState.reachedComputer = true;
         reachedComputer();
@@ -674,7 +679,7 @@ $(function() {
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
-      heavenState.massiveComputer.material.opacity = 0.33;
+      heavenState.massiveComputer.material.opacity = 0.01;
     });
 
     var dummyForwardInterval = setInterval(function() {
@@ -809,6 +814,10 @@ $(function() {
     linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
+
+    var skybox = SKYBOX.create();
+    scene.add(skybox);
+    console.log(skybox);
 
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
