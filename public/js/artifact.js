@@ -61,10 +61,14 @@ artifactTextureNames[HOTDOG_TYPE] = [
 
 artifactTextureNames[MONEY_TYPE] = [
   '/images/coin.jpg',
-  '/images/dollar.jpg'
+  '/images/dollar.jpg',
+  '/images/canada_dollar.jpg',
+  '/images/ruby.jpg',
 ];
 artifactTextureNames[BALOON_TYPE] = [
-  '/images/finder.jpg'
+  '/images/green_baloon.jpg',
+  '/images/red_baloon.jpg',
+  '/images/blue_baloon.jpg'
 ];
 artifactTextureNames[HALO_TYPE] = [
   '/images/finder.jpg'
