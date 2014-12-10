@@ -1,6 +1,7 @@
 $(function() {
 
   var kt = require('./lib/kutility');
+  var BodyPart = require('./bodypart');
   var Character = require('./character');
   //var io = require('./io');
   var RonaldWord = require('./ronald_word');
@@ -825,7 +826,7 @@ $(function() {
     lightFollowState.target = cameraFollowState.target;
     lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 250, y: 50, z: girlZ}, 29, 'girl');
+    finalState.girl = new Human({x: 275, y: 50, z: girlZ}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
@@ -836,8 +837,10 @@ $(function() {
     finalState.tonyRonaldScreen.addTo(scene, function() {});
 
     finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
-    finalState.hotdog.addTo(scene, function() {
-    });
+    finalState.hotdog.addTo(scene);
+
+    finalState.keyboard = new BodyPart({x: 0, y: -10, z: girlZ - 30}, 15, '/js/models/keyboard.js');
+    finalState.keyboard.addTo(scene);
 
     fadeOverlay(false, function() {
       girlGonnaTalkNow();

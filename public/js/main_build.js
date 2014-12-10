@@ -276,7 +276,18 @@ var modelNames = require('./model_names');
 
 module.exports = BodyPart;
 
-function BodyPart(startPos, scale) {
+function BodyPart(startPos, scale, model) {
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.scale = scale || 1;
+
+  if (model) {
+    this.specificModelName = model;
+  }
+
   this.modelChoices = [];
 
   this.melting = false;
@@ -1777,6 +1788,7 @@ Kutility.prototype.blur = function(el, x) {
 $(function() {
 
   var kt = require('./lib/kutility');
+  var BodyPart = require('./bodypart');
   var Character = require('./character');
   //var io = require('./io');
   var RonaldWord = require('./ronald_word');
@@ -2601,7 +2613,7 @@ $(function() {
     lightFollowState.target = cameraFollowState.target;
     lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 250, y: 50, z: girlZ}, 29, 'girl');
+    finalState.girl = new Human({x: 275, y: 50, z: girlZ}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
@@ -2612,8 +2624,10 @@ $(function() {
     finalState.tonyRonaldScreen.addTo(scene, function() {});
 
     finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
-    finalState.hotdog.addTo(scene, function() {
-    });
+    finalState.hotdog.addTo(scene);
+
+    finalState.keyboard = new BodyPart({x: 0, y: -10, z: girlZ - 30}, 15, '/js/models/keyboard.js');
+    finalState.keyboard.addTo(scene);
 
     fadeOverlay(false, function() {
       girlGonnaTalkNow();
@@ -2697,7 +2711,7 @@ $(function() {
 
 });
 
-},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./hotdog":10,"./human":11,"./lib/kutility":13,"./model_names":15,"./ronald_word":16,"./skybox":17}],15:[function(require,module,exports){
+},{"./artifact":2,"./billboard":3,"./bodypart":5,"./character":6,"./computer":7,"./hand":8,"./hotdog":10,"./human":11,"./lib/kutility":13,"./model_names":15,"./ronald_word":16,"./skybox":17}],15:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
