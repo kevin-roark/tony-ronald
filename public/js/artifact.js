@@ -71,7 +71,11 @@ artifactTextureNames[BALOON_TYPE] = [
   '/images/blue_baloon.jpg'
 ];
 artifactTextureNames[HALO_TYPE] = [
-  '/images/finder.jpg'
+  '/images/halo.jpg',
+  '/images/stairs.jpg',
+  '/images/angel_fig.jpg',
+  '/images/moses.jpg',
+  '/images/demon_fig.jpg'
 ];
 artifactTextureNames[TV_TYPE] = [
   '/images/finder.jpg'
