@@ -1978,6 +1978,17 @@ $(function() {
     });
   }
 
+  function flash(text, timeout) {
+    if (!text) return;
+    if (!timeout) timeout = 200;
+
+    $('#flash').text(text);
+    $('#flash').show();
+    setTimeout(function() {
+      $('#flash').hide();
+    }, timeout);
+  }
+
   function shakeCamera() {
     var dx = (Math.random() - 0.5) * 1;
     var dy = (Math.random() - 0.5) * 0.5;
@@ -2165,6 +2176,8 @@ $(function() {
   }
 
   function enterTrappedState() {
+    flash('RONALD IS BORN');
+
     active.ronalds = true;
     active.trapped = true;
 
@@ -2246,6 +2259,7 @@ $(function() {
 
   function enterDesperateFleeState() {
     console.log('I AM DESPERATE NOW');
+    flash('RONALD ESCAPES');
 
     var groundLength = 2500;
     var darkLength = 1000;
@@ -2338,6 +2352,7 @@ $(function() {
 
   function enterHeavenState(startGrassZ) {
     console.log('I AM HEAVEN NOW');
+    flash('RONALD LIVES');
 
     if (!startGrassZ) startGrassZ = 4500;
 
@@ -2558,6 +2573,7 @@ $(function() {
 
   function enterEndgameState(linux) {
     console.log('IT IS TIME TO DIE RONALD');
+    flash('RONALD?');
     active.endgame = true;
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));

@@ -34,6 +34,21 @@ canvas {
   display: none;
 }
 
+#flash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+
+  background-color: white;
+  color: red;
+  font-size: 30px;
+  text-align: center;
+  padding-top: 300px;
+
+  display: none;
+}
+
 #ronald-gui {
   position: fixed;
   z-index: 10;
