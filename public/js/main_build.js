@@ -2296,11 +2296,11 @@ $(function() {
     rainArtifacts();
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
+      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 320 + 80};
 
       var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
       var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
-      var artifact = new Artifact(future, Math.random() * 15 + 5, false, artifactIndex);
+      var artifact = new Artifact(future, Math.random() * 20 + 9.8, false, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2310,7 +2310,7 @@ $(function() {
       }
 
       if (!desperateState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(300, 50));
+        setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
       else {
         setTimeout(function() {
@@ -2435,11 +2435,11 @@ $(function() {
     heavenState.artifacts = [];
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
+      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 80};
 
       var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
       var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
-      var artifact = new Artifact(future, Math.random() * 15 + 5, true, artifactIndex);
+      var artifact = new Artifact(future, Math.random() * 20 + 9.8, true, artifactIndex);
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2449,7 +2449,7 @@ $(function() {
       }
 
       if (!heavenState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(300, 50));
+        setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
       else {
         setTimeout(function() {
