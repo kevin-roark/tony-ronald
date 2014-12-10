@@ -84,7 +84,9 @@ artifactTextureNames[TV_TYPE] = [
   '/images/tv_3.jpg'
 ];
 artifactTextureNames[SWORD_TYPE] = [
-  '/images/finder.jpg'
+  '/images/sword_1.jpg',
+  '/images/sword_2.jpg',
+  '/images/daggers.jpg'
 ];
 
 function Artifact(startPos, scale, earthType, typeIndex) {
