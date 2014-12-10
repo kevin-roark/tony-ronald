@@ -7,8 +7,8 @@ var BodyPart = require('./bodypart');
 
 module.exports = Billboard;
 
-var VID_WIDTH = 300;
-var VID_HEIGHT = 240;
+var DEFAULT_VID_WIDTH = 300;
+var DEFAULT_VID_HEIGHT = 240;
 
 function Billboard(startPos, scale, videoDomElementObject) {
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -16,7 +16,13 @@ function Billboard(startPos, scale, videoDomElementObject) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
+  if (!videoDomElementObject.width) videoDomElementObject.width = DEFAULT_VID_WIDTH;
+  if (!videoDomElementObject.height) videoDomElementObject.height = DEFAULT_VID_HEIGHT;
+
   this.scale = scale || 1;
+
+  this.width = videoDomElementObject.width;
+  this.height = videoDomElementObject.height;
 
   this.video = videoDomElementObject.vid;
 
@@ -26,7 +32,7 @@ function Billboard(startPos, scale, videoDomElementObject) {
 
   this.videoImageContext = this.videoImage.getContext('2d');
 	this.videoImageContext.fillStyle = '#ffffff'; // background color if no video present
-	this.videoImageContext.fillRect( 0, 0, VID_WIDTH, VID_HEIGHT);
+	this.videoImageContext.fillRect( 0, 0, this.width, this.height);
 }
 
 Billboard.prototype.__proto__ = BodyPart.prototype;
@@ -44,7 +50,7 @@ Billboard.prototype.createMesh = function(callback) {
     , side: THREE.DoubleSide
   });
 
-  this.geometry = new THREE.PlaneGeometry(VID_WIDTH, VID_HEIGHT);
+  this.geometry = new THREE.PlaneGeometry(this.width, this.height);
   this.mesh = new THREE.Mesh(this.geometry, this.material);
 
   callback();

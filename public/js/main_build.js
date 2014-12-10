@@ -186,8 +186,8 @@ var BodyPart = require('./bodypart');
 
 module.exports = Billboard;
 
-var VID_WIDTH = 300;
-var VID_HEIGHT = 240;
+var DEFAULT_VID_WIDTH = 300;
+var DEFAULT_VID_HEIGHT = 240;
 
 function Billboard(startPos, scale, videoDomElementObject) {
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -195,7 +195,13 @@ function Billboard(startPos, scale, videoDomElementObject) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
+  if (!videoDomElementObject.width) videoDomElementObject.width = DEFAULT_VID_WIDTH;
+  if (!videoDomElementObject.height) videoDomElementObject.height = DEFAULT_VID_HEIGHT;
+
   this.scale = scale || 1;
+
+  this.width = videoDomElementObject.width;
+  this.height = videoDomElementObject.height;
 
   this.video = videoDomElementObject.vid;
 
@@ -205,7 +211,7 @@ function Billboard(startPos, scale, videoDomElementObject) {
 
   this.videoImageContext = this.videoImage.getContext('2d');
 	this.videoImageContext.fillStyle = '#ffffff'; // background color if no video present
-	this.videoImageContext.fillRect( 0, 0, VID_WIDTH, VID_HEIGHT);
+	this.videoImageContext.fillRect( 0, 0, this.width, this.height);
 }
 
 Billboard.prototype.__proto__ = BodyPart.prototype;
@@ -223,7 +229,7 @@ Billboard.prototype.createMesh = function(callback) {
     , side: THREE.DoubleSide
   });
 
-  this.geometry = new THREE.PlaneGeometry(VID_WIDTH, VID_HEIGHT);
+  this.geometry = new THREE.PlaneGeometry(this.width, this.height);
   this.mesh = new THREE.Mesh(this.geometry, this.material);
 
   callback();
@@ -1838,6 +1844,8 @@ $(function() {
   scene.add(mainLight);
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
+  var chatroomVideo = document.querySelector('#chatroom');
+  console.log(chatroomVideo);
   var ronaldGUI = $('#ronald-gui');
 
   /*
@@ -2504,7 +2512,6 @@ $(function() {
       }
 
       heavenState.skyBlocker.material.opacity = Math.max(0, heavenState.skyBlocker.material.opacity - 0.01);
-      console.log(heavenState.skyBlocker.material.opacity);
       heavenState.skyBlocker.material.needsUpdate = true;
 
       if (!heavenState.stopRaining) {
@@ -2629,15 +2636,19 @@ $(function() {
     lightFollowState.target = cameraFollowState.target;
     lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 275, y: 50, z: girlZ}, 29, 'girl');
+    finalState.girl = new Human({x: 295, y: 50, z: girlZ - 10}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
 
-    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
+    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo};
     finalState.tonyRonaldScreen = new Billboard({x: -127, y: 280, z: girlZ - 165}, 1, tonyRonaldVideoStruct);
-    finalState.tonyRonaldScreen.addTo(scene, function() {});
+    finalState.tonyRonaldScreen.addTo(scene);
+
+    var chatroomVideoStruct = {vid: chatroomVideo, width: 340, height: 120};
+    finalState.chatroomScreen = new Billboard({x: -100, y: 75, z: girlZ - 165}, 1, chatroomVideoStruct);
+    finalState.chatroomScreen.addTo(scene);
 
     finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
     finalState.hotdog.addTo(scene);
@@ -2652,6 +2663,7 @@ $(function() {
     finalState.render = function() {
       finalState.girl.render();
       if (finalState.tonyRonaldScreen) finalState.tonyRonaldScreen.render();
+      if (finalState.chatroomScreen) finalState.chatroomScreen.render();
     };
     finalState.physicsUpdate = function() {
 
@@ -2662,6 +2674,7 @@ $(function() {
 
       setTimeout(function() {
         tonyRonaldVideo.play();
+        chatroomVideo.play();
         panToShowScreen();
       }, 4444);
     }

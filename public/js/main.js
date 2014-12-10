@@ -51,6 +51,8 @@ $(function() {
   scene.add(mainLight);
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
+  var chatroomVideo = document.querySelector('#chatroom');
+  console.log(chatroomVideo);
   var ronaldGUI = $('#ronald-gui');
 
   /*
@@ -841,15 +843,19 @@ $(function() {
     lightFollowState.target = cameraFollowState.target;
     lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 275, y: 50, z: girlZ}, 29, 'girl');
+    finalState.girl = new Human({x: 295, y: 50, z: girlZ - 10}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
 
-    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
+    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo};
     finalState.tonyRonaldScreen = new Billboard({x: -127, y: 280, z: girlZ - 165}, 1, tonyRonaldVideoStruct);
-    finalState.tonyRonaldScreen.addTo(scene, function() {});
+    finalState.tonyRonaldScreen.addTo(scene);
+
+    var chatroomVideoStruct = {vid: chatroomVideo, width: 340, height: 120};
+    finalState.chatroomScreen = new Billboard({x: -100, y: 75, z: girlZ - 165}, 1, chatroomVideoStruct);
+    finalState.chatroomScreen.addTo(scene);
 
     finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
     finalState.hotdog.addTo(scene);
@@ -864,6 +870,7 @@ $(function() {
     finalState.render = function() {
       finalState.girl.render();
       if (finalState.tonyRonaldScreen) finalState.tonyRonaldScreen.render();
+      if (finalState.chatroomScreen) finalState.chatroomScreen.render();
     };
     finalState.physicsUpdate = function() {
 
@@ -874,6 +881,7 @@ $(function() {
 
       setTimeout(function() {
         tonyRonaldVideo.play();
+        chatroomVideo.play();
         panToShowScreen();
       }, 4444);
     }
