@@ -78,7 +78,10 @@ artifactTextureNames[HALO_TYPE] = [
   '/images/demon_fig.jpg'
 ];
 artifactTextureNames[TV_TYPE] = [
-  '/images/finder.jpg'
+  '/images/remote.jpg',
+  '/images/tv_1.jpg',
+  '/images/tv_2.jpg',
+  '/images/tv_3.jpg'
 ];
 artifactTextureNames[SWORD_TYPE] = [
   '/images/finder.jpg'
@@ -106,7 +109,7 @@ function Artifact(startPos, scale, earthType, typeIndex) {
 Artifact.prototype.__proto__ = BodyPart.prototype;
 
 Artifact.prototype.createMesh = function(callback) {
-  if (Math.random() < 0.3) {
+  if (Math.random() < 0.24) {
     this.geometry = new THREE.SphereGeometry(1);
   }
   else {
