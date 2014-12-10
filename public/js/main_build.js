@@ -2301,8 +2301,13 @@ $(function() {
       kevinRonald.resetMovement();
     };
 
+    var groundTexture = THREE.ImageUtils.loadTexture('/images/circuit.jpg');
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(6, 24);
+
     desperateState.ground_material = Physijs.createMaterial(
-      new THREE.MeshBasicMaterial({color: 0xeeeeee, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({map: groundTexture, side: THREE.DoubleSide}),
       .8, .4
     );
     desperateState.ground_geometry = new THREE.PlaneGeometry(500, groundLength * 2);
