@@ -2296,7 +2296,7 @@ $(function() {
     rainArtifacts();
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 320 + 80};
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + Math.random() * 320 + 80};
 
       var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
       var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
@@ -2344,9 +2344,12 @@ $(function() {
     var heavenGroundZ = startGrassZ + groundLength / 2;
     var massiveComputerZ = startGrassZ + groundLength;
     var numberOfArtifactTypes = 5;
+    var grassPath = '/images/grass.jpg';
 
     active.heaven = true;
     var grassMeshes = [];
+
+    var patchTexture = THREE.ImageUtils.loadTexture(grassPath);
     heavenState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
@@ -2365,7 +2368,10 @@ $(function() {
         for (var i = 0; i < count; i++) {
           var size = kt.randInt(9, 1);
           var grassGeometry = new THREE.PlaneGeometry(size, size);
-          var grassMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide});
+          var grassMaterial = new THREE.MeshBasicMaterial({
+            map: patchTexture,
+            side: THREE.DoubleSide
+          });
           var grassMesh = new THREE.Mesh(grassGeometry, grassMaterial);
           grassMesh.rotation.x = -Math.PI / 2;
           grassMesh.position.z = middle.z + kt.randInt(100);
@@ -2408,8 +2414,13 @@ $(function() {
       }
     };
 
+    var grassTexture = THREE.ImageUtils.loadTexture(grassPath);
+    grassTexture.wrapS = THREE.RepeatWrapping;
+    grassTexture.wrapT = THREE.RepeatWrapping;
+    grassTexture.repeat.set(4, 20);
+
     heavenState.ground_material = Physijs.createMaterial(
-      new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({map: grassTexture, side: THREE.DoubleSide}),
       .8, .4
     );
     heavenState.ground_geometry = new THREE.PlaneGeometry(500, groundLength);
@@ -2435,7 +2446,7 @@ $(function() {
     heavenState.artifacts = [];
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 80};
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + Math.random() * 200 + 80};
 
       var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
       var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
