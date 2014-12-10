@@ -45,7 +45,11 @@ artifactTextureNames[HORSE_TYPE] = [
   '/images/sky_horse.jpg'
 ];
 artifactTextureNames[BUZZFEED_TYPE] = [
-  '/images/finder.jpg'
+  '/images/buzzfeed_1.jpg',
+  '/images/buzzfeed_2.jpg',
+  '/images/listicle_1.jpg',
+  '/images/listicle_2.jpg',
+  '/images/fishboy.jpg'
 ];
 artifactTextureNames[HOTDOG_TYPE] = [
   '/images/chicago_dog.jpg',
