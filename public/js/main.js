@@ -173,9 +173,9 @@ $(function() {
       camera.position.copy(cameraFollowState.target).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.target);
     }
-    if (lightFollowState.obj) {
-      light.target.position.copy(lightFollowState.target);
-      light.position.addVectors(light.target.position, lightFollowState.offset);
+    if (lightFollowState.target) {
+      mainLight.target.position.copy(lightFollowState.target);
+      mainLight.position.addVectors(mainLight.target.position, lightFollowState.offset);
     }
 
     renderer.render(scene, camera);
@@ -796,11 +796,11 @@ $(function() {
 
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
-    cameraFollowState.offset = {x: 400, y: 25, z: 0};
+    cameraFollowState.offset = {x: 500, y: 25, z: 50};
     lightFollowState.target = cameraFollowState.target;
-    lightFollowState.offset = {x: 100, y: 40, z: 0};
+    lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 220, y: 50, z: girlZ}, 35, 'girl');
+    finalState.girl = new Human({x: 250, y: 50, z: girlZ}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');

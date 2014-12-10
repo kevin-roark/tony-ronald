@@ -39,6 +39,7 @@ canvas {
   z-index: 10;
   width: 300px;
   height: 300px;
+  overflow: scroll;
   top: 61px;
   left: 732px;
   background-color: red;
