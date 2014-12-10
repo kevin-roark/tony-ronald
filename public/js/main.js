@@ -665,6 +665,12 @@ $(function() {
       }
     };
 
+    heavenState.skybox = SKYBOX.create(undefined, '/images/mountain.jpg');
+    scene.add(heavenState.skybox);
+
+    heavenState.skyBlocker = SKYBOX.blocker();
+    scene.add(heavenState.skyBlocker);
+
     var grassTexture = THREE.ImageUtils.loadTexture(grassPath);
     grassTexture.wrapS = THREE.RepeatWrapping;
     grassTexture.wrapT = THREE.RepeatWrapping;
@@ -710,6 +716,9 @@ $(function() {
         scene.remove(firstArtifact.mesh);
       }
 
+      heavenState.skyBlocker.material.opacity = Math.max(0, heavenState.skyBlocker.material.opacity - 0.01);
+      heavenState.skyBlocker.material.needsUpdate = true;
+
       if (!heavenState.stopRaining) {
         setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
@@ -736,6 +745,8 @@ $(function() {
 
         if (currentTarget.y >= initY + 40) {
           clearInterval(aimCameraUpInterval);
+          scene.remove(heavenState.skybox);
+          scene.remove(heavenState.skyBlocker);
           addHand();
         }
       }, 10);
@@ -823,7 +834,6 @@ $(function() {
 
     var skybox = SKYBOX.create();
     scene.add(skybox);
-    console.log(skybox);
 
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};

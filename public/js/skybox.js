@@ -25,7 +25,6 @@ function makeCubemap(textureURL, repeatX, repeatY) {
 
 function makeShader(cubemap) {
   var shader = THREE.ShaderLib['cube']; // init cube shader from built-in lib
-  console.log(shader);
   shader.uniforms['tCube'].value = cubemap; // apply textures to shader
   return shader;
 }
@@ -50,5 +49,18 @@ module.exports.create = function(size, textureURL) {
 
   var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
   var material = skyboxMaterial(textureURL);
+  return new THREE.Mesh(geometry, material);
+}
+
+module.exports.blocker = function(size) {
+  if (!size) size = {x: 19500, y: 19500, z: 19500};
+
+  var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+  var material = new THREE.MeshBasicMaterial({
+      color: 0x000000
+    , side: THREE.DoubleSide
+    , opacity: 1.0
+    , transparent: true
+  });
   return new THREE.Mesh(geometry, material);
 }
