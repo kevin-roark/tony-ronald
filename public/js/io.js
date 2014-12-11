@@ -30,8 +30,9 @@ var kneeHistory = {one: {rotating: false}, two: {rotating: false}};
 
 var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rotDown: false}};
 
-var MIN_TIME_BETWEEN_GESTURES = 400;
-var PHRASE_GESTURE_DELTA_MULT = 20.0;
+var MIN_TIME_BETWEEN_GESTURES = 800;
+var PHRASE_GESTURE_DELTA_MULT = 4.0;
+var MIN_PHRASE_VEL = 120.0;
 var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
 var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
 var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
@@ -59,7 +60,17 @@ module.exports.mode = module.exports.PHRASE;
 
 function blankpos() { return {x: 0, y: 0, z: 0}; };
 
+function phrasePos(left) {
+  var pos = blankpos();
+  pos.x = left? 0 : 60;
+  pos.y = (Math.random() - 0.5) * 100;
+  pos.z = (Math.random() * -100);
+  return pos;
+}
+
 module.exports.eventHandler = function(event, data) {};
+
+module.exports.socket = socket;
 
 module.exports.begin = function(w1, w2, cam, l) {
   wrestler1 = w1;
@@ -189,6 +200,13 @@ function totalMagnitude(pos) {
   return Math.abs(pos.x) + Math.abs(pos.y) + Math.abs(pos.z);
 }
 
+function phraseBlast(player, pos, vel) {
+  var data = {player: 1, pos: pos, vel: vel};
+  module.exports.eventHandler('phraseBlast', data);
+  console.log('blasted phrase:');
+  console.log(data);
+}
+
 function rightHand1(position) {
   if (previousPositions.rightHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
@@ -197,20 +215,21 @@ function rightHand1(position) {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.right1 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.rightHand1);
+        var pdelta = delta(position, previousPositions.rightHand1);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(false);
 
-        phraseGestureTimes.right1 = now;
-        phraseGestureVelocities.right1 = vel;
-        phraseGestureStartPositions.right1 = pos;
+          phraseGestureTimes.right1 = now;
+          phraseGestureVelocities.right1 = vel;
+          phraseGestureStartPositions.right1 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(1, pos, vel);
+        }
       }
     }
   }
@@ -232,20 +251,21 @@ function leftHand1(position) {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.left1 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.leftHand1);
+        var pdelta = delta(position, previousPositions.leftHand1);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(true);
 
-        phraseGestureTimes.left1 = now;
-        phraseGestureVelocities.left1 = vel;
-        phraseGestureStartPositions.left1 = pos;
+          phraseGestureTimes.left1 = now;
+          phraseGestureVelocities.left1 = vel;
+          phraseGestureStartPositions.left1 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(1, pos, vel);
+        }
       }
     }
   }
@@ -333,7 +353,7 @@ function torso1(position) {
       moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      var mag = totalMagnitude(position, previousPositions.torso1);
+      var mag = totalMagnitude(delta(position, previousPositions.torso1));
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler1.move(0, 0, dist);
     }
@@ -352,20 +372,21 @@ function rightHand2(position)  {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.right2 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.rightHand2);
+        var pdelta = delta(position, previousPositions.rightHand2);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(false);
 
-        phraseGestureTimes.right2 = now;
-        phraseGestureVelocities.right2 = vel;
-        phraseGestureStartPositions.right2 = pos;
+          phraseGestureTimes.right2 = now;
+          phraseGestureVelocities.right2 = vel;
+          phraseGestureStartPositions.right2 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(2, pos, vel);
+        }
       }
     }
   }
@@ -387,20 +408,21 @@ function leftHand2(position) {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.left2 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.leftHand2);
+        var pdelta = delta(position, previousPositions.leftHand2);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(true);
 
-        phraseGestureTimes.left2 = now;
-        phraseGestureVelocities.left2 = vel;
-        phraseGestureStartPositions.left2 = pos;
+          phraseGestureTimes.left2 = now;
+          phraseGestureVelocities.left2 = vel;
+          phraseGestureStartPositions.left2 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(2, pos, vel);
+        }
       }
     }
   }
@@ -489,7 +511,7 @@ function torso2(position) {
       moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: true, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      var mag = totalMagnitude(position, previousPositions.torso2);
+      var mag = totalMagnitude(delta(position, previousPositions.torso2));
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler2.move(0, 0, dist);
     }

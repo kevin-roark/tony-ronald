@@ -1226,8 +1226,9 @@ var kneeHistory = {one: {rotating: false}, two: {rotating: false}};
 
 var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rotDown: false}};
 
-var MIN_TIME_BETWEEN_GESTURES = 400;
-var PHRASE_GESTURE_DELTA_MULT = 20.0;
+var MIN_TIME_BETWEEN_GESTURES = 800;
+var PHRASE_GESTURE_DELTA_MULT = 4.0;
+var MIN_PHRASE_VEL = 120.0;
 var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
 var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
 var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
@@ -1255,7 +1256,17 @@ module.exports.mode = module.exports.PHRASE;
 
 function blankpos() { return {x: 0, y: 0, z: 0}; };
 
+function phrasePos(left) {
+  var pos = blankpos();
+  pos.x = left? 0 : 60;
+  pos.y = (Math.random() - 0.5) * 100;
+  pos.z = (Math.random() * -100);
+  return pos;
+}
+
 module.exports.eventHandler = function(event, data) {};
+
+module.exports.socket = socket;
 
 module.exports.begin = function(w1, w2, cam, l) {
   wrestler1 = w1;
@@ -1385,6 +1396,13 @@ function totalMagnitude(pos) {
   return Math.abs(pos.x) + Math.abs(pos.y) + Math.abs(pos.z);
 }
 
+function phraseBlast(player, pos, vel) {
+  var data = {player: 1, pos: pos, vel: vel};
+  module.exports.eventHandler('phraseBlast', data);
+  console.log('blasted phrase:');
+  console.log(data);
+}
+
 function rightHand1(position) {
   if (previousPositions.rightHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
@@ -1393,20 +1411,21 @@ function rightHand1(position) {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.right1 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.rightHand1);
+        var pdelta = delta(position, previousPositions.rightHand1);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(false);
 
-        phraseGestureTimes.right1 = now;
-        phraseGestureVelocities.right1 = vel;
-        phraseGestureStartPositions.right1 = pos;
+          phraseGestureTimes.right1 = now;
+          phraseGestureVelocities.right1 = vel;
+          phraseGestureStartPositions.right1 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(1, pos, vel);
+        }
       }
     }
   }
@@ -1428,20 +1447,21 @@ function leftHand1(position) {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.left1 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.leftHand1);
+        var pdelta = delta(position, previousPositions.leftHand1);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(true);
 
-        phraseGestureTimes.left1 = now;
-        phraseGestureVelocities.left1 = vel;
-        phraseGestureStartPositions.left1 = pos;
+          phraseGestureTimes.left1 = now;
+          phraseGestureVelocities.left1 = vel;
+          phraseGestureStartPositions.left1 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(1, pos, vel);
+        }
       }
     }
   }
@@ -1529,7 +1549,7 @@ function torso1(position) {
       moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      var mag = totalMagnitude(position, previousPositions.torso1);
+      var mag = totalMagnitude(delta(position, previousPositions.torso1));
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler1.move(0, 0, dist);
     }
@@ -1548,20 +1568,21 @@ function rightHand2(position)  {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.right2 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.rightHand2);
+        var pdelta = delta(position, previousPositions.rightHand2);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(false);
 
-        phraseGestureTimes.right2 = now;
-        phraseGestureVelocities.right2 = vel;
-        phraseGestureStartPositions.right2 = pos;
+          phraseGestureTimes.right2 = now;
+          phraseGestureVelocities.right2 = vel;
+          phraseGestureStartPositions.right2 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(2, pos, vel);
+        }
       }
     }
   }
@@ -1583,20 +1604,21 @@ function leftHand2(position) {
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
       if (now - phraseGestureTimes.left2 >= MIN_TIME_BETWEEN_GESTURES) {
-        var delta = delta(position, previousPositions.leftHand2);
+        var pdelta = delta(position, previousPositions.leftHand2);
         var vel = {
-          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
-          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
         };
-        var pos = blankpos();
-        console.log(position);
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(true);
 
-        phraseGestureTimes.left2 = now;
-        phraseGestureVelocities.left2 = vel;
-        phraseGestureStartPositions.left2 = pos;
+          phraseGestureTimes.left2 = now;
+          phraseGestureVelocities.left2 = vel;
+          phraseGestureStartPositions.left2 = pos;
 
-        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+          phraseBlast(2, pos, vel);
+        }
       }
     }
   }
@@ -1685,7 +1707,7 @@ function torso2(position) {
       moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: true, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      var mag = totalMagnitude(position, previousPositions.torso2);
+      var mag = totalMagnitude(delta(position, previousPositions.torso2));
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler2.move(0, 0, dist);
     }
@@ -2498,12 +2520,16 @@ $(function() {
   var ronaldGUI = $('#ronald-gui');
 
   io.eventHandler = function(event, data) {
-    if (event.name == 'phraseBlast') {
-      var rw = new RonaldWord(undefined, {position: data.pos, velocity: data.vel});
+    console.log('io event: ' + event);
+
+    if (event == 'phraseBlast') {
+      var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
       rw.addTo(scene);
       phraseState.phrases.push(rw);
+
+      io.socket.emit('phrase', data.player, rw.phraseIndex, data.vel);
     }
-    else if (event.name == 'shatter') {
+    else if (event == 'shatter') {
       if (trappedState.mac) trappedState.mac.shatterable = true;
       if (trappedState.pc) trappedState.pc.shatterable = true;
     }
@@ -2531,10 +2557,10 @@ $(function() {
     offset: {x: 0, y: 0, z: 0}
   };
 
-  kevinRonald = new Character({x: -200, y: -50, z: -200}, 20);
+  kevinRonald = new Character({x: -700, y: -200, z: -1000}, 20);
   kevinRonald.addTo(scene);
 
-  dylanRonald = new Character({x: -190, y: -50, z: -200}, 20);
+  dylanRonald = new Character({x: -600, y: -200, z: -1000}, 20);
   dylanRonald.addTo(scene);
   var ronalds = [kevinRonald, dylanRonald];
 
@@ -2545,7 +2571,7 @@ $(function() {
   start();
   function start() {
     if (!TEST_MODE) {
-      io.begin(kevinRonald, dylanRonald, camera, hueLight);
+      io.begin(kevinRonald, dylanRonald, camera);
     }
 
     enterPhrasesState();
@@ -2842,6 +2868,7 @@ $(function() {
       }, 500);
     }
 
+    var time = TEST_MODE? 3000 : 60000;
     setTimeout(function() {
       fadeOverlay(true, function() {
         clearInterval(phraseInterval);
@@ -2862,7 +2889,7 @@ $(function() {
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 20000);
+    }, time);
   }
 
   function enterTrappedState() {
@@ -2882,10 +2909,10 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald.moveTo(-100, 5, -170);
+    kevinRonald.moveTo(-100, 15, -170);
     kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald.moveTo(100, 5, -170);
+    dylanRonald.moveTo(100, 15, -170);
     dylanRonald.rotate(0, -Math.PI/4, 0);
 
     ronalds = [kevinRonald, dylanRonald];
@@ -2908,6 +2935,7 @@ $(function() {
       kevinRonald.leftArm.move(-1, 0, -1);
     };
 
+    var time = TEST_MODE? 1000 : 20000;
     setTimeout(function() {
       mac.becomeTransparent(0.02);
       pc.becomeTransparent(0.02);
@@ -2918,12 +2946,13 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 20000);
+    }, time);
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
 
-      kevinRonald.reset(); dylanRonald.reset();
+      kevinRonald.moveTo(-100, 5, -170);
+      dylanRonald.moveTo(100, 5, -170);
 
       var cameraPosition = {x: 0, y: 40, z: -370};
       setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
@@ -3000,8 +3029,8 @@ $(function() {
     if (TEST_MODE) {
       var dummyForwardInterval = setInterval(function() {
         var z = Math.random() * 0.5 + 10;
-        kevinRonald.walk(negrand(3), 0, z);
-        dylanRonald.walk(negrand(3), 0, z);
+        kevinRonald.walk(negrand(6), 0, z);
+        dylanRonald.walk(negrand(6), 0, z);
       }, 30);
     }
 
@@ -3472,7 +3501,7 @@ var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
 
-var phraseBank = [
+var player1PhraseBank = [
   'RONALD',
   'MY FRIEND RONALD LIVES INSIDE THE COMPUTER',
   'MY FRIEND RONALD',
@@ -3480,6 +3509,34 @@ var phraseBank = [
   'RONALD EATS ALL THE COMPUTER TRASH',
   'MY FRIEND RONALD SMOKES WEED',
   "MY FRIEND RONALD'S DEAD",
+  'MY FRIEND RONALD USES ADOBE CREATIVE CLOUD',
+  'MY FRIEND RONALD HAS A STARTUP',
+  'MY FRIEND RONALD NEVER HAS TO GO OUTSIDE',
+  "RONALD'S NOT AFRAID",
+  "WHERE'D YOU GO, RONALD?",
+  'MY FRIEND RONALD WEARS BAND TEES',
+  'MY FRIEND RONALD HAS DESIRES',
+  'MY FRIEND RONALD SEEKS CLOSURE',
+  'MY FRIEND RONALD HELPS ME ESCAPE'
+];
+
+var player2PhraseBank =  [
+  'I SEE MY FRIEND RONALD INSIDE OF EVERYONE',
+  'MY FRIEND RONALD IS ON SNAPCHAT',
+  'MY FRIEND RONALD BETA TESTED IOS 8',
+  'MY FRIEND RONALD IS A DEVELOPER',
+  'MY FRIEND RONALD PREFERS XBOX',
+  'MY FRIEND RONALD HAS CONNECTIONS',
+  'MY FRIEND RONALD WAKES UP EVERY MORNING WITH A SMILE',
+  "RONALD'S ONLY FRIEND IS ME",
+  'MY ONLY FRIEND IS RONALD',
+  'MY FRIEND RONALD USES VSCO CAM',
+  'MY FRIEND RONALD LOVES TV PARTY',
+  'RONALD USES ANGULAR.JS FOR FRONTEND WEB DEVELOPMENT',
+  "RONALD'S FAVORITE TRASH IS PICTURES",
+  "RONALD'S HOME IS TRASH",
+  "MY FRIEND RONALD IS AN EXPERT WHEN IT COMES TO CLEANING COMPUTERS",
+  'YOU HAVE TO FEED MY FRIEND RONALD TRASH OR HE WILL DIE'
 ];
 
 function negrand(scalar) {
@@ -3493,7 +3550,12 @@ function randcolor() {
   return new THREE.Color(r, g, b);
 }
 
-function RonaldWord(phrase, config) {
+function RonaldWord(player, phrase, config) {
+  if (!player) {
+    player = 1;
+  }
+
+  var phraseBank = (player == 1)? player1PhraseBank : player2PhraseBank;
   if (!phrase) {
     phrase = kt.choice(phraseBank);
   }
@@ -3509,6 +3571,7 @@ function RonaldWord(phrase, config) {
     config.decay = 60000;
   }
 
+  this.phraseIndex = phraseBank.indexOf(phrase);
   this.phrase = phrase;
   this.position = config.position;
   this.velocity = config.velocity;

@@ -2,7 +2,7 @@ var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
 
-var phraseBank = [
+var player1PhraseBank = [
   'RONALD',
   'MY FRIEND RONALD LIVES INSIDE THE COMPUTER',
   'MY FRIEND RONALD',
@@ -10,6 +10,34 @@ var phraseBank = [
   'RONALD EATS ALL THE COMPUTER TRASH',
   'MY FRIEND RONALD SMOKES WEED',
   "MY FRIEND RONALD'S DEAD",
+  'MY FRIEND RONALD USES ADOBE CREATIVE CLOUD',
+  'MY FRIEND RONALD HAS A STARTUP',
+  'MY FRIEND RONALD NEVER HAS TO GO OUTSIDE',
+  "RONALD'S NOT AFRAID",
+  "WHERE'D YOU GO, RONALD?",
+  'MY FRIEND RONALD WEARS BAND TEES',
+  'MY FRIEND RONALD HAS DESIRES',
+  'MY FRIEND RONALD SEEKS CLOSURE',
+  'MY FRIEND RONALD HELPS ME ESCAPE'
+];
+
+var player2PhraseBank =  [
+  'I SEE MY FRIEND RONALD INSIDE OF EVERYONE',
+  'MY FRIEND RONALD IS ON SNAPCHAT',
+  'MY FRIEND RONALD BETA TESTED IOS 8',
+  'MY FRIEND RONALD IS A DEVELOPER',
+  'MY FRIEND RONALD PREFERS XBOX',
+  'MY FRIEND RONALD HAS CONNECTIONS',
+  'MY FRIEND RONALD WAKES UP EVERY MORNING WITH A SMILE',
+  "RONALD'S ONLY FRIEND IS ME",
+  'MY ONLY FRIEND IS RONALD',
+  'MY FRIEND RONALD USES VSCO CAM',
+  'MY FRIEND RONALD LOVES TV PARTY',
+  'RONALD USES ANGULAR.JS FOR FRONTEND WEB DEVELOPMENT',
+  "RONALD'S FAVORITE TRASH IS PICTURES",
+  "RONALD'S HOME IS TRASH",
+  "MY FRIEND RONALD IS AN EXPERT WHEN IT COMES TO CLEANING COMPUTERS",
+  'YOU HAVE TO FEED MY FRIEND RONALD TRASH OR HE WILL DIE'
 ];
 
 function negrand(scalar) {
@@ -23,7 +51,12 @@ function randcolor() {
   return new THREE.Color(r, g, b);
 }
 
-function RonaldWord(phrase, config) {
+function RonaldWord(player, phrase, config) {
+  if (!player) {
+    player = 1;
+  }
+
+  var phraseBank = (player == 1)? player1PhraseBank : player2PhraseBank;
   if (!phrase) {
     phrase = kt.choice(phraseBank);
   }
@@ -39,6 +72,7 @@ function RonaldWord(phrase, config) {
     config.decay = 60000;
   }
 
+  this.phraseIndex = phraseBank.indexOf(phrase);
   this.phrase = phrase;
   this.position = config.position;
   this.velocity = config.velocity;

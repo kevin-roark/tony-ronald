@@ -58,12 +58,16 @@ $(function() {
   var ronaldGUI = $('#ronald-gui');
 
   io.eventHandler = function(event, data) {
-    if (event.name == 'phraseBlast') {
-      var rw = new RonaldWord(undefined, {position: data.pos, velocity: data.vel});
+    console.log('io event: ' + event);
+
+    if (event == 'phraseBlast') {
+      var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
       rw.addTo(scene);
       phraseState.phrases.push(rw);
+
+      io.socket.emit('phrase', data.player, rw.phraseIndex, data.vel);
     }
-    else if (event.name == 'shatter') {
+    else if (event == 'shatter') {
       if (trappedState.mac) trappedState.mac.shatterable = true;
       if (trappedState.pc) trappedState.pc.shatterable = true;
     }
@@ -91,10 +95,10 @@ $(function() {
     offset: {x: 0, y: 0, z: 0}
   };
 
-  kevinRonald = new Character({x: -200, y: -50, z: -200}, 20);
+  kevinRonald = new Character({x: -700, y: -200, z: -1000}, 20);
   kevinRonald.addTo(scene);
 
-  dylanRonald = new Character({x: -190, y: -50, z: -200}, 20);
+  dylanRonald = new Character({x: -600, y: -200, z: -1000}, 20);
   dylanRonald.addTo(scene);
   var ronalds = [kevinRonald, dylanRonald];
 
@@ -105,7 +109,7 @@ $(function() {
   start();
   function start() {
     if (!TEST_MODE) {
-      io.begin(kevinRonald, dylanRonald, camera, hueLight);
+      io.begin(kevinRonald, dylanRonald, camera);
     }
 
     enterPhrasesState();
@@ -402,6 +406,7 @@ $(function() {
       }, 500);
     }
 
+    var time = TEST_MODE? 3000 : 60000;
     setTimeout(function() {
       fadeOverlay(true, function() {
         clearInterval(phraseInterval);
@@ -422,7 +427,7 @@ $(function() {
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 20000);
+    }, time);
   }
 
   function enterTrappedState() {
@@ -442,10 +447,10 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald.moveTo(-100, 5, -170);
+    kevinRonald.moveTo(-100, 15, -170);
     kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald.moveTo(100, 5, -170);
+    dylanRonald.moveTo(100, 15, -170);
     dylanRonald.rotate(0, -Math.PI/4, 0);
 
     ronalds = [kevinRonald, dylanRonald];
@@ -468,6 +473,7 @@ $(function() {
       kevinRonald.leftArm.move(-1, 0, -1);
     };
 
+    var time = TEST_MODE? 1000 : 20000;
     setTimeout(function() {
       mac.becomeTransparent(0.02);
       pc.becomeTransparent(0.02);
@@ -478,12 +484,13 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 20000);
+    }, time);
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
 
-      kevinRonald.reset(); dylanRonald.reset();
+      kevinRonald.moveTo(-100, 5, -170);
+      dylanRonald.moveTo(100, 5, -170);
 
       var cameraPosition = {x: 0, y: 40, z: -370};
       setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
@@ -560,8 +567,8 @@ $(function() {
     if (TEST_MODE) {
       var dummyForwardInterval = setInterval(function() {
         var z = Math.random() * 0.5 + 10;
-        kevinRonald.walk(negrand(3), 0, z);
-        dylanRonald.walk(negrand(3), 0, z);
+        kevinRonald.walk(negrand(6), 0, z);
+        dylanRonald.walk(negrand(6), 0, z);
       }, 30);
     }
 
