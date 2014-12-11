@@ -116,6 +116,10 @@ io.on('connection', function(socket) {
   socket.on('artifact', function(player) {
     maxer.whoa(player);
   });
+
+  socket.on('knock', function(player) {
+    maxer.knock(player);
+  });
 });
 
 function setForwarderSocketEvents(forwarderSocket) {

@@ -253,6 +253,11 @@ $(function() {
     io.socket.emit('artifact', player);
   }
 
+  function computerKnock(object) {
+    var player = (object.hostBody == kevinRonald)? 1 : 2;
+    io.socket.emit('knock', player);
+  }
+
   function shakeCamera() {
     var dx = (Math.random() - 0.5) * 1;
     var dy = (Math.random() - 0.5) * 0.5;
@@ -476,33 +481,78 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald.moveTo(-100, 15, -170);
+    kevinRonald.moveTo(-80, 8, -140);
     kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald.moveTo(100, 15, -170);
+    dylanRonald.moveTo(80, 8, -140);
     dylanRonald.rotate(0, -Math.PI/4, 0);
+
+    makeArmsTransparent();
+    changeArmOpacity(0);
 
     ronalds = [kevinRonald, dylanRonald];
 
-    var mac = new Computer({x: -50, y: 0, z: -80}, 60);
+    var mac = new Computer({x: -50, y: 0, z: -80}, 60, 10000, 200);
     mac.addTo(scene, function() {
-      mac.rotate(0, Math.PI/6, 0);
+      mac.rotate(0, Math.PI/8, 0);
     });
+    mac.knockHandler = function(otherObject) {
+      computerKnock(otherObject);
+    };
 
-    var pc = new Computer({x: 50, y: 0, z: -80}, 60);
+    var pc = new Computer({x: 50, y: 0, z: -80}, 60, 10000, 200);
     pc.addTo(scene, function() {
-      pc.rotate(0, -Math.PI/6, 0);
+      pc.rotate(0, -Math.PI/8, 0);
     });
+    pc.knockHandler = function(otherObject) {
+      computerKnock(otherObject);
+    };
+
+    io.maxPositions = {x: 50, y: 50, z: -70};
+    io.minPositions = {x: -50, y: -50, z: -400};
 
     trappedState.renderObjects = [mac, pc];
     trappedState.mac = mac;
     trappedState.pc = pc;
 
     kevinRonald.leftArm.collisionHandler = function() {
-      kevinRonald.leftArm.move(-1, 0, -1);
+      kevinRonald.leftArm.move(-10, 0, -10);
+    };
+    kevinRonald.rightArm.collisionHandler = function() {
+      kevinRonald.rightArm.move(-10, 0, -10);
+    };
+    dylanRonald.leftArm.collisionHandler = function() {
+      dylanRonald.leftArm.move(-10, 0, -10);
+    };
+    dylanRonald.rightArm.collisionHandler = function() {
+      dylanRonald.rightArm.move(-10, 0, -10);
     };
 
+    var resetInterval = setInterval(function() {
+      mac.reset();
+      mac.rotate(0, Math.PI/8, 0);
+      pc.reset();
+      pc.rotate(0, -Math.PI/8, 0);
+    }, 5000);
+
+    function changeArmOpacity(op) {
+      var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
+      arms.forEach(function(arm) {
+        arm.material.opacity = op;
+      });
+    }
+
+    function makeArmsTransparent() {
+      var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
+      arms.forEach(function(arm) {
+        arm.mesh.material.transparent = true;
+        arm.mesh.material.needsUpdate = true;
+      });
+    }
+
     trappedState.makeTransparent = function() {
+      changeArmOpacity(1.0);
+
       var delta = TEST_MODE? 0.02 : 0.002;
       mac.becomeTransparent(delta, undefined, TEST_MODE);
       pc.becomeTransparent(delta, undefined, TEST_MODE);
@@ -523,6 +573,7 @@ $(function() {
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
+      clearInterval(resetInterval);
 
       var endCameraZ = -150;
       var panInterval = setInterval(function() {
@@ -548,6 +599,9 @@ $(function() {
   }
 
   function enterDesperateFleeState() {
+    io.maxPositions = {x: 20000, y: 20000, z: 20000};
+    io.minPositions = {x: -20000, y: -20000, z: -20000};
+
     console.log('I AM DESPERATE NOW');
     flash('RONALD ESCAPES');
 
@@ -766,6 +820,9 @@ $(function() {
     scene.add(heavenState.ground);
 
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
+    heavenState.massiveComputer.knockHandler = function(otherObject) {
+      computerKnock(otherObject);
+    };
     heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
       heavenState.massiveComputer.material.opacity = 0.01;
@@ -842,6 +899,7 @@ $(function() {
         var z = massiveComputerZ + 150;
         heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: z}, 90);
         heavenState.bigGirlHand.mass = 500;
+        havenState.bigGirlHand.humanPart = true;
         heavenState.bigGirlHand.ignoreCollisons = true;
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {

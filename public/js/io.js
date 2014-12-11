@@ -38,7 +38,7 @@ var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2:
 var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
 
 var BIG_HEAD_MAG = 15;
-var MAX_HEAD_SWELL = 500;
+var MAX_HEAD_SWELL = 40;
 var TORSO_CLOSE_MAG = 11;
 
 var CLOSE_KNEE_MAG = 60;
@@ -71,6 +71,17 @@ function phrasePos(left) {
 module.exports.eventHandler = function(event, data) {};
 
 module.exports.socket = socket;
+
+module.exports.maxPositions = {
+  z: 1000,
+  x: 1000,
+  y: 1000
+};
+module.exports.minPositions = {
+  z: -1000,
+  x: -1000,
+  y: -1000
+};
 
 module.exports.begin = function(w1, w2, cam, l) {
   wrestler1 = w1;
@@ -191,6 +202,19 @@ function moveDelta(bodypart, position, lastPos, divisor, directions) {
     deltaZ = (position.z - lastPos.z) / -divisor;
   }
 
+  if (bodyPart.mesh.position.x + deltaX < module.exports.minPositions.x ||
+      bodyPart.mesh.position.x + deltaX > module.exports.maxPositions.x) {
+        deltaX = 0;
+  }
+  if (bodyPart.mesh.position.y + deltaY < module.exports.minPositions.y ||
+    bodyPart.mesh.position.y + deltaY > module.exports.maxPositions.y) {
+      deltaY = 0;
+  }
+  if (bodyPart.mesh.position.z + deltaZ < module.exports.minPositions.z ||
+    bodyPart.mesh.position.z + deltaZ > module.exports.maxPositions.z) {
+      deltaZ = 0;
+  }
+
   bodypart.move(deltaX, deltaY, deltaZ);
 }
 
@@ -221,7 +245,13 @@ function phraseBlast(player, pos, vel) {
 function rightHand1(position) {
   if (previousPositions.rightHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, 10);
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -257,7 +287,13 @@ function leftHand1(position) {
 
   if (previousPositions.leftHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, 10);
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -311,7 +347,7 @@ function head1(position) {
           module.exports.eventHandler('shatter', {});
         }
 
-        scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
+        //scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
       }
 
     }
@@ -363,7 +399,7 @@ function rightElbow1(position) {
 function torso1(position) {
   if (previousPositions.torso1) {
     if (module.exports.mode == module.exports.KNOCK) {
-      moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
+      moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
       var mag = totalMagnitude(delta(position, previousPositions.torso1));
@@ -380,7 +416,13 @@ function torso1(position) {
 function rightHand2(position)  {
   if (previousPositions.rightHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-        moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -416,7 +458,13 @@ function leftHand2(position) {
 
   if (previousPositions.leftHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, 10);
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -472,7 +520,7 @@ function head2(position) {
           module.exports.eventHandler('shatter', {});
         }
 
-        scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
+        //scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
       }
     }
   }
@@ -523,7 +571,7 @@ function rightElbow2(position) {
 function torso2(position) {
   if (previousPositions.torso2) {
     if (module.exports.mode == module.exports.KNOCK) {
-      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: true, y: false, z: true});
+      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
       var mag = totalMagnitude(delta(position, previousPositions.torso2));

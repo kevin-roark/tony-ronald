@@ -17,7 +17,7 @@ var computerIndex = 0;
 
 var allComputers = [];
 
-function Computer(startPos, scale, mass) {
+function Computer(startPos, scale, mass, twitchtime) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -29,7 +29,8 @@ function Computer(startPos, scale, mass) {
   computerIndex += 1;
 
   this.scale = scale || 20;
-  this.mass = mass || 1;
+  this.mass = mass || 0;
+  this.twitchtime = twitchtime || 200;
 
   this.ignoreCollisons = true;
 
@@ -89,12 +90,17 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
       computer.shatter();
     });
   }
-  else if (this.knockable) {
-    console.log('KNOCK KNOCK');
+  else if (this.knockable && other_object.humanPart) {
+    console.log('KNOCK!!!');
+
     this.twitching = true;
     setTimeout(function() {
       self.twitching = false;
-    }, 200);
+    }, this.twitchtime);
+
+    if (this.knockHandler) {
+      this.knockHandler(other_object);
+    }
   }
 }
 

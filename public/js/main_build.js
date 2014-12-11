@@ -779,7 +779,7 @@ var computerIndex = 0;
 
 var allComputers = [];
 
-function Computer(startPos, scale, mass) {
+function Computer(startPos, scale, mass, twitchtime) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -791,7 +791,8 @@ function Computer(startPos, scale, mass) {
   computerIndex += 1;
 
   this.scale = scale || 20;
-  this.mass = mass || 1;
+  this.mass = mass || 0;
+  this.twitchtime = twitchtime || 200;
 
   this.ignoreCollisons = true;
 
@@ -851,12 +852,17 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
       computer.shatter();
     });
   }
-  else if (this.knockable) {
-    console.log('KNOCK KNOCK');
+  else if (this.knockable && other_object.humanPart) {
+    console.log('KNOCK!!!');
+
     this.twitching = true;
     setTimeout(function() {
       self.twitching = false;
-    }, 200);
+    }, this.twitchtime);
+
+    if (this.knockHandler) {
+      this.knockHandler(other_object);
+    }
   }
 }
 
@@ -1241,7 +1247,7 @@ var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2:
 var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
 
 var BIG_HEAD_MAG = 15;
-var MAX_HEAD_SWELL = 500;
+var MAX_HEAD_SWELL = 40;
 var TORSO_CLOSE_MAG = 11;
 
 var CLOSE_KNEE_MAG = 60;
@@ -1274,6 +1280,17 @@ function phrasePos(left) {
 module.exports.eventHandler = function(event, data) {};
 
 module.exports.socket = socket;
+
+module.exports.maxPositions = {
+  z: 1000,
+  x: 1000,
+  y: 1000
+};
+module.exports.minPositions = {
+  z: -1000,
+  x: -1000,
+  y: -1000
+};
 
 module.exports.begin = function(w1, w2, cam, l) {
   wrestler1 = w1;
@@ -1394,6 +1411,19 @@ function moveDelta(bodypart, position, lastPos, divisor, directions) {
     deltaZ = (position.z - lastPos.z) / -divisor;
   }
 
+  if (bodyPart.mesh.position.x + deltaX < module.exports.minPositions.x ||
+      bodyPart.mesh.position.x + deltaX > module.exports.maxPositions.x) {
+        deltaX = 0;
+  }
+  if (bodyPart.mesh.position.y + deltaY < module.exports.minPositions.y ||
+    bodyPart.mesh.position.y + deltaY > module.exports.maxPositions.y) {
+      deltaY = 0;
+  }
+  if (bodyPart.mesh.position.z + deltaZ < module.exports.minPositions.z ||
+    bodyPart.mesh.position.z + deltaZ > module.exports.maxPositions.z) {
+      deltaZ = 0;
+  }
+
   bodypart.move(deltaX, deltaY, deltaZ);
 }
 
@@ -1424,7 +1454,13 @@ function phraseBlast(player, pos, vel) {
 function rightHand1(position) {
   if (previousPositions.rightHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, 10);
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -1460,7 +1496,13 @@ function leftHand1(position) {
 
   if (previousPositions.leftHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, 10);
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -1514,7 +1556,7 @@ function head1(position) {
           module.exports.eventHandler('shatter', {});
         }
 
-        scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
+        //scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
       }
 
     }
@@ -1566,7 +1608,7 @@ function rightElbow1(position) {
 function torso1(position) {
   if (previousPositions.torso1) {
     if (module.exports.mode == module.exports.KNOCK) {
-      moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
+      moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
       var mag = totalMagnitude(delta(position, previousPositions.torso1));
@@ -1583,7 +1625,13 @@ function torso1(position) {
 function rightHand2(position)  {
   if (previousPositions.rightHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-        moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -1619,7 +1667,13 @@ function leftHand2(position) {
 
   if (previousPositions.leftHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, 10);
+      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var directions = {x: true, y: true, z: true};
+      if (module.exports.mode == module.exports.KNOCK) {
+        directions.y = false;
+        directions.x = false;
+      }
+      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -1675,7 +1729,7 @@ function head2(position) {
           module.exports.eventHandler('shatter', {});
         }
 
-        scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
+        //scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
       }
     }
   }
@@ -1726,7 +1780,7 @@ function rightElbow2(position) {
 function torso2(position) {
   if (previousPositions.torso2) {
     if (module.exports.mode == module.exports.KNOCK) {
-      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: true, y: false, z: true});
+      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
       var mag = totalMagnitude(delta(position, previousPositions.torso2));
@@ -2729,6 +2783,11 @@ $(function() {
     io.socket.emit('artifact', player);
   }
 
+  function computerKnock(object) {
+    var player = (object.hostBody == kevinRonald)? 1 : 2;
+    io.socket.emit('knock', player);
+  }
+
   function shakeCamera() {
     var dx = (Math.random() - 0.5) * 1;
     var dy = (Math.random() - 0.5) * 0.5;
@@ -2952,33 +3011,78 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald.moveTo(-100, 15, -170);
+    kevinRonald.moveTo(-80, 8, -140);
     kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald.moveTo(100, 15, -170);
+    dylanRonald.moveTo(80, 8, -140);
     dylanRonald.rotate(0, -Math.PI/4, 0);
+
+    makeArmsTransparent();
+    changeArmOpacity(0);
 
     ronalds = [kevinRonald, dylanRonald];
 
-    var mac = new Computer({x: -50, y: 0, z: -80}, 60);
+    var mac = new Computer({x: -50, y: 0, z: -80}, 60, 10000, 200);
     mac.addTo(scene, function() {
-      mac.rotate(0, Math.PI/6, 0);
+      mac.rotate(0, Math.PI/8, 0);
     });
+    mac.knockHandler = function(otherObject) {
+      computerKnock(otherObject);
+    };
 
-    var pc = new Computer({x: 50, y: 0, z: -80}, 60);
+    var pc = new Computer({x: 50, y: 0, z: -80}, 60, 10000, 200);
     pc.addTo(scene, function() {
-      pc.rotate(0, -Math.PI/6, 0);
+      pc.rotate(0, -Math.PI/8, 0);
     });
+    pc.knockHandler = function(otherObject) {
+      computerKnock(otherObject);
+    };
+
+    io.maxPositions = {x: 50, y: 50, z: -70};
+    io.minPositions = {x: -50, y: -50, z: -400};
 
     trappedState.renderObjects = [mac, pc];
     trappedState.mac = mac;
     trappedState.pc = pc;
 
     kevinRonald.leftArm.collisionHandler = function() {
-      kevinRonald.leftArm.move(-1, 0, -1);
+      kevinRonald.leftArm.move(-10, 0, -10);
+    };
+    kevinRonald.rightArm.collisionHandler = function() {
+      kevinRonald.rightArm.move(-10, 0, -10);
+    };
+    dylanRonald.leftArm.collisionHandler = function() {
+      dylanRonald.leftArm.move(-10, 0, -10);
+    };
+    dylanRonald.rightArm.collisionHandler = function() {
+      dylanRonald.rightArm.move(-10, 0, -10);
     };
 
+    var resetInterval = setInterval(function() {
+      mac.reset();
+      mac.rotate(0, Math.PI/8, 0);
+      pc.reset();
+      pc.rotate(0, -Math.PI/8, 0);
+    }, 5000);
+
+    function changeArmOpacity(op) {
+      var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
+      arms.forEach(function(arm) {
+        arm.material.opacity = op;
+      });
+    }
+
+    function makeArmsTransparent() {
+      var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
+      arms.forEach(function(arm) {
+        arm.mesh.material.transparent = true;
+        arm.mesh.material.needsUpdate = true;
+      });
+    }
+
     trappedState.makeTransparent = function() {
+      changeArmOpacity(1.0);
+
       var delta = TEST_MODE? 0.02 : 0.002;
       mac.becomeTransparent(delta, undefined, TEST_MODE);
       pc.becomeTransparent(delta, undefined, TEST_MODE);
@@ -2999,6 +3103,7 @@ $(function() {
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
+      clearInterval(resetInterval);
 
       var endCameraZ = -150;
       var panInterval = setInterval(function() {
@@ -3024,6 +3129,9 @@ $(function() {
   }
 
   function enterDesperateFleeState() {
+    io.maxPositions = {x: 20000, y: 20000, z: 20000};
+    io.minPositions = {x: -20000, y: -20000, z: -20000};
+
     console.log('I AM DESPERATE NOW');
     flash('RONALD ESCAPES');
 
@@ -3242,6 +3350,9 @@ $(function() {
     scene.add(heavenState.ground);
 
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
+    heavenState.massiveComputer.knockHandler = function(otherObject) {
+      computerKnock(otherObject);
+    };
     heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
       heavenState.massiveComputer.material.opacity = 0.01;
@@ -3318,6 +3429,7 @@ $(function() {
         var z = massiveComputerZ + 150;
         heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: z}, 90);
         heavenState.bigGirlHand.mass = 500;
+        havenState.bigGirlHand.humanPart = true;
         heavenState.bigGirlHand.ignoreCollisons = true;
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {
