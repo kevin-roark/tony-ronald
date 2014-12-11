@@ -7,7 +7,7 @@
 			"revision" : 4
 		}
 ,
-		"rect" : [ 791.0, 66.0, 632.0, 670.0 ],
+		"rect" : [ 731.0, 60.0, 632.0, 670.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -27,6 +27,32 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"blinkcolor" : [ 0.0, 1.0, 0.073474, 1.0 ],
+					"id" : "obj-4",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 56.0, 229.0, 294.0, 294.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-2",
+					"maxclass" : "newobj",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 22.5, 175.0, 57.0, 20.0 ],
+					"text" : "del 4000"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -78,7 +104,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 160.0, 101.0, 446.0, 18.0 ],
-					"text" : "open ~/Documents/Projects/tony-ronald/public/media/myfriend/myfriend0.aiff"
+					"text" : "open ~/Documents/Projects/tony-ronald/public/media/myfriend/myfriend5.aiff"
 				}
 
 			}
@@ -137,7 +163,7 @@
 					"outlettype" : [ "int", "", "" ],
 					"parameter_enable" : 0,
 					"patching_rect" : [ 238.5, 607.0, 165.0, 20.0 ],
-					"prefix" : ":/Users/Dylan/Documents/Projects/tony-ronald/media/myfriend/"
+					"prefix" : "~/Documents/Projects/tony-ronald/media/myfriend/"
 				}
 
 			}
@@ -179,7 +205,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 13.5, 101.0, 75.0, 18.0 ],
-					"text" : "record 2500"
+					"text" : "record 4000"
 				}
 
 			}
@@ -208,6 +234,15 @@
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
+					"destination" : [ "obj-2", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-1", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-9", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -221,6 +256,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-13", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-4", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-2", 0 ]
 				}
 
 			}
