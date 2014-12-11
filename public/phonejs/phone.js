@@ -1,5 +1,5 @@
 
-var SERVER_IP = '169.254.120.171';
+var SERVER_IP = '169.254.138.240';
 
 var socket = io('http://' + SERVER_IP + ':8888');
 

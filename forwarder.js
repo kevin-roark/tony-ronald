@@ -2,7 +2,7 @@
 var PORT_FROM_KINECT = 12345; // also 12347
 var HOST = '127.0.0.1';
 
-var DYLAN_HOST = '169.254.240.97';
+var DYLAN_HOST = '169.254.120.171';
 var DYLAN_PORT = '8888';
 
 var osc = require('osc');

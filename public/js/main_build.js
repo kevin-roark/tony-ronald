@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -1282,7 +1282,7 @@ function phrasePos(left) {
   var pos = blankpos();
   pos.x = left? -60 : 60;
   pos.y = Math.random() * 80;
-  pos.z = (Math.random() * -150) - 50;
+  pos.z = (Math.random() * -80) - 16;
   return pos;
 }
 
@@ -2600,7 +2600,9 @@ $(function() {
   var chatroomVideo = document.querySelector('#chatroom');
   var walkLikeRonald = document.querySelector('#walk-like-ronald');
   var ronaldGUI = $('#ronald-gui');
+  console.log(ronaldGUI);
 
+  var startedShatter = false;
   io.eventHandler = function(event, data) {
     if (event == 'phraseBlast') {
       var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
@@ -2611,9 +2613,12 @@ $(function() {
     }
     else if (event == 'shatter') {
       trappedState.startShatter();
+      startedShatter = true;
     }
     else if (event == 'phoneShatter') {
-      trappedState.doShatter();
+      if (startedShatter) {
+        trappedState.doShatter();
+      }
     }
     else if (event == 'endPhrases') {
       phraseState.endScene();
@@ -3969,4 +3974,4 @@ module.exports.blocker = function(size) {
   return new THREE.Mesh(geometry, material);
 }
 
-},{"./lib/kutility":14}]},{},[15])
+},{"./lib/kutility":14}]},{},[15]);

@@ -57,7 +57,9 @@ $(function() {
   var chatroomVideo = document.querySelector('#chatroom');
   var walkLikeRonald = document.querySelector('#walk-like-ronald');
   var ronaldGUI = $('#ronald-gui');
+  console.log(ronaldGUI);
 
+  var startedShatter = false;
   io.eventHandler = function(event, data) {
     if (event == 'phraseBlast') {
       var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
@@ -68,9 +70,12 @@ $(function() {
     }
     else if (event == 'shatter') {
       trappedState.startShatter();
+      startedShatter = true;
     }
     else if (event == 'phoneShatter') {
-      trappedState.doShatter();
+      if (startedShatter) {
+        trappedState.doShatter();
+      }
     }
     else if (event == 'endPhrases') {
       phraseState.endScene();

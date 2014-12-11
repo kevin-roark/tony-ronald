@@ -64,7 +64,7 @@ function phrasePos(left) {
   var pos = blankpos();
   pos.x = left? -60 : 60;
   pos.y = Math.random() * 80;
-  pos.z = (Math.random() * -150) - 50;
+  pos.z = (Math.random() * -80) - 16;
   return pos;
 }
 
