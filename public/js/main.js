@@ -14,7 +14,7 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = false;
+  var TEST_MODE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -54,7 +54,6 @@ $(function() {
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
   var chatroomVideo = document.querySelector('#chatroom');
-  console.log(chatroomVideo);
   var ronaldGUI = $('#ronald-gui');
 
   io.eventHandler = function(event, data) {
@@ -284,6 +283,16 @@ $(function() {
     }).start();
   }
 
+  function tweenCamera(position, callback) {
+    var tween = new TWEEN.Tween(camera.position).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+      console.log('got that update');
+    }).onComplete(function() {
+      callback();
+    });
+    tween.start();
+  }
+
   function fadeOverlay(fadein, callback, color, time) {
     if (!color) color = 'rgb(255, 255, 255)';
     if (!time) time = 4000;
@@ -510,16 +519,15 @@ $(function() {
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
 
-      kevinRonald.moveTo(-100, 5, -170);
-      dylanRonald.moveTo(100, 5, -170);
-
-      var cameraPosition = {x: 0, y: 40, z: -370};
-      setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-      camera.lookAt({x: 0, y: 0, z: -100});
-      //tweenCameraToTarget(cameraPosition);
-
-      active.trapped = false;
-      enterDesperateFleeState();
+      var endCameraZ = -150;
+      var panInterval = setInterval(function() {
+        camera.position.z -= 2.5;
+        if (camera.position.z <= endCameraZ) {
+          clearInterval(panInterval);
+          active.trapped = false;
+          enterDesperateFleeState();
+        }
+      }, 15);
     }
 
     $('body').keypress(function(ev) {
@@ -537,6 +545,11 @@ $(function() {
   function enterDesperateFleeState() {
     console.log('I AM DESPERATE NOW');
     flash('RONALD ESCAPES');
+
+    kevinRonald.moveTo(-100, 5, -170);
+    dylanRonald.moveTo(100, 5, -170);
+    setCameraPosition(0, 40, -370);
+    camera.lookAt({x: 0, y: 0, z: -100});
 
     var groundLength = 2500;
     var darkLength = 1000;
@@ -760,7 +773,9 @@ $(function() {
     heavenState.artifacts = [];
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + Math.random() * 200 + 80};
+
+      var z = (heavenState.artifactZOffset)? heavenState.artifactZOffset() : Math.random() * 200 + 80;
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + z};
 
       var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
       var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
@@ -791,6 +806,8 @@ $(function() {
     function reachedComputer() {
       console.log('I AM AT LINUX NOW');
       clearInterval(dummyForwardInterval);
+
+      heavenState.artifactZOffset = function() {return (Math.random() - 0.5) * -12};
 
       var currentTarget = cameraFollowState.target;
       var initY = currentTarget.y;
