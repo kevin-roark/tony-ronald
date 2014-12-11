@@ -2490,7 +2490,7 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = true;
+  var TEST_MODE = false;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *

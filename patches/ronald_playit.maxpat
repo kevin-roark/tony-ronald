@@ -3,8 +3,9 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 6,
-			"minor" : 0,
-			"revision" : 4
+			"minor" : 1,
+			"revision" : 8,
+			"architecture" : "x86"
 		}
 ,
 		"rect" : [ 432.0, 133.0, 890.0, 624.0 ],
@@ -156,7 +157,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-49",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -171,7 +172,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-48",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -186,7 +187,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-47",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -365,7 +366,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-56",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -412,13 +413,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-29",
 					"linecount" : 2,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 23.5, 33.0, 135.0, 34.0 ],
+					"patching_rect" : [ 23.5, 33.0, 135.0, 33.0 ],
 					"text" : "TO BE USED IN poly~ WITHIN tony_master",
 					"textcolor" : [ 0.015097, 0.575236, 0.909319, 1.0 ]
 				}
@@ -428,13 +429,13 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-28",
 					"linecount" : 3,
 					"maxclass" : "comment",
 					"numinlets" : 1,
 					"numoutlets" : 0,
-					"patching_rect" : [ 485.0, 283.0, 129.5, 48.0 ],
+					"patching_rect" : [ 485.0, 283.0, 129.5, 47.0 ],
 					"text" : "pitching: will be controlled by moving words on screen",
 					"textcolor" : [ 0.015097, 0.575236, 0.909319, 1.0 ]
 				}
@@ -444,7 +445,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-67",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -534,8 +535,8 @@
 					"numinlets" : 3,
 					"numoutlets" : 2,
 					"outlettype" : [ "", "" ],
-					"patching_rect" : [ 79.0, 132.0, 504.0, 20.0 ],
-					"text" : "combine ~/Documents/Projects/tony-ronald/public/media/myfriend/myfriend i .aiff @triggers 1"
+					"patching_rect" : [ 44.0, 129.0, 199.0, 20.0 ],
+					"text" : "combine myfriend i .aiff @triggers 1"
 				}
 
 			}
@@ -550,12 +551,12 @@
 					"patching_rect" : [ 29.0, 293.0, 20.0, 20.0 ],
 					"saved_attribute_attributes" : 					{
 						"valueof" : 						{
-							"parameter_initial" : [ 0 ],
+							"parameter_longname" : "toggle",
+							"parameter_shortname" : "toggle",
 							"parameter_type" : 3,
 							"parameter_initial_enable" : 1,
-							"parameter_invisible" : 1,
-							"parameter_shortname" : "toggle",
-							"parameter_longname" : "toggle"
+							"parameter_initial" : [ 0 ],
+							"parameter_invisible" : 1
 						}
 
 					}
@@ -956,30 +957,30 @@
  ],
 		"parameters" : 		{
 			"obj-3.1::obj-30" : [ "gain~", "gain~", 0 ],
+			"obj-16" : [ "toggle", "toggle", 0 ],
 			"obj-3.1::obj-5" : [ "toggle[1]", "toggle[1]", 0 ],
 			"obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
-			"obj-16" : [ "toggle", "toggle", 0 ],
 			"obj-3.1::obj-42" : [ "flonum", "flonum", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
 				"name" : "ronald_doppler.maxpat",
-				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
-				"patcherrelativepath" : "",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_verb.maxpat",
-				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
-				"patcherrelativepath" : "",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_pan.maxpat",
-				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
-				"patcherrelativepath" : "",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
