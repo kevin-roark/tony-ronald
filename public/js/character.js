@@ -11,6 +11,8 @@ var Hand = require('./hand');
 module.exports = Character;
 
 function Character(startPos, scale) {
+  var self = this;
+
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
   this.startX = startPos.x;
   this.startY = startPos.y;
@@ -37,6 +39,7 @@ function Character(startPos, scale) {
                     this.torso, this.head];
   this.bodyParts.forEach(function(bodyPart) {
     bodyPart.ignoreCollisons = true;
+    bodyPart.hostBody = self;
   });
 
   this.twitching = false; // random motion and rotation
@@ -52,6 +55,8 @@ Character.prototype.addTo = function(scene, callback) {
   var bodyCount = 0;
   this.bodyParts.forEach(function(part) {
     part.addTo(scene, function() {
+      part.mesh.humanPart = true;
+
       bodyCount += 1;
       if (bodyCount == self.bodyParts.length) {
         if (callback) callback();

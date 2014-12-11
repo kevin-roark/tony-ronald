@@ -14,7 +14,7 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = false;
+  var TEST_MODE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -239,13 +239,18 @@ $(function() {
 
   function flash(text, timeout) {
     if (!text) return;
-    if (!timeout) timeout = 200;
+    if (!timeout) timeout = 275;
 
     $('#flash').text(text);
     $('#flash').show();
     setTimeout(function() {
       $('#flash').hide();
     }, timeout);
+  }
+
+  function artifactCollision(object) {
+    var player = (object.hostBody == kevinRonald)? 1 : 2;
+    io.socket.emit('artifact', player);
   }
 
   function shakeCamera() {
@@ -615,6 +620,10 @@ $(function() {
       var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
       var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
       var artifact = new Artifact(future, Math.random() * 20 + 9.8, false, artifactIndex);
+      artifact.humanCollisionHandler = function(otherObject) {
+        artifactCollision(otherObject);
+      };
+
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -780,6 +789,10 @@ $(function() {
       var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
       var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
       var artifact = new Artifact(future, Math.random() * 20 + 9.8, true, artifactIndex);
+      artifact.humanCollisionHandler = function(otherObject) {
+        artifactCollision(otherObject);
+      };
+
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 

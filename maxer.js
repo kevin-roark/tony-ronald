@@ -16,6 +16,7 @@ var END_ROTDOWN_ADDRESS = '/endRotDown';
 var HAND_DELTA_ADDRESS = '/handDelta';
 
 var PHRASE_ADDRESS = '/phrase';
+var WHOA_ADDRESS = '/whoa';
 
 var signalMap = {};
 signalMap[playerize(START_SWELL_ADDRESS, 1)] = 1;
@@ -76,6 +77,10 @@ module.exports.handDelta = function(player, mag) {
 
 module.exports.phrase = function(playerIndex, phraseIndex, velocity) {
   maxClient.send(PHRASE_ADDRESS, playerIndex - 1, phraseIndex, velocity.x, velocity.y, velocity.z);
+}
+
+module.exports.whoa = function(playerIndex) {
+  maxClient.send(WHOA_ADDRESS, playerIndex -1);
 }
 
 function playerize(address, player) {
