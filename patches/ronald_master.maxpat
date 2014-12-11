@@ -3,11 +3,12 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 6,
-			"minor" : 0,
-			"revision" : 4
+			"minor" : 1,
+			"revision" : 8,
+			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 0.0, 50.0, 1032.0, 728.0 ],
+		"rect" : [ 280.0, 75.0, 1032.0, 746.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -27,6 +28,60 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"id" : "obj-34",
+					"maxclass" : "button",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "bang" ],
+					"patching_rect" : [ 600.0, 136.0, 52.0, 52.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-36",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "signal" ],
+					"patching_rect" : [ 600.0, 202.0, 126.0, 20.0 ],
+					"text" : "poly~ knock_playit 16"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"frgb" : 0.0,
+					"id" : "obj-31",
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 600.0, 68.0, 173.0, 20.0 ],
+					"text" : "KNOCK / PHRASE / WHOA",
+					"textcolor" : [ 0.827671, 0.544408, 0.311287, 1.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-28",
+					"maxclass" : "newobj",
+					"numinlets" : 1,
+					"numoutlets" : 3,
+					"outlettype" : [ "", "", "" ],
+					"patching_rect" : [ 600.0, 96.0, 242.0, 20.0 ],
+					"text" : "poly~ osc_router 1"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-19",
 					"maxclass" : "button",
@@ -154,6 +209,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
+					"frgb" : 0.0,
 					"id" : "obj-10",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -237,7 +293,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
+					"frgb" : 0.0,
 					"id" : "obj-20",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -528,6 +584,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-34", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-28", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-1", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -541,6 +606,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-30", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-36", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-34", 0 ]
 				}
 
 			}
@@ -645,112 +719,122 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-4.2::obj-16" : [ "toggle[2]", "toggle", 0 ],
-			"obj-4.7::obj-3.1::obj-5" : [ "toggle[37]", "toggle[1]", 0 ],
-			"obj-4.10::obj-3.1::obj-42" : [ "flonum[24]", "flonum", 0 ],
-			"obj-4.15::obj-16" : [ "toggle[29]", "toggle", 0 ],
-			"obj-4.3::obj-16" : [ "toggle[4]", "toggle", 0 ],
-			"obj-4.5::obj-3.1::obj-30" : [ "gain~[39]", "gain~", 0 ],
-			"obj-4.10::obj-3.1::obj-10" : [ "gain~[49]", "gain~[1]", 0 ],
-			"obj-4.11::obj-3.1::obj-5" : [ "toggle[41]", "toggle[1]", 0 ],
-			"obj-4.13::obj-3.1::obj-5" : [ "toggle[43]", "toggle[1]", 0 ],
-			"obj-4.8::obj-3.1::obj-10" : [ "gain~[44]", "gain~[1]", 0 ],
-			"obj-4.13::obj-3.1::obj-30" : [ "gain~[54]", "gain~", 0 ],
 			"obj-4.3::obj-3.1::obj-10" : [ "gain~[34]", "gain~[1]", 0 ],
-			"obj-4.7::obj-3.1::obj-10" : [ "gain~[42]", "gain~[1]", 0 ],
-			"obj-4.4::obj-3.1::obj-5" : [ "toggle[34]", "toggle[1]", 0 ],
-			"obj-4.5::obj-3.1::obj-42" : [ "flonum[19]", "flonum", 0 ],
-			"obj-4.15::obj-3.1::obj-30" : [ "gain~[58]", "gain~", 0 ],
-			"obj-4.1::obj-3.1::obj-30" : [ "gain~", "gain~", 0 ],
-			"obj-4.8::obj-3.1::obj-42" : [ "flonum[22]", "flonum", 0 ],
-			"obj-4.10::obj-3.1::obj-30" : [ "gain~[48]", "gain~", 0 ],
-			"obj-4.15::obj-3.1::obj-42" : [ "flonum[29]", "flonum", 0 ],
-			"obj-4.9::obj-3.1::obj-30" : [ "gain~[46]", "gain~", 0 ],
+			"obj-4.13::obj-16" : [ "toggle[24]", "toggle", 0 ],
 			"obj-4.16::obj-16" : [ "toggle[31]", "toggle", 0 ],
-			"obj-4.6::obj-3.1::obj-5" : [ "toggle[36]", "toggle[1]", 0 ],
-			"obj-4.1::obj-3.1::obj-5" : [ "toggle[1]", "toggle[1]", 0 ],
-			"obj-4.2::obj-3.1::obj-10" : [ "gain~[32]", "gain~[1]", 0 ],
-			"obj-4.15::obj-3.1::obj-5" : [ "toggle[45]", "toggle[1]", 0 ],
-			"obj-4.3::obj-3.1::obj-42" : [ "flonum[17]", "flonum", 0 ],
-			"obj-4.14::obj-16" : [ "toggle[26]", "toggle", 0 ],
-			"obj-4.12::obj-3.1::obj-10" : [ "gain~[52]", "gain~[1]", 0 ],
-			"obj-4.4::obj-3.1::obj-30" : [ "gain~[36]", "gain~", 0 ],
-			"obj-4.5::obj-16" : [ "toggle[9]", "toggle", 0 ],
-			"obj-4.12::obj-16" : [ "toggle[23]", "toggle", 0 ],
-			"obj-4.16::obj-3.1::obj-42" : [ "flonum[30]", "flonum", 0 ],
-			"obj-4.4::obj-3.1::obj-10" : [ "gain~[37]", "gain~[1]", 0 ],
-			"obj-4.6::obj-16" : [ "toggle[10]", "toggle", 0 ],
-			"obj-4.11::obj-16" : [ "toggle[21]", "toggle", 0 ],
-			"obj-4.1::obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
-			"obj-4.12::obj-3.1::obj-42" : [ "flonum[26]", "flonum", 0 ],
+			"obj-4.4::obj-16" : [ "toggle[6]", "toggle", 0 ],
+			"obj-4.14::obj-3.1::obj-10" : [ "gain~[56]", "gain~[1]", 0 ],
+			"obj-4.5::obj-3.1::obj-10" : [ "gain~[38]", "gain~[1]", 0 ],
 			"obj-4.15::obj-3.1::obj-10" : [ "gain~[59]", "gain~[1]", 0 ],
 			"obj-4.6::obj-3.1::obj-30" : [ "gain~[40]", "gain~", 0 ],
-			"obj-4.7::obj-3.1::obj-42" : [ "flonum[21]", "flonum", 0 ],
-			"obj-4.14::obj-3.1::obj-5" : [ "toggle[44]", "toggle[1]", 0 ],
-			"obj-4.14::obj-3.1::obj-10" : [ "gain~[56]", "gain~[1]", 0 ],
-			"obj-4.9::obj-16" : [ "toggle[16]", "toggle", 0 ],
-			"obj-4.14::obj-3.1::obj-30" : [ "gain~[57]", "gain~", 0 ],
-			"obj-4.9::obj-3.1::obj-5" : [ "toggle[39]", "toggle[1]", 0 ],
-			"obj-4.10::obj-16" : [ "toggle[18]", "toggle", 0 ],
-			"obj-4.4::obj-3.1::obj-42" : [ "flonum[18]", "flonum", 0 ],
-			"obj-4.11::obj-3.1::obj-10" : [ "gain~[51]", "gain~[1]", 0 ],
-			"obj-4.13::obj-3.1::obj-42" : [ "flonum[27]", "flonum", 0 ],
-			"obj-4.13::obj-16" : [ "toggle[24]", "toggle", 0 ],
-			"obj-4.5::obj-3.1::obj-10" : [ "gain~[38]", "gain~[1]", 0 ],
-			"obj-4.12::obj-3.1::obj-30" : [ "gain~[53]", "gain~", 0 ],
-			"obj-4.16::obj-3.1::obj-30" : [ "gain~[61]", "gain~", 0 ],
-			"obj-4.6::obj-3.1::obj-42" : [ "flonum[20]", "flonum", 0 ],
-			"obj-4.6::obj-3.1::obj-10" : [ "gain~[41]", "gain~[1]", 0 ],
-			"obj-4.9::obj-3.1::obj-10" : [ "gain~[47]", "gain~[1]", 0 ],
-			"obj-4.1::obj-16" : [ "toggle", "toggle", 0 ],
-			"obj-4.8::obj-16" : [ "toggle[15]", "toggle", 0 ],
-			"obj-4.14::obj-3.1::obj-42" : [ "flonum[28]", "flonum", 0 ],
-			"obj-4.2::obj-3.1::obj-5" : [ "toggle[32]", "toggle[1]", 0 ],
-			"obj-4.2::obj-3.1::obj-30" : [ "gain~[33]", "gain~", 0 ],
-			"obj-4.3::obj-3.1::obj-30" : [ "gain~[35]", "gain~", 0 ],
-			"obj-4.5::obj-3.1::obj-5" : [ "toggle[35]", "toggle[1]", 0 ],
-			"obj-4.7::obj-16" : [ "toggle[12]", "toggle", 0 ],
+			"obj-4.7::obj-3.1::obj-30" : [ "gain~[43]", "gain~", 0 ],
 			"obj-4.8::obj-3.1::obj-5" : [ "toggle[38]", "toggle[1]", 0 ],
-			"obj-4.11::obj-3.1::obj-42" : [ "flonum[25]", "flonum", 0 ],
-			"obj-4.4::obj-16" : [ "toggle[6]", "toggle", 0 ],
-			"obj-4.11::obj-3.1::obj-30" : [ "gain~[50]", "gain~", 0 ],
-			"obj-4.16::obj-3.1::obj-10" : [ "gain~[60]", "gain~[1]", 0 ],
-			"obj-4.10::obj-3.1::obj-5" : [ "toggle[40]", "toggle[1]", 0 ],
-			"obj-4.16::obj-3.1::obj-5" : [ "toggle[46]", "toggle[1]", 0 ],
-			"obj-4.1::obj-3.1::obj-42" : [ "flonum", "flonum", 0 ],
-			"obj-4.9::obj-3.1::obj-42" : [ "flonum[23]", "flonum", 0 ],
-			"obj-4.12::obj-3.1::obj-5" : [ "toggle[42]", "toggle[1]", 0 ],
-			"obj-4.13::obj-3.1::obj-10" : [ "gain~[55]", "gain~[1]", 0 ],
+			"obj-4.9::obj-16" : [ "toggle[16]", "toggle", 0 ],
+			"obj-4.10::obj-3.1::obj-10" : [ "gain~[49]", "gain~[1]", 0 ],
+			"obj-4.11::obj-3.1::obj-10" : [ "gain~[51]", "gain~[1]", 0 ],
 			"obj-4.2::obj-3.1::obj-42" : [ "flonum[16]", "flonum", 0 ],
+			"obj-4.12::obj-3.1::obj-30" : [ "gain~[53]", "gain~", 0 ],
+			"obj-4.3::obj-3.1::obj-42" : [ "flonum[17]", "flonum", 0 ],
+			"obj-4.13::obj-3.1::obj-10" : [ "gain~[55]", "gain~[1]", 0 ],
+			"obj-4.16::obj-3.1::obj-5" : [ "toggle[46]", "toggle[1]", 0 ],
+			"obj-4.4::obj-3.1::obj-10" : [ "gain~[37]", "gain~[1]", 0 ],
+			"obj-4.1::obj-16" : [ "toggle", "toggle", 0 ],
+			"obj-4.14::obj-16" : [ "toggle[26]", "toggle", 0 ],
+			"obj-4.5::obj-16" : [ "toggle[9]", "toggle", 0 ],
+			"obj-4.1::obj-3.1::obj-5" : [ "toggle[1]", "toggle[1]", 0 ],
+			"obj-4.6::obj-3.1::obj-10" : [ "gain~[41]", "gain~[1]", 0 ],
+			"obj-4.7::obj-3.1::obj-5" : [ "toggle[37]", "toggle[1]", 0 ],
 			"obj-4.8::obj-3.1::obj-30" : [ "gain~[45]", "gain~", 0 ],
+			"obj-4.9::obj-3.1::obj-30" : [ "gain~[46]", "gain~", 0 ],
+			"obj-4.10::obj-16" : [ "toggle[18]", "toggle", 0 ],
+			"obj-4.11::obj-3.1::obj-42" : [ "flonum[25]", "flonum", 0 ],
+			"obj-4.2::obj-3.1::obj-5" : [ "toggle[32]", "toggle[1]", 0 ],
+			"obj-4.12::obj-3.1::obj-10" : [ "gain~[52]", "gain~[1]", 0 ],
+			"obj-4.1::obj-3.1::obj-42" : [ "flonum", "flonum", 0 ],
 			"obj-4.3::obj-3.1::obj-5" : [ "toggle[33]", "toggle[1]", 0 ],
-			"obj-4.7::obj-3.1::obj-30" : [ "gain~[43]", "gain~", 0 ]
+			"obj-4.13::obj-3.1::obj-5" : [ "toggle[43]", "toggle[1]", 0 ],
+			"obj-4.16::obj-3.1::obj-30" : [ "gain~[61]", "gain~", 0 ],
+			"obj-4.4::obj-3.1::obj-42" : [ "flonum[18]", "flonum", 0 ],
+			"obj-4.14::obj-3.1::obj-5" : [ "toggle[44]", "toggle[1]", 0 ],
+			"obj-4.5::obj-3.1::obj-30" : [ "gain~[39]", "gain~", 0 ],
+			"obj-4.6::obj-16" : [ "toggle[10]", "toggle", 0 ],
+			"obj-4.7::obj-3.1::obj-42" : [ "flonum[21]", "flonum", 0 ],
+			"obj-4.1::obj-3.1::obj-30" : [ "gain~", "gain~", 0 ],
+			"obj-4.8::obj-3.1::obj-42" : [ "flonum[22]", "flonum", 0 ],
+			"obj-4.9::obj-3.1::obj-10" : [ "gain~[47]", "gain~[1]", 0 ],
+			"obj-4.10::obj-3.1::obj-30" : [ "gain~[48]", "gain~", 0 ],
+			"obj-4.11::obj-16" : [ "toggle[21]", "toggle", 0 ],
+			"obj-4.2::obj-16" : [ "toggle[2]", "toggle", 0 ],
+			"obj-4.12::obj-3.1::obj-42" : [ "flonum[26]", "flonum", 0 ],
+			"obj-4.15::obj-3.1::obj-42" : [ "flonum[29]", "flonum", 0 ],
+			"obj-4.3::obj-3.1::obj-30" : [ "gain~[35]", "gain~", 0 ],
+			"obj-4.13::obj-3.1::obj-30" : [ "gain~[54]", "gain~", 0 ],
+			"obj-4.16::obj-3.1::obj-10" : [ "gain~[60]", "gain~[1]", 0 ],
+			"obj-4.4::obj-3.1::obj-5" : [ "toggle[34]", "toggle[1]", 0 ],
+			"obj-4.14::obj-3.1::obj-42" : [ "flonum[28]", "flonum", 0 ],
+			"obj-4.5::obj-3.1::obj-42" : [ "flonum[19]", "flonum", 0 ],
+			"obj-4.15::obj-3.1::obj-5" : [ "toggle[45]", "toggle[1]", 0 ],
+			"obj-4.6::obj-3.1::obj-42" : [ "flonum[20]", "flonum", 0 ],
+			"obj-4.7::obj-16" : [ "toggle[12]", "toggle", 0 ],
+			"obj-4.8::obj-3.1::obj-10" : [ "gain~[44]", "gain~[1]", 0 ],
+			"obj-4.9::obj-3.1::obj-5" : [ "toggle[39]", "toggle[1]", 0 ],
+			"obj-4.10::obj-3.1::obj-42" : [ "flonum[24]", "flonum", 0 ],
+			"obj-4.11::obj-3.1::obj-30" : [ "gain~[50]", "gain~", 0 ],
+			"obj-4.2::obj-3.1::obj-10" : [ "gain~[32]", "gain~[1]", 0 ],
+			"obj-4.1::obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
+			"obj-4.12::obj-16" : [ "toggle[23]", "toggle", 0 ],
+			"obj-4.15::obj-16" : [ "toggle[29]", "toggle", 0 ],
+			"obj-4.3::obj-16" : [ "toggle[4]", "toggle", 0 ],
+			"obj-4.13::obj-3.1::obj-42" : [ "flonum[27]", "flonum", 0 ],
+			"obj-4.16::obj-3.1::obj-42" : [ "flonum[30]", "flonum", 0 ],
+			"obj-4.4::obj-3.1::obj-30" : [ "gain~[36]", "gain~", 0 ],
+			"obj-4.14::obj-3.1::obj-30" : [ "gain~[57]", "gain~", 0 ],
+			"obj-4.5::obj-3.1::obj-5" : [ "toggle[35]", "toggle[1]", 0 ],
+			"obj-4.15::obj-3.1::obj-30" : [ "gain~[58]", "gain~", 0 ],
+			"obj-4.6::obj-3.1::obj-5" : [ "toggle[36]", "toggle[1]", 0 ],
+			"obj-4.7::obj-3.1::obj-10" : [ "gain~[42]", "gain~[1]", 0 ],
+			"obj-4.8::obj-16" : [ "toggle[15]", "toggle", 0 ],
+			"obj-4.9::obj-3.1::obj-42" : [ "flonum[23]", "flonum", 0 ],
+			"obj-4.10::obj-3.1::obj-5" : [ "toggle[40]", "toggle[1]", 0 ],
+			"obj-4.11::obj-3.1::obj-5" : [ "toggle[41]", "toggle[1]", 0 ],
+			"obj-4.2::obj-3.1::obj-30" : [ "gain~[33]", "gain~", 0 ],
+			"obj-4.12::obj-3.1::obj-5" : [ "toggle[42]", "toggle[1]", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
 				"name" : "ronald_playit.maxpat",
-				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
-				"patcherrelativepath" : "",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_doppler.maxpat",
-				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
-				"patcherrelativepath" : "",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_verb.maxpat",
-				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
-				"patcherrelativepath" : "",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
-				"name" : "nw.gverb~.mxo",
-				"type" : "iLaX"
+				"name" : "osc_router.maxpat",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
+			}
+, 			{
+				"name" : "knock_playit.maxpat",
+				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
+				"patcherrelativepath" : ".",
+				"type" : "JSON",
+				"implicit" : 1
 			}
  ]
 	}
