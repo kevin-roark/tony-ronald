@@ -75,10 +75,10 @@ $(function() {
       phraseState.endScene();
     }
     else if (event == 'transparentComputers') {
-
+      trappedState.makeTransparent();
     }
     else if (event == 'endPokes') {
-
+      heavenState.stopPoking = true;
     }
   };
 
@@ -488,10 +488,10 @@ $(function() {
       kevinRonald.leftArm.move(-1, 0, -1);
     };
 
-    var time = TEST_MODE? 1000 : 20000;
-    setTimeout(function() {
-      mac.becomeTransparent(0.02, undefined, TEST_MODE);
-      pc.becomeTransparent(0.02, undefined, TEST_MODE);
+    trappedState.makeTransparent = function() {
+      var delta = TEST_MODE? 0.02 : 0.002;
+      mac.becomeTransparent(delta, undefined, TEST_MODE);
+      pc.becomeTransparent(delta, undefined, TEST_MODE);
 
       var shatterChecker = setInterval(function() {
         if (mac.shattering && pc.shattering) {
@@ -499,7 +499,13 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, time);
+    }
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        trappedState.makeTransparent();
+      }, 1000);
+    }
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
@@ -843,13 +849,13 @@ $(function() {
         var dist = 60;
         var hand = heavenState.bigGirlHand;
         var pokeCount = 0;
-        var maxPokes = 3;
+        var maxPokes = TEST_MODE? 3 : 1000;
 
         poke();
         function poke() {
           hand.pokeUntilCollision(dist, function() {
             pokeCount += 1;
-            if (pokeCount < maxPokes) {
+            if (!heavenState.stopPoking && pokeCount < maxPokes) {
               setTimeout(poke, 1);
             } else {
               donePoking();

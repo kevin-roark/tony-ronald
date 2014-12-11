@@ -310,6 +310,8 @@ function head1(position) {
         if (checkShatter(eventsWithRapidHeadVelocity.one)) {
           module.exports.eventHandler('shatter', {});
         }
+
+        scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
       }
 
     }
@@ -469,6 +471,8 @@ function head2(position) {
         if (checkShatter(eventsWithRapidHeadVelocity.two)) {
           module.exports.eventHandler('shatter', {});
         }
+
+        scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
       }
     }
   }
