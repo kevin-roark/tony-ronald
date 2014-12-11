@@ -124,6 +124,13 @@ io.on('connection', function(socket) {
   socket.on('rock', function(index) {
     maxer.rock(index);
   });
+
+  socket.on('heaven', function() {
+    maxer.heaven();
+  });
+  socket.on('running', function() {
+    maxer.running();
+  });
 });
 
 function setForwarderSocketEvents(forwarderSocket) {

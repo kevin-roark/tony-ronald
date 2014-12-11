@@ -11,3 +11,9 @@ connect other computer to server with node forwarder.js
 connect server's browser
 
 to connect phone u gotta use sever_ip/8888:phone.html in safari
+
+
+architecture:
+  browser socket io.js -> kinect.js socket.io server -> maxer.js osc -> max msp
+  forwarder connect socket -> kinect.js socket.io server -> browser socket io.js
+  phone socket phone.js -> kinect.js socket.io server -> browser socket io.js

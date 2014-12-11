@@ -19,6 +19,8 @@ var PHRASE_ADDRESS = '/phrase';
 var WHOA_ADDRESS = '/whoa';
 var KNOCK_ADDRESS = '/knock';
 var ROCK_ADDRESS = '/rock';
+var HEAVEN_ADDRESS = '/heaven';
+var RUNNING_ADDRESS = '/running';
 
 var signalMap = {};
 signalMap[playerize(START_SWELL_ADDRESS, 1)] = 1;
@@ -91,6 +93,14 @@ module.exports.knock = function(playerIndex) {
 
 module.exports.rock = function(index) {
   maxClient.send(ROCK_ADDRESS, index);
+}
+
+module.exports.heaven = function() {
+  maxClient.send(HEAVEN_ADDRESS, 1);
+}
+
+module.exports.running = function() {
+  maxClient.send(RUNNING_ADDRESS, 1);
 }
 
 function playerize(address, player) {

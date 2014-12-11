@@ -2596,6 +2596,7 @@ $(function() {
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
   var chatroomVideo = document.querySelector('#chatroom');
+  var walkLikeRonald = document.querySelector('#walk-like-ronald');
   var ronaldGUI = $('#ronald-gui');
 
   io.eventHandler = function(event, data) {
@@ -2609,8 +2610,7 @@ $(function() {
       io.socket.emit('phrase', data.player, rw.phraseIndex, data.vel);
     }
     else if (event == 'shatter') {
-      if (trappedState.mac) trappedState.mac.shatterable = true;
-      if (trappedState.pc) trappedState.pc.shatterable = true;
+      trappedState.startShatter();
     }
     else if (event == 'endPhrases') {
       phraseState.endScene();
@@ -3055,6 +3055,20 @@ $(function() {
       computerKnock(otherObject);
     };
 
+    trappedState.startShatter = function() {
+      mac.shatterable = true;
+      pc.shatterable = true;
+
+      walkLikeRonald.play();
+    };
+
+    var shatterChecker = setInterval(function() {
+      if (mac.shattering && pc.shattering) {
+        clearInterval(shatterChecker);
+        endScene();
+      }
+    }, 100);
+
     io.maxPositions = {x: 50, y: 50, z: -70};
     io.minPositions = {x: -50, y: -50, z: -400};
 
@@ -3117,13 +3131,6 @@ $(function() {
       var delta = TEST_MODE? 0.02 : 0.002;
       mac.becomeTransparent(delta, undefined, TEST_MODE);
       pc.becomeTransparent(delta, undefined, TEST_MODE);
-
-      var shatterChecker = setInterval(function() {
-        if (mac.shattering && pc.shattering) {
-          clearInterval(shatterChecker);
-          endScene();
-        }
-      }, 100);
     }
 
     if (TEST_MODE || SKIP_PHRASE) {
@@ -3142,6 +3149,7 @@ $(function() {
         camera.position.z -= 2.5;
         if (camera.position.z <= endCameraZ) {
           clearInterval(panInterval);
+          walkLikeRonald.pause();
           active.trapped = false;
           enterDesperateFleeState();
         }
@@ -3166,6 +3174,7 @@ $(function() {
 
     console.log('I AM DESPERATE NOW');
     flash('RONALD ESCAPES');
+    io.socket.emit('running');
 
     kevinRonald.moveTo(-100, 5, -170);
     dylanRonald.moveTo(100, 5, -170);
@@ -3277,6 +3286,7 @@ $(function() {
   function enterHeavenState(startGrassZ) {
     console.log('I AM HEAVEN NOW');
     flash('RONALD LIVES');
+    io.socket.emit('heaven');
 
     if (!startGrassZ) startGrassZ = 4500;
 
