@@ -1250,6 +1250,7 @@ var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rot
 
 var MIN_TIME_BETWEEN_GESTURES = 800;
 var PHRASE_GESTURE_DELTA_MULT = 4.0;
+var MAX_PHRASE_DIRECTIONAL_VEL = 100;
 var MIN_PHRASE_VEL = 120.0;
 var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
 var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
@@ -1281,10 +1282,22 @@ function blankpos() { return {x: 0, y: 0, z: 0}; };
 
 function phrasePos(left) {
   var pos = blankpos();
-  pos.x = left? -60 : 60;
-  pos.y = Math.random() * 80;
-  pos.z = (Math.random() * -80) - 16;
+
+  pos.x = left? -20 : 20;
+  pos.y = Math.random() * 40 + 20;
+  pos.z = (Math.random() * -60) - 20;
   return pos;
+}
+
+function velCleanse(vel) {
+  if (vel.x < -MAX_PHRASE_DIRECTIONAL_VEL) vel.x = -MAX_PHRASE_DIRECTIONAL_VEL;
+  else if (vel.x > MAX_PHRASE_DIRECTIONAL_VEL) vel.x = MAX_PHRASE_DIRECTIONAL_VEL;
+
+  if (vel.y < -MAX_PHRASE_DIRECTIONAL_VEL) vel.y = -MAX_PHRASE_DIRECTIONAL_VEL;
+  else if (vel.y > MAX_PHRASE_DIRECTIONAL_VEL) vel.y = MAX_PHRASE_DIRECTIONAL_VEL;
+
+  if (vel.z < -MAX_PHRASE_DIRECTIONAL_VEL) vel.z = -MAX_PHRASE_DIRECTIONAL_VEL;
+  else if (vel.z > MAX_PHRASE_DIRECTIONAL_VEL) vel.z = MAX_PHRASE_DIRECTIONAL_VEL;
 }
 
 module.exports.eventHandler = function(event, data) {};
@@ -1486,6 +1499,8 @@ function rightHand1(position) {
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(false);
 
+          velCleanse(vel);
+
           phraseGestureTimes.right1 = now;
           phraseGestureVelocities.right1 = vel;
           phraseGestureStartPositions.right1 = pos;
@@ -1527,6 +1542,8 @@ function leftHand1(position) {
         };
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(true);
+
+          velCleanse(vel);
 
           phraseGestureTimes.left1 = now;
           phraseGestureVelocities.left1 = vel;
@@ -1662,6 +1679,8 @@ function rightHand2(position)  {
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(false);
 
+          velCleanse(vel);
+
           phraseGestureTimes.right2 = now;
           phraseGestureVelocities.right2 = vel;
           phraseGestureStartPositions.right2 = pos;
@@ -1703,6 +1722,8 @@ function leftHand2(position) {
         };
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(true);
+
+          velCleanse(vel);
 
           phraseGestureTimes.left2 = now;
           phraseGestureVelocities.left2 = vel;
@@ -3024,7 +3045,7 @@ $(function() {
     if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         phraseState.endScene();
-      }, 5000);
+      }, 10000);
     }
   }
 
@@ -3831,6 +3852,9 @@ function RonaldWord(player, phrase, config) {
   if (!config) config = {};
   if (!config.position) {
     config.position = {x: Math.random() * 80 - 40, y: Math.random() * 80, z: Math.random() * -100};
+    config.position.x = (Math.random() > 0.5)? -20 : 20;
+    config.position.y = Math.random() * 40 + 20;
+    config.position.z = (Math.random() * -60) - 20;
   }
   if (!config.velocity) {
     config.velocity = {x: negrand(50), y: negrand(50), z: negrand(50)};
@@ -3846,7 +3870,7 @@ function RonaldWord(player, phrase, config) {
   this.decay = config.decay;
 
   this.geometry = new THREE.TextGeometry(this.phrase, {
-    size: 1.5 + negrand(1)
+    size: 2 + negrand(1)
     , height: 0.01
     , curveSegments: 1
     , font: "droid sans"

@@ -472,7 +472,7 @@ $(function() {
     if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         phraseState.endScene();
-      }, 5000);
+      }, 10000);
     }
   }
 

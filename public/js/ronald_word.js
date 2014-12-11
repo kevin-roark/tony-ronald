@@ -64,6 +64,9 @@ function RonaldWord(player, phrase, config) {
   if (!config) config = {};
   if (!config.position) {
     config.position = {x: Math.random() * 80 - 40, y: Math.random() * 80, z: Math.random() * -100};
+    config.position.x = (Math.random() > 0.5)? -20 : 20;
+    config.position.y = Math.random() * 40 + 20;
+    config.position.z = (Math.random() * -60) - 20;
   }
   if (!config.velocity) {
     config.velocity = {x: negrand(50), y: negrand(50), z: negrand(50)};
@@ -79,7 +82,7 @@ function RonaldWord(player, phrase, config) {
   this.decay = config.decay;
 
   this.geometry = new THREE.TextGeometry(this.phrase, {
-    size: 1.5 + negrand(1)
+    size: 2 + negrand(1)
     , height: 0.01
     , curveSegments: 1
     , font: "droid sans"

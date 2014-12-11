@@ -32,6 +32,7 @@ var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rot
 
 var MIN_TIME_BETWEEN_GESTURES = 800;
 var PHRASE_GESTURE_DELTA_MULT = 4.0;
+var MAX_PHRASE_DIRECTIONAL_VEL = 100;
 var MIN_PHRASE_VEL = 120.0;
 var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
 var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
@@ -63,10 +64,22 @@ function blankpos() { return {x: 0, y: 0, z: 0}; };
 
 function phrasePos(left) {
   var pos = blankpos();
-  pos.x = left? -60 : 60;
-  pos.y = Math.random() * 80;
-  pos.z = (Math.random() * -80) - 16;
+
+  pos.x = left? -20 : 20;
+  pos.y = Math.random() * 40 + 20;
+  pos.z = (Math.random() * -60) - 20;
   return pos;
+}
+
+function velCleanse(vel) {
+  if (vel.x < -MAX_PHRASE_DIRECTIONAL_VEL) vel.x = -MAX_PHRASE_DIRECTIONAL_VEL;
+  else if (vel.x > MAX_PHRASE_DIRECTIONAL_VEL) vel.x = MAX_PHRASE_DIRECTIONAL_VEL;
+
+  if (vel.y < -MAX_PHRASE_DIRECTIONAL_VEL) vel.y = -MAX_PHRASE_DIRECTIONAL_VEL;
+  else if (vel.y > MAX_PHRASE_DIRECTIONAL_VEL) vel.y = MAX_PHRASE_DIRECTIONAL_VEL;
+
+  if (vel.z < -MAX_PHRASE_DIRECTIONAL_VEL) vel.z = -MAX_PHRASE_DIRECTIONAL_VEL;
+  else if (vel.z > MAX_PHRASE_DIRECTIONAL_VEL) vel.z = MAX_PHRASE_DIRECTIONAL_VEL;
 }
 
 module.exports.eventHandler = function(event, data) {};
@@ -268,6 +281,8 @@ function rightHand1(position) {
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(false);
 
+          velCleanse(vel);
+
           phraseGestureTimes.right1 = now;
           phraseGestureVelocities.right1 = vel;
           phraseGestureStartPositions.right1 = pos;
@@ -309,6 +324,8 @@ function leftHand1(position) {
         };
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(true);
+
+          velCleanse(vel);
 
           phraseGestureTimes.left1 = now;
           phraseGestureVelocities.left1 = vel;
@@ -444,6 +461,8 @@ function rightHand2(position)  {
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(false);
 
+          velCleanse(vel);
+
           phraseGestureTimes.right2 = now;
           phraseGestureVelocities.right2 = vel;
           phraseGestureStartPositions.right2 = pos;
@@ -485,6 +504,8 @@ function leftHand2(position) {
         };
         if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
           var pos = phrasePos(true);
+
+          velCleanse(vel);
 
           phraseGestureTimes.left2 = now;
           phraseGestureVelocities.left2 = vel;
