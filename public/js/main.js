@@ -662,11 +662,22 @@ $(function() {
     active.desperate = true;
     io.mode = io.RUN;
 
+    var helicopter = {x: 0, y: 0, z: 0};
+    var heliInterval = setInterval(function() {
+      //helicopter.x = (Math.random() - 0.5);
+      //helicopter.x = (Math.random() - 0.5);
+    }, 6666);
+
+    var camOffset = {x: 0, y: 40, z: -270};
+
     desperateState.render = function() {
+      camOffset.x += helicopter.x;
+      camOffset.y += helicopter.y;
+
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
       cameraFollowState.target = middle;
-      cameraFollowState.offset = {x: 0, y: 40, z: -270};
+      cameraFollowState.offset = camOffset;
       lightFollowState.target = middle;
       lightFollowState.offset = {x: 10, y: 20, z: -60};
 
@@ -748,7 +759,8 @@ $(function() {
     }
 
     function endState() {
-      clearInterval(dummyForwardInterval);
+      if (TEST_MODE) clearInterval(dummyForwardInterval);
+      clearInterval(heliInterval);
 
       active.desperate = false;
       enterHeavenState();
@@ -919,7 +931,7 @@ $(function() {
 
     function reachedComputer() {
       console.log('I AM AT LINUX NOW');
-      clearInterval(dummyForwardInterval);
+      if (TEST_MODE) clearInterval(dummyForwardInterval);
 
       heavenState.artifactZOffset = function() {return (Math.random() - 0.5) * -12};
 
