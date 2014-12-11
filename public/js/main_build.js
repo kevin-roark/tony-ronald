@@ -1266,7 +1266,7 @@ var RIDICULOUS_ELBOW_MAG = 600;
 
 var CLOSE_HANDS_MAG = 100;
 
-var TORSO_MOVEMENT_MAG_MULT = 10;
+var TORSO_MOVEMENT_MAG_MULT = 0.2;
 
 module.exports.PHRASE = 1;
 module.exports.KNOCK  = 2;
@@ -1281,8 +1281,8 @@ function blankpos() { return {x: 0, y: 0, z: 0}; };
 function phrasePos(left) {
   var pos = blankpos();
   pos.x = left? -60 : 60;
-  pos.y = (Math.random() - 0.5) * 100;
-  pos.z = (Math.random() * -100);
+  pos.y = Math.random() * 80;
+  pos.z = (Math.random() * -150) - 50;
   return pos;
 }
 
@@ -1460,8 +1460,7 @@ function totalMagnitude(pos) {
 function phraseBlast(player, pos, vel) {
   var data = {player: player, pos: pos, vel: vel};
   module.exports.eventHandler('phraseBlast', data);
-  console.log('blasted phrase:');
-  console.log(data);
+  console.log(data.vel);
 }
 
 function rightHand1(position) {
@@ -2559,8 +2558,8 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = true;
-  var SKIP_PHRASE = true;
+  var TEST_MODE = false;
+  var SKIP_PHRASE = false;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *

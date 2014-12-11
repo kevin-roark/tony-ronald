@@ -14,8 +14,8 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = true;
-  var SKIP_PHRASE = true;
+  var TEST_MODE = false;
+  var SKIP_PHRASE = false;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1023,6 +1023,7 @@ $(function() {
     flash('RONALD?');
     active.endgame = true;
     io.mode = -1;
+    io.socket.emit('noHeaven');
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 
