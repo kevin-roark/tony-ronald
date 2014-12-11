@@ -56,7 +56,7 @@ Computer.prototype.createMesh = function(callback) {
   callback();
 }
 
-Computer.prototype.becomeTransparent = function(delta, thresh) {
+Computer.prototype.becomeTransparent = function(delta, thresh, shatterAfter) {
   var self = this;
 
   if (!delta) delta = 0.01;
@@ -66,8 +66,9 @@ Computer.prototype.becomeTransparent = function(delta, thresh) {
     self.material.opacity -= delta;
     if (self.material.opacity <= thresh) {
       clearInterval(int);
-      self.shatterable = true;
-      console.log('SHATTERABLE');
+      if (shatterAfter) {
+        self.shatterable = true;
+      }
     }
   }, 30);
 }

@@ -71,6 +71,15 @@ $(function() {
       if (trappedState.mac) trappedState.mac.shatterable = true;
       if (trappedState.pc) trappedState.pc.shatterable = true;
     }
+    else if (event == 'endPhrases') {
+      phraseState.endScene();
+    }
+    else if (event == 'transparentComputers') {
+
+    }
+    else if (event == 'endPokes') {
+
+    }
   };
 
   /*
@@ -406,28 +415,34 @@ $(function() {
       }, 500);
     }
 
-    var time = TEST_MODE? 3000 : 60000;
-    setTimeout(function() {
+    phraseState.endScene = function() {
       fadeOverlay(true, function() {
         clearInterval(phraseInterval);
 
         var phraseMeshes = [
-          phraseState.leftWall,
-          phraseState.rightWall,
-          phraseState.backWall,
-          phraseState.frontWall,
-          phraseState.ceiling,
-          phraseState.ground
+        phraseState.leftWall,
+        phraseState.rightWall,
+        phraseState.backWall,
+        phraseState.frontWall,
+        phraseState.ceiling,
+        phraseState.ground
         ];
         phraseState.phrases.forEach(function(phrase) {
           phraseMeshes.push(phrase.mesh);
         });
+
         clearScene(phraseMeshes);
         active.phrases = false;
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, time);
+    };
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        phraseState.endScene();
+      }, 5000);
+    }
   }
 
   function enterTrappedState() {
@@ -475,8 +490,8 @@ $(function() {
 
     var time = TEST_MODE? 1000 : 20000;
     setTimeout(function() {
-      mac.becomeTransparent(0.02);
-      pc.becomeTransparent(0.02);
+      mac.becomeTransparent(0.02, undefined, TEST_MODE);
+      pc.becomeTransparent(0.02, undefined, TEST_MODE);
 
       var shatterChecker = setInterval(function() {
         if (mac.shattering && pc.shattering) {

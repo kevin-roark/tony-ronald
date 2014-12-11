@@ -62,7 +62,7 @@ function blankpos() { return {x: 0, y: 0, z: 0}; };
 
 function phrasePos(left) {
   var pos = blankpos();
-  pos.x = left? 0 : 60;
+  pos.x = left? -60 : 60;
   pos.y = (Math.random() - 0.5) * 100;
   pos.z = (Math.random() * -100);
   return pos;
@@ -158,6 +158,17 @@ module.exports.begin = function(w1, w2, cam, l) {
     } else {
       wrestler2.reset();
     }
+  });
+
+  socket.on('endPhrases', function() {
+    console.log('got my end phrases');
+    module.exports.eventHandler('endPhrases');
+  });
+  socket.on('transparentComputers', function() {
+    module.exports.eventHandler('transparentComputers');
+  });
+  socket.on('endPokes', function() {
+    module.exports.eventHandler('endPokes');
   });
 }
 

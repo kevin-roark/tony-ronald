@@ -12,18 +12,17 @@ html, body {
 
   text-align: center;
   line-height: 300px;
-}
 
-#reset-button {
   background-color: black;
-  margin-left: 100px;
-  margin-top: 50px;
 
   color: white;
   font-family: "Courier New", monospace;
   font-size: 40px;
+
+  margin-left: 300px;
+  margin-top: 50px;
 }
 
-#reset-button.active {
+.round-button.active {
   background-color: red;
 }

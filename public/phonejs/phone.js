@@ -1,5 +1,5 @@
 
-var SERVER_IP = '169.254.219.115';
+var SERVER_IP = '169.254.120.171';
 
 var socket = io('http://' + SERVER_IP + ':8888');
 
@@ -17,7 +17,7 @@ socket.on('connectedRolls', function(connectedRolls) {
 
 socket.emit('showConnectedRolls');
 
-var buttons = [$('#reset-button')];
+var buttons = [$('#end-phrase'), $('#computer-transparent'), $('#end-pokes')];
 
 buttons.forEach(function(button) {
   button.mousedown(function() {
@@ -31,6 +31,14 @@ buttons.forEach(function(button) {
   });
 });
 
-$('#reset-button').click(function() {
-  socket.emit('resetPlayer', playerNum);
+$('#end-phrase').click(function() {
+  socket.emit('endPhrases', playerNum);
+});
+
+$('#computer-transparent').click(function() {
+  socket.emit('transparentComputers', playerNum);
+});
+
+$('#end-pokes').click(function() {
+  socket.emit('endPokes', playerNum);
 });

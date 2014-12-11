@@ -812,7 +812,7 @@ Computer.prototype.createMesh = function(callback) {
   callback();
 }
 
-Computer.prototype.becomeTransparent = function(delta, thresh) {
+Computer.prototype.becomeTransparent = function(delta, thresh, shatterAfter) {
   var self = this;
 
   if (!delta) delta = 0.01;
@@ -822,8 +822,9 @@ Computer.prototype.becomeTransparent = function(delta, thresh) {
     self.material.opacity -= delta;
     if (self.material.opacity <= thresh) {
       clearInterval(int);
-      self.shatterable = true;
-      console.log('SHATTERABLE');
+      if (shatterAfter) {
+        self.shatterable = true;
+      }
     }
   }, 30);
 }
@@ -1258,7 +1259,7 @@ function blankpos() { return {x: 0, y: 0, z: 0}; };
 
 function phrasePos(left) {
   var pos = blankpos();
-  pos.x = left? 0 : 60;
+  pos.x = left? -60 : 60;
   pos.y = (Math.random() - 0.5) * 100;
   pos.z = (Math.random() * -100);
   return pos;
@@ -1354,6 +1355,17 @@ module.exports.begin = function(w1, w2, cam, l) {
     } else {
       wrestler2.reset();
     }
+  });
+
+  socket.on('endPhrases', function() {
+    console.log('got my end phrases');
+    module.exports.eventHandler('endPhrases');
+  });
+  socket.on('transparentComputers', function() {
+    module.exports.eventHandler('transparentComputers');
+  });
+  socket.on('endPokes', function() {
+    module.exports.eventHandler('endPokes');
   });
 }
 
@@ -2533,6 +2545,15 @@ $(function() {
       if (trappedState.mac) trappedState.mac.shatterable = true;
       if (trappedState.pc) trappedState.pc.shatterable = true;
     }
+    else if (event == 'endPhrases') {
+      phraseState.endScene();
+    }
+    else if (event == 'transparentComputers') {
+
+    }
+    else if (event == 'endPokes') {
+
+    }
   };
 
   /*
@@ -2868,28 +2889,34 @@ $(function() {
       }, 500);
     }
 
-    var time = TEST_MODE? 3000 : 60000;
-    setTimeout(function() {
+    phraseState.endScene = function() {
       fadeOverlay(true, function() {
         clearInterval(phraseInterval);
 
         var phraseMeshes = [
-          phraseState.leftWall,
-          phraseState.rightWall,
-          phraseState.backWall,
-          phraseState.frontWall,
-          phraseState.ceiling,
-          phraseState.ground
+        phraseState.leftWall,
+        phraseState.rightWall,
+        phraseState.backWall,
+        phraseState.frontWall,
+        phraseState.ceiling,
+        phraseState.ground
         ];
         phraseState.phrases.forEach(function(phrase) {
           phraseMeshes.push(phrase.mesh);
         });
+
         clearScene(phraseMeshes);
         active.phrases = false;
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, time);
+    };
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        phraseState.endScene();
+      }, 5000);
+    }
   }
 
   function enterTrappedState() {
@@ -2937,8 +2964,8 @@ $(function() {
 
     var time = TEST_MODE? 1000 : 20000;
     setTimeout(function() {
-      mac.becomeTransparent(0.02);
-      pc.becomeTransparent(0.02);
+      mac.becomeTransparent(0.02, undefined, TEST_MODE);
+      pc.becomeTransparent(0.02, undefined, TEST_MODE);
 
       var shatterChecker = setInterval(function() {
         if (mac.shattering && pc.shattering) {
@@ -3571,7 +3598,7 @@ function RonaldWord(player, phrase, config) {
     config.decay = 60000;
   }
 
-  this.phraseIndex = phraseBank.indexOf(phrase);
+  this.phraseIndex = phraseBank.indexOf(phrase) + 1;
   this.phrase = phrase;
   this.position = config.position;
   this.velocity = config.velocity;

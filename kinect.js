@@ -111,6 +111,10 @@ io.on('connection', function(socket) {
   socket.on('handDelta', function(player, mag) {
     maxer.handDelta(player, mag);
   });
+
+  socket.on('phrase', function(player, phraseIndex, velocity) {
+    maxer.phrase(player, phraseIndex, velocity);
+  });
 });
 
 function setForwarderSocketEvents(forwarderSocket) {
@@ -154,6 +158,15 @@ function setForwarderSocketEvents(forwarderSocket) {
 function setPhoneSocketEvents(phoneSocket) {
   phoneSocket.on('resetPlayer', function(player) {
     if (browserSocket) browserSocket.emit('resetPlayer', player);
+  });
+  phoneSocket.on('endPhrases', function(player) {
+    if (browserSocket) browserSocket.emit('endPhrases', player);
+  });
+  phoneSocket.on('transparentComputers', function(player) {
+    if (browserSocket) browserSocket.emit('transparentComputers', player);
+  });
+  phoneSocket.on('endPokes', function(player) {
+    if (browserSocket) browserSocket.emit('endPokes', player);
   });
 }
 

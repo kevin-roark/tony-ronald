@@ -72,7 +72,7 @@ function RonaldWord(player, phrase, config) {
     config.decay = 60000;
   }
 
-  this.phraseIndex = phraseBank.indexOf(phrase);
+  this.phraseIndex = phraseBank.indexOf(phrase) + 1;
   this.phrase = phrase;
   this.position = config.position;
   this.velocity = config.velocity;
