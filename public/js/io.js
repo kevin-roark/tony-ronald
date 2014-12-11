@@ -172,11 +172,13 @@ module.exports.begin = function(w1, w2, cam, l) {
   });
 
   socket.on('endPhrases', function() {
-    console.log('got my end phrases');
     module.exports.eventHandler('endPhrases');
   });
   socket.on('transparentComputers', function() {
     module.exports.eventHandler('transparentComputers');
+  });
+  socket.on('phoneShatter', function() {
+    module.exports.eventHandler('phoneShatter');
   });
   socket.on('endPokes', function() {
     module.exports.eventHandler('endPokes');

@@ -17,7 +17,7 @@ socket.on('connectedRolls', function(connectedRolls) {
 
 socket.emit('showConnectedRolls');
 
-var buttons = [$('#end-phrase'), $('#computer-transparent'), $('#end-pokes')];
+var buttons = [$('#end-phrase'), $('#computer-transparent'), $('#shatter'), $('#end-pokes')];
 
 buttons.forEach(function(button) {
   button.mousedown(function() {
@@ -37,6 +37,10 @@ $('#end-phrase').click(function() {
 
 $('#computer-transparent').click(function() {
   socket.emit('transparentComputers', playerNum);
+});
+
+$('#shatter').click(function() {
+  socket.emit('phoneShatter', playerNum);
 });
 
 $('#end-pokes').click(function() {

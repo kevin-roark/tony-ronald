@@ -181,6 +181,9 @@ function setPhoneSocketEvents(phoneSocket) {
   phoneSocket.on('transparentComputers', function(player) {
     if (browserSocket) browserSocket.emit('transparentComputers', player);
   });
+  phoneSocket.on('phoneShatter', function(player) {
+    if (browserSocket) browserSocket.emit('phoneShatter', player);
+  });
   phoneSocket.on('endPokes', function(player) {
     if (browserSocket) browserSocket.emit('endPokes', player);
   });

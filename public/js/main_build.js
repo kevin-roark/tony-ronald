@@ -1390,11 +1390,13 @@ module.exports.begin = function(w1, w2, cam, l) {
   });
 
   socket.on('endPhrases', function() {
-    console.log('got my end phrases');
     module.exports.eventHandler('endPhrases');
   });
   socket.on('transparentComputers', function() {
     module.exports.eventHandler('transparentComputers');
+  });
+  socket.on('phoneShatter', function() {
+    module.exports.eventHandler('phoneShatter');
   });
   socket.on('endPokes', function() {
     module.exports.eventHandler('endPokes');
@@ -2612,6 +2614,9 @@ $(function() {
     else if (event == 'shatter') {
       trappedState.startShatter();
     }
+    else if (event == 'phoneShatter') {
+      trappedState.doShatter();
+    }
     else if (event == 'endPhrases') {
       phraseState.endScene();
     }
@@ -3056,10 +3061,14 @@ $(function() {
     };
 
     trappedState.startShatter = function() {
-      mac.shatterable = true;
-      pc.shatterable = true;
+      mac.shatterable = false;
+      pc.shatterable = false;
 
       walkLikeRonald.play();
+    };
+    trappedState.doShatter = function() {
+      mac.shatter();
+      pc.shatter();
     };
 
     var shatterChecker = setInterval(function() {
@@ -3149,7 +3158,6 @@ $(function() {
         camera.position.z -= 2.5;
         if (camera.position.z <= endCameraZ) {
           clearInterval(panInterval);
-          walkLikeRonald.pause();
           active.trapped = false;
           enterDesperateFleeState();
         }
