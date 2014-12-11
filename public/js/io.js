@@ -30,6 +30,12 @@ var kneeHistory = {one: {rotating: false}, two: {rotating: false}};
 
 var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rotDown: false}};
 
+var MIN_TIME_BETWEEN_GESTURES = 400;
+var PHRASE_GESTURE_DELTA_MULT = 10.0;
+var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
+var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
+var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
+
 var BIG_HEAD_MAG = 15;
 var MAX_HEAD_SWELL = 500;
 var TORSO_CLOSE_MAG = 11;
@@ -50,6 +56,8 @@ module.exports.RUN    = 3;
 var wrestler1, wrestler2, camera, light;
 
 module.exports.mode = module.exports.PHRASE;
+
+function blankpos() { return {x: 0, y: 0, z: 0}; };
 
 module.exports.eventHandler = function(event, data) {};
 
@@ -186,6 +194,25 @@ function rightHand1(position) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
       moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, 10);
     }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.right1 >= MIN_TIME_BETWEEN_GESTURES) {
+        var delta = delta(position, previousPositions.rightHand1);
+        var vel = {
+          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        var pos = blankpos();
+        console.log(position);
+
+        phraseGestureTimes.right1 = now;
+        phraseGestureVelocities.right1 = vel;
+        phraseGestureStartPositions.right1 = pos;
+
+        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+      }
+    }
   }
 
   previousPositions.rightHand1 = position;
@@ -201,6 +228,25 @@ function leftHand1(position) {
   if (previousPositions.leftHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
       moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, 10);
+    }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.left1 >= MIN_TIME_BETWEEN_GESTURES) {
+        var delta = delta(position, previousPositions.leftHand1);
+        var vel = {
+          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        var pos = blankpos();
+        console.log(position);
+
+        phraseGestureTimes.left1 = now;
+        phraseGestureVelocities.left1 = vel;
+        phraseGestureStartPositions.left1 = pos;
+
+        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+      }
     }
   }
 
@@ -303,6 +349,25 @@ function rightHand2(position)  {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
         moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
     }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.right2 >= MIN_TIME_BETWEEN_GESTURES) {
+        var delta = delta(position, previousPositions.rightHand2);
+        var vel = {
+          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        var pos = blankpos();
+        console.log(position);
+
+        phraseGestureTimes.right2 = now;
+        phraseGestureVelocities.right2 = vel;
+        phraseGestureStartPositions.right2 = pos;
+
+        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+      }
+    }
   }
 
   previousPositions.rightHand2 = position;
@@ -318,6 +383,25 @@ function leftHand2(position) {
   if (previousPositions.leftHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
       moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, 10);
+    }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.left2 >= MIN_TIME_BETWEEN_GESTURES) {
+        var delta = delta(position, previousPositions.leftHand2);
+        var vel = {
+          x: delta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          z: delta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        var pos = blankpos();
+        console.log(position);
+
+        phraseGestureTimes.left2 = now;
+        phraseGestureVelocities.left2 = vel;
+        phraseGestureStartPositions.left2 = pos;
+
+        module.exports.eventHandler('phraseBlast', {pos: pos, vel: vel});
+      }
     }
   }
 
