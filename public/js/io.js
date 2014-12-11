@@ -49,6 +49,7 @@ var RIDICULOUS_ELBOW_MAG = 600;
 var CLOSE_HANDS_MAG = 100;
 
 var TORSO_MOVEMENT_MAG_MULT = 0.25;
+var MIN_DISTANCE_BETWEEN_WRESTLERS = 50;
 
 module.exports.PHRASE = 1;
 module.exports.KNOCK  = 2;
@@ -408,6 +409,10 @@ function torso1(position) {
       var mag = totalMagnitude(d);
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler1.move(d.x / 30, 0, dist);
+
+      if (wrestler1.position.z - wrestler2.position.z > MIN_DISTANCE_BETWEEN_WRESTLERS) {
+        wrestler2.move(0, 0, wrestler1.position.z - MIN_DISTANCE_BETWEEN_WRESTLERS);
+      }
     }
 
     positionDeltas.torso1 = delta(position, previousPositions.torso1);
@@ -581,6 +586,10 @@ function torso2(position) {
       var mag = totalMagnitude(d);
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler2.move(d.x / 30, 0, dist);
+
+      if (wrestler2.position.z - wrestler1.position.z > MIN_DISTANCE_BETWEEN_WRESTLERS) {
+        wrestler1.move(0, 0, wrestler2.position.z - MIN_DISTANCE_BETWEEN_WRESTLERS);
+      }
     }
 
     positionDeltas.torso2 = delta(position, previousPositions.torso2);

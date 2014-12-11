@@ -14,8 +14,8 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = false;
-  var SKIP_PHRASE = false;
+  var TEST_MODE = true;
+  var SKIP_PHRASE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -969,7 +969,7 @@ $(function() {
 
           pokeHandMany(z, function() {
             io.socket.emit('noHeaven');
-            
+
             setTimeout(function() { // lets give some time to twitch
               endState();
             }, 10000);

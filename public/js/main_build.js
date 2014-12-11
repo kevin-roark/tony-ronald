@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -1267,6 +1267,7 @@ var RIDICULOUS_ELBOW_MAG = 600;
 var CLOSE_HANDS_MAG = 100;
 
 var TORSO_MOVEMENT_MAG_MULT = 0.25;
+var MIN_DISTANCE_BETWEEN_WRESTLERS = 50;
 
 module.exports.PHRASE = 1;
 module.exports.KNOCK  = 2;
@@ -1626,6 +1627,10 @@ function torso1(position) {
       var mag = totalMagnitude(d);
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler1.move(d.x / 30, 0, dist);
+
+      if (wrestler1.position.z - wrestler2.position.z > MIN_DISTANCE_BETWEEN_WRESTLERS) {
+        wrestler2.move(0, 0, wrestler1.position.z - MIN_DISTANCE_BETWEEN_WRESTLERS);
+      }
     }
 
     positionDeltas.torso1 = delta(position, previousPositions.torso1);
@@ -1799,6 +1804,10 @@ function torso2(position) {
       var mag = totalMagnitude(d);
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
       wrestler2.move(d.x / 30, 0, dist);
+
+      if (wrestler2.position.z - wrestler1.position.z > MIN_DISTANCE_BETWEEN_WRESTLERS) {
+        wrestler1.move(0, 0, wrestler2.position.z - MIN_DISTANCE_BETWEEN_WRESTLERS);
+      }
     }
 
     positionDeltas.torso2 = delta(position, previousPositions.torso2);
@@ -2557,8 +2566,8 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = false;
-  var SKIP_PHRASE = false;
+  var TEST_MODE = true;
+  var SKIP_PHRASE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -3512,7 +3521,7 @@ $(function() {
 
           pokeHandMany(z, function() {
             io.socket.emit('noHeaven');
-            
+
             setTimeout(function() { // lets give some time to twitch
               endState();
             }, 10000);
@@ -3974,4 +3983,4 @@ module.exports.blocker = function(size) {
   return new THREE.Mesh(geometry, material);
 }
 
-},{"./lib/kutility":14}]},{},[15]);
+},{"./lib/kutility":14}]},{},[15])
