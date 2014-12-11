@@ -18,6 +18,7 @@ var HAND_DELTA_ADDRESS = '/handDelta';
 var PHRASE_ADDRESS = '/phrase';
 var WHOA_ADDRESS = '/whoa';
 var KNOCK_ADDRESS = '/knock';
+var ROCK_ADDRESS = '/rock';
 
 var signalMap = {};
 signalMap[playerize(START_SWELL_ADDRESS, 1)] = 1;
@@ -86,6 +87,10 @@ module.exports.whoa = function(playerIndex) {
 
 module.exports.knock = function(playerIndex) {
   maxClient.send(KNOCK_ADDRESS, playerIndex - 1);
+}
+
+module.exports.rock = function(index) {
+  maxClient.send(ROCK_ADDRESS, index);
 }
 
 function playerize(address, player) {

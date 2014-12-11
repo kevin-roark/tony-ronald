@@ -15,6 +15,10 @@ var teeShirts = [
   , '/images/eminem.jpg'
   , '/images/drowning_pool.jpg'
   , '/images/creed.jpg'
+  , '/images/dmx.jpg'
+  , '/images/korn.jpg'
+  , '/images/grace.jpg'
+  , '/images/wyte.jpg'
 ];
 
 function Hotdog(startPos, scale) {

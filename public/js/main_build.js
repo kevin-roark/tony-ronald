@@ -1019,6 +1019,10 @@ var teeShirts = [
   , '/images/eminem.jpg'
   , '/images/drowning_pool.jpg'
   , '/images/creed.jpg'
+  , '/images/dmx.jpg'
+  , '/images/korn.jpg'
+  , '/images/grace.jpg'
+  , '/images/wyte.jpg'
 ];
 
 function Hotdog(startPos, scale) {
@@ -2551,7 +2555,7 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = false;
+  var TEST_MODE = true;
   var SKIP_PHRASE = true;
 
   /*
@@ -2624,7 +2628,7 @@ $(function() {
    */
 
   var active = {ronalds: false, lighting: false, camera: false, phrases: false};
-  var history = {};
+  var history = {lastArtifactTime: new Date()};
 
   var phraseState = {};
   var trappedState = {};
@@ -2787,8 +2791,13 @@ $(function() {
   }
 
   function artifactCollision(object) {
-    var player = (object.hostBody == kevinRonald)? 1 : 2;
-    io.socket.emit('artifact', player);
+    var now = new Date();
+    if (now - history.lastArtifactTime >= 150) {
+      var player = (object.hostBody == kevinRonald)? 1 : 2;
+      io.socket.emit('artifact', player);
+
+      history.lastArtifactTime = now;
+    }
   }
 
   function computerKnock(object) {
@@ -3372,7 +3381,7 @@ $(function() {
     heavenState.ground.ground = true;
     scene.add(heavenState.ground);
 
-    heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
+    heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000, 200);
     heavenState.massiveComputer.knockHandler = function(otherObject) {
       computerKnock(otherObject);
     };
@@ -3452,10 +3461,11 @@ $(function() {
         var z = massiveComputerZ + 150;
         heavenState.bigGirlHand = new Hand({x: 0, y: 200, z: z}, 90);
         heavenState.bigGirlHand.mass = 500;
-        havenState.bigGirlHand.humanPart = true;
         heavenState.bigGirlHand.ignoreCollisons = true;
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {
+          heavenState.bigGirlHand.mesh.humanPart = true;
+
           var material = heavenState.bigGirlHand.materials[0];
           material.color = new THREE.Color(198, 120, 86);
           material.needsUpdate = true;
@@ -3638,6 +3648,7 @@ $(function() {
       var id = target[0].id;
       var shirtNumber = parseInt(id.replace('shirt', ''));
       finalState.hotdog.changeTeeShirt(shirtNumber);
+      io.socket.emit('rock', shirtNumber);
     });
   }
 

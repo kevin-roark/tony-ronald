@@ -120,6 +120,10 @@ io.on('connection', function(socket) {
   socket.on('knock', function(player) {
     maxer.knock(player);
   });
+
+  socket.on('rock', function(index) {
+    maxer.rock(index);
+  });
 });
 
 function setForwarderSocketEvents(forwarderSocket) {
