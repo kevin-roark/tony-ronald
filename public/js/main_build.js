@@ -172,8 +172,9 @@ Artifact.prototype.createMesh = function(callback) {
 }
 
 Artifact.prototype.collisonHandle = function(other_object, relative_velocity, relative_rotation, contact_normal) {
-  var self = this;
-  //console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
+  if (other_object.humanPart && this.humanCollisionHandler) {
+    this.humanCollisionHandler(other_object);
+  }
 }
 
 },{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],3:[function(require,module,exports){
@@ -567,6 +568,8 @@ var Hand = require('./hand');
 module.exports = Character;
 
 function Character(startPos, scale) {
+  var self = this;
+
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
   this.startX = startPos.x;
   this.startY = startPos.y;
@@ -593,6 +596,7 @@ function Character(startPos, scale) {
                     this.torso, this.head];
   this.bodyParts.forEach(function(bodyPart) {
     bodyPart.ignoreCollisons = true;
+    bodyPart.hostBody = self;
   });
 
   this.twitching = false; // random motion and rotation
@@ -608,6 +612,8 @@ Character.prototype.addTo = function(scene, callback) {
   var bodyCount = 0;
   this.bodyParts.forEach(function(part) {
     part.addTo(scene, function() {
+      part.mesh.humanPart = true;
+
       bodyCount += 1;
       if (bodyCount == self.bodyParts.length) {
         if (callback) callback();
@@ -2484,7 +2490,7 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
-  var TEST_MODE = false;
+  var TEST_MODE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -2709,13 +2715,18 @@ $(function() {
 
   function flash(text, timeout) {
     if (!text) return;
-    if (!timeout) timeout = 200;
+    if (!timeout) timeout = 275;
 
     $('#flash').text(text);
     $('#flash').show();
     setTimeout(function() {
       $('#flash').hide();
     }, timeout);
+  }
+
+  function artifactCollision(object) {
+    var player = (object.hostBody == kevinRonald)? 1 : 2;
+    io.socket.emit('artifact', player);
   }
 
   function shakeCamera() {
@@ -3085,6 +3096,10 @@ $(function() {
       var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
       var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
       var artifact = new Artifact(future, Math.random() * 20 + 9.8, false, artifactIndex);
+      artifact.humanCollisionHandler = function(otherObject) {
+        artifactCollision(otherObject);
+      };
+
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -3250,6 +3265,10 @@ $(function() {
       var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
       var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
       var artifact = new Artifact(future, Math.random() * 20 + 9.8, true, artifactIndex);
+      artifact.humanCollisionHandler = function(otherObject) {
+        artifactCollision(otherObject);
+      };
+
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 

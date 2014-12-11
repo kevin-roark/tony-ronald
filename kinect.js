@@ -112,6 +112,10 @@ io.on('connection', function(socket) {
   socket.on('phrase', function(player, phraseIndex, velocity) {
     maxer.phrase(player, phraseIndex, velocity);
   });
+
+  socket.on('artifact', function(player) {
+    maxer.whoa(player);
+  });
 });
 
 function setForwarderSocketEvents(forwarderSocket) {
