@@ -3,7 +3,7 @@ $(function() {
   var kt = require('./lib/kutility');
   var BodyPart = require('./bodypart');
   var Character = require('./character');
-  //var io = require('./io');
+  var io = require('./io');
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
   var Artifact = require('./artifact');
@@ -55,6 +55,18 @@ $(function() {
   console.log(chatroomVideo);
   var ronaldGUI = $('#ronald-gui');
 
+  io.eventHandler = function(event, data) {
+    if (event.name == 'phraseBlast') {
+      var rw = new RonaldWord(undefined, {position: data.pos, velocity: data.vel});
+      rw.addTo(scene);
+      phraseState.phrases.push(rw);
+    }
+    else if (event.name == 'shatter') {
+      if (trappedState.mac) trappedState.mac.shatterable = true;
+      if (trappedState.pc) trappedState.pc.shatterable = true;
+    }
+  };
+
   /*
    * * * * * STATE OBJECTS * * * * *
    */
@@ -77,9 +89,12 @@ $(function() {
     offset: {x: 0, y: 0, z: 0}
   };
 
-  var kevinRonald;
-  var dylanRonald;
-  var ronalds = [];
+  kevinRonald = new Character({x: -200, y: -50, z: -200}, 20);
+  kevinRonald.addTo(scene);
+
+  dylanRonald = new Character({x: -190, y: -50, z: -200}, 20);
+  dylanRonald.addTo(scene);
+  var ronalds = [kevinRonald, dylanRonald];
 
   /*
    * * * * * STARTIN AND RENDERIN * * * * *
@@ -87,7 +102,7 @@ $(function() {
 
   start();
   function start() {
-    //io.begin(kevinRonald, dylanRonald, camera, hueLight);
+    io.begin(kevinRonald, dylanRonald, camera, hueLight);
 
     enterPhrasesState();
 
@@ -312,6 +327,7 @@ $(function() {
 
   function enterPhrasesState() {
     active.phrases = true;
+    io.mode = io.PHRASE;
 
     phraseState.phrases = [];
 
@@ -375,9 +391,9 @@ $(function() {
     setCameraPosition(0, 40, 10);
 
     var phraseInterval = setInterval(function() {
-      var rw = new RonaldWord();
-      rw.addTo(scene);
-      phraseState.phrases.push(rw);
+      // var rw = new RonaldWord();
+      // rw.addTo(scene);
+      // phraseState.phrases.push(rw);
     }, 500);
 
     setTimeout(function() {
@@ -408,6 +424,7 @@ $(function() {
 
     active.ronalds = true;
     active.trapped = true;
+    io.mode = io.KNOCK;
 
     setCameraPosition(0, 0, 0);
 
@@ -419,15 +436,11 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -100, y: 5, z: -170}, 20);
-    kevinRonald.addTo(scene, function() {
-      kevinRonald.rotate(0, Math.PI/4, 0);
-    });
+    kevinRonald.moveTo(-100, 5, -170);
+    kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald = new Character({x: 100, y: 5, z: -170}, 20);
-    dylanRonald.addTo(scene, function() {
-      dylanRonald.rotate(0, -Math.PI/4, 0);
-    });
+    dylanRonald.moveTo(100, 5, -170);
+    dylanRonald.rotate(0, -Math.PI/4, 0);
 
     ronalds = [kevinRonald, dylanRonald];
 
@@ -442,6 +455,8 @@ $(function() {
     });
 
     trappedState.renderObjects = [mac, pc];
+    trappedState.mac = mac;
+    trappedState.pc = pc;
 
     kevinRonald.leftArm.collisionHandler = function() {
       kevinRonald.leftArm.move(-1, 0, -1);
@@ -496,6 +511,8 @@ $(function() {
     var numberOfArtifactTypes = 5;
 
     active.desperate = true;
+    io.mode = io.RUN;
+
     desperateState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
@@ -823,6 +840,7 @@ $(function() {
     console.log('IT IS TIME TO DIE RONALD');
     flash('RONALD?');
     active.endgame = true;
+    io.mode = -1;
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 

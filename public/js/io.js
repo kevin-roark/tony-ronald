@@ -31,7 +31,7 @@ var kneeHistory = {one: {rotating: false}, two: {rotating: false}};
 var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rotDown: false}};
 
 var MIN_TIME_BETWEEN_GESTURES = 400;
-var PHRASE_GESTURE_DELTA_MULT = 10.0;
+var PHRASE_GESTURE_DELTA_MULT = 20.0;
 var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
 var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
 var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
