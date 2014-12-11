@@ -597,12 +597,19 @@ $(function() {
       var delta = TEST_MODE? 0.02 : 0.002;
       mac.becomeTransparent(delta, undefined, TEST_MODE);
       pc.becomeTransparent(delta, undefined, TEST_MODE);
+
+      if (TEST_MODE || SKIP_PHRASE) {
+        trappedState.startShatter();
+        setTimeout(function() {
+          trappedState.doShatter();
+        }, 10000);
+      }
     }
 
     if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         trappedState.makeTransparent();
-      }, 1000);
+      }, 4000);
     }
 
     function endScene() {
