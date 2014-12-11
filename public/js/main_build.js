@@ -853,16 +853,21 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
     });
   }
   else if (this.knockable && other_object.humanPart) {
-    console.log('KNOCK!!!');
+    this.knock(other_object);
+  }
+}
 
-    this.twitching = true;
-    setTimeout(function() {
-      self.twitching = false;
-    }, this.twitchtime);
+Computer.prototype.knock = function(other_object) {
+  console.log('KNOCK!!!');
 
-    if (this.knockHandler) {
-      this.knockHandler(other_object);
-    }
+  var self = this;
+  this.twitching = true;
+  setTimeout(function() {
+    self.twitching = false;
+  }, this.twitchtime);
+
+  if (this.knockHandler) {
+    this.knockHandler(other_object);
   }
 }
 
@@ -1411,17 +1416,19 @@ function moveDelta(bodypart, position, lastPos, divisor, directions) {
     deltaZ = (position.z - lastPos.z) / -divisor;
   }
 
-  if (bodyPart.mesh.position.x + deltaX < module.exports.minPositions.x ||
-      bodyPart.mesh.position.x + deltaX > module.exports.maxPositions.x) {
-        deltaX = 0;
-  }
-  if (bodyPart.mesh.position.y + deltaY < module.exports.minPositions.y ||
-    bodyPart.mesh.position.y + deltaY > module.exports.maxPositions.y) {
-      deltaY = 0;
-  }
-  if (bodyPart.mesh.position.z + deltaZ < module.exports.minPositions.z ||
-    bodyPart.mesh.position.z + deltaZ > module.exports.maxPositions.z) {
-      deltaZ = 0;
+  if (bodypart.mesh) {
+    if (bodypart.mesh.position.x + deltaX < module.exports.minPositions.x ||
+      bodypart.mesh.position.x + deltaX > module.exports.maxPositions.x) {
+          deltaX = 0;
+    }
+    if (bodypart.mesh.position.y + deltaY < module.exports.minPositions.y ||
+      bodypart.mesh.position.y + deltaY > module.exports.maxPositions.y) {
+        deltaY = 0;
+    }
+    if (bodypart.mesh.position.z + deltaZ < module.exports.minPositions.z ||
+      bodypart.mesh.position.z + deltaZ > module.exports.maxPositions.z) {
+        deltaZ = 0;
+    }
   }
 
   bodypart.move(deltaX, deltaY, deltaZ);
@@ -1454,7 +1461,7 @@ function phraseBlast(player, pos, vel) {
 function rightHand1(position) {
   if (previousPositions.rightHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var denom = (module.exports.mode == module.exports.KNOCK)? 2.5 : 7;
       var directions = {x: true, y: true, z: true};
       if (module.exports.mode == module.exports.KNOCK) {
         directions.y = false;
@@ -1496,7 +1503,7 @@ function leftHand1(position) {
 
   if (previousPositions.leftHand1) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var denom = (module.exports.mode == module.exports.KNOCK)? 2.5 : 7;
       var directions = {x: true, y: true, z: true};
       if (module.exports.mode == module.exports.KNOCK) {
         directions.y = false;
@@ -1608,7 +1615,7 @@ function rightElbow1(position) {
 function torso1(position) {
   if (previousPositions.torso1) {
     if (module.exports.mode == module.exports.KNOCK) {
-      moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: false, y: false, z: true});
+      //moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
       var mag = totalMagnitude(delta(position, previousPositions.torso1));
@@ -1625,7 +1632,7 @@ function torso1(position) {
 function rightHand2(position)  {
   if (previousPositions.rightHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var denom = (module.exports.mode == module.exports.KNOCK)? 2.5 : 7;
       var directions = {x: true, y: true, z: true};
       if (module.exports.mode == module.exports.KNOCK) {
         directions.y = false;
@@ -1667,7 +1674,7 @@ function leftHand2(position) {
 
   if (previousPositions.leftHand2) {
     if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
-      var denom = (module.exports.mode == module.exports.KNOCK)? 3.5 : 7;
+      var denom = (module.exports.mode == module.exports.KNOCK)? 2.5 : 7;
       var directions = {x: true, y: true, z: true};
       if (module.exports.mode == module.exports.KNOCK) {
         directions.y = false;
@@ -1780,7 +1787,7 @@ function rightElbow2(position) {
 function torso2(position) {
   if (previousPositions.torso2) {
     if (module.exports.mode == module.exports.KNOCK) {
-      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: false, y: false, z: true});
+      //moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
       var mag = totalMagnitude(delta(position, previousPositions.torso2));
@@ -2545,6 +2552,7 @@ $(function() {
   var SKYBOX = require('./skybox');
 
   var TEST_MODE = false;
+  var SKIP_PHRASE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -2987,7 +2995,7 @@ $(function() {
       });
     };
 
-    if (TEST_MODE) {
+    if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         phraseState.endScene();
       }, 5000);
@@ -3065,6 +3073,20 @@ $(function() {
       pc.rotate(0, -Math.PI/8, 0);
     }, 5000);
 
+    var knockInterval = setInterval(function() {
+      var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
+      arms.forEach(function(arm) {
+        if (Math.abs(arm.mesh.position.z - mac.mesh.position.z) <= 18) {
+          if (arm == kevinRonald.leftArm || arm == kevinRonald.rightArm) {
+            mac.knock(arm);
+          }
+          else {
+            pc.knock(arm);
+          }
+        }
+      });
+    }, 333);
+
     function changeArmOpacity(op) {
       var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
       arms.forEach(function(arm) {
@@ -3095,7 +3117,7 @@ $(function() {
       }, 100);
     }
 
-    if (TEST_MODE) {
+    if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         trappedState.makeTransparent();
       }, 1000);
@@ -3104,6 +3126,7 @@ $(function() {
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
       clearInterval(resetInterval);
+      clearInterval(knockInterval);
 
       var endCameraZ = -150;
       var panInterval = setInterval(function() {

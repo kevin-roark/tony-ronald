@@ -91,16 +91,21 @@ Computer.prototype.collisonHandle = function(other_object, relative_velocity, re
     });
   }
   else if (this.knockable && other_object.humanPart) {
-    console.log('KNOCK!!!');
+    this.knock(other_object);
+  }
+}
 
-    this.twitching = true;
-    setTimeout(function() {
-      self.twitching = false;
-    }, this.twitchtime);
+Computer.prototype.knock = function(other_object) {
+  console.log('KNOCK!!!');
 
-    if (this.knockHandler) {
-      this.knockHandler(other_object);
-    }
+  var self = this;
+  this.twitching = true;
+  setTimeout(function() {
+    self.twitching = false;
+  }, this.twitchtime);
+
+  if (this.knockHandler) {
+    this.knockHandler(other_object);
   }
 }
 

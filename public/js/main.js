@@ -15,6 +15,7 @@ $(function() {
   var SKYBOX = require('./skybox');
 
   var TEST_MODE = false;
+  var SKIP_PHRASE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -457,7 +458,7 @@ $(function() {
       });
     };
 
-    if (TEST_MODE) {
+    if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         phraseState.endScene();
       }, 5000);
@@ -535,6 +536,20 @@ $(function() {
       pc.rotate(0, -Math.PI/8, 0);
     }, 5000);
 
+    var knockInterval = setInterval(function() {
+      var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
+      arms.forEach(function(arm) {
+        if (Math.abs(arm.mesh.position.z - mac.mesh.position.z) <= 18) {
+          if (arm == kevinRonald.leftArm || arm == kevinRonald.rightArm) {
+            mac.knock(arm);
+          }
+          else {
+            pc.knock(arm);
+          }
+        }
+      });
+    }, 333);
+
     function changeArmOpacity(op) {
       var arms = [kevinRonald.leftArm, kevinRonald.rightArm, dylanRonald.leftArm, dylanRonald.rightArm];
       arms.forEach(function(arm) {
@@ -565,7 +580,7 @@ $(function() {
       }, 100);
     }
 
-    if (TEST_MODE) {
+    if (TEST_MODE || SKIP_PHRASE) {
       setTimeout(function() {
         trappedState.makeTransparent();
       }, 1000);
@@ -574,6 +589,7 @@ $(function() {
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
       clearInterval(resetInterval);
+      clearInterval(knockInterval);
 
       var endCameraZ = -150;
       var panInterval = setInterval(function() {
