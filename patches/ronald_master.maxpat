@@ -7,7 +7,7 @@
 			"revision" : 4
 		}
 ,
-		"rect" : [ 165.0, 52.0, 1123.0, 746.0 ],
+		"rect" : [ 0.0, 52.0, 1123.0, 746.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -27,6 +27,48 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-8",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 499.5, 490.0, 71.0, 18.0 ],
+					"text" : "target 0, $1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-7",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 573.25, 490.0, 71.0, 18.0 ],
+					"text" : "target 0, $1"
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-4",
+					"maxclass" : "message",
+					"numinlets" : 2,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 640.5, 490.0, 71.0, 18.0 ],
+					"text" : "target 0, $1"
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
@@ -162,7 +204,7 @@
 					"numinlets" : 5,
 					"numoutlets" : 2,
 					"outlettype" : [ "signal", "signal" ],
-					"patching_rect" : [ 398.0, 533.0, 121.0, 20.0 ],
+					"patching_rect" : [ 398.0, 533.0, 259.0, 20.0 ],
 					"text" : "poly~ ronald_playit 4"
 				}
 
@@ -201,7 +243,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "float", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 602.0, 228.0, 48.0, 20.0 ]
+					"patching_rect" : [ 646.0, 228.0, 48.0, 20.0 ]
 				}
 
 			}
@@ -215,7 +257,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "float", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 555.5, 228.0, 46.5, 20.0 ]
+					"patching_rect" : [ 584.5, 228.0, 48.5, 20.0 ]
 				}
 
 			}
@@ -229,7 +271,7 @@
 					"numoutlets" : 2,
 					"outlettype" : [ "float", "bang" ],
 					"parameter_enable" : 0,
-					"patching_rect" : [ 514.5, 228.0, 41.0, 20.0 ]
+					"patching_rect" : [ 518.0, 228.0, 53.0, 20.0 ]
 				}
 
 			}
@@ -239,6 +281,8 @@
 					"fontsize" : 12.0,
 					"id" : "obj-49",
 					"maxclass" : "number",
+					"maximum" : 16,
+					"minimum" : 1,
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
@@ -253,6 +297,8 @@
 					"fontsize" : 12.0,
 					"id" : "obj-46",
 					"maxclass" : "number",
+					"maximum" : 1,
+					"minimum" : 0,
 					"numinlets" : 1,
 					"numoutlets" : 2,
 					"outlettype" : [ "int", "bang" ],
@@ -645,6 +691,15 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-69", 4 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-4", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-46", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -708,7 +763,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-69", 2 ],
+					"destination" : [ "obj-8", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-51", 0 ]
@@ -717,7 +772,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-69", 3 ],
+					"destination" : [ "obj-7", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-53", 0 ]
@@ -726,7 +781,7 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-69", 4 ],
+					"destination" : [ "obj-4", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-55", 0 ]
@@ -825,10 +880,28 @@
 			}
 , 			{
 				"patchline" : 				{
+					"destination" : [ "obj-69", 3 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-7", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
 					"destination" : [ "obj-62", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-71", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-69", 2 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-8", 0 ]
 				}
 
 			}
@@ -852,26 +925,26 @@
 			}
  ],
 		"parameters" : 		{
-			"obj-69.2::obj-3.1::obj-10" : [ "gain~[2]", "gain~[1]", 0 ],
-			"obj-69.3::obj-3.1::obj-42" : [ "flonum[2]", "flonum", 0 ],
-			"obj-69.2::obj-3.1::obj-5" : [ "toggle[2]", "toggle[1]", 0 ],
-			"obj-69.3::obj-3.1::obj-30" : [ "gain~[5]", "gain~", 0 ],
-			"obj-69.3::obj-3.1::obj-5" : [ "toggle[4]", "toggle[1]", 0 ],
-			"obj-69.4::obj-3.1::obj-30" : [ "gain~[7]", "gain~", 0 ],
-			"obj-69.2::obj-3.1::obj-42" : [ "flonum[1]", "flonum", 0 ],
 			"obj-69.1::obj-3.1::obj-30" : [ "gain~", "gain~", 0 ],
+			"obj-69.2::obj-3.1::obj-10" : [ "gain~[2]", "gain~[1]", 0 ],
+			"obj-69.3::obj-3.1::obj-5" : [ "toggle[4]", "toggle[1]", 0 ],
+			"obj-69.4::obj-16" : [ "toggle[7]", "toggle", 0 ],
 			"obj-69.2::obj-3.1::obj-30" : [ "gain~[3]", "gain~", 0 ],
+			"obj-69.3::obj-3.1::obj-42" : [ "flonum[2]", "flonum", 0 ],
 			"obj-69.1::obj-3.1::obj-5" : [ "toggle[1]", "toggle[1]", 0 ],
-			"obj-69.1::obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
-			"obj-69.4::obj-3.1::obj-10" : [ "gain~[6]", "gain~[1]", 0 ],
-			"obj-69.3::obj-16" : [ "toggle[5]", "toggle", 0 ],
-			"obj-69.1::obj-16" : [ "toggle", "toggle", 0 ],
-			"obj-69.3::obj-3.1::obj-10" : [ "gain~[4]", "gain~[1]", 0 ],
 			"obj-69.4::obj-3.1::obj-42" : [ "flonum[3]", "flonum", 0 ],
-			"obj-69.2::obj-16" : [ "toggle[3]", "toggle", 0 ],
+			"obj-69.2::obj-3.1::obj-42" : [ "flonum[1]", "flonum", 0 ],
+			"obj-69.3::obj-3.1::obj-10" : [ "gain~[4]", "gain~[1]", 0 ],
 			"obj-69.4::obj-3.1::obj-5" : [ "toggle[6]", "toggle[1]", 0 ],
-			"obj-69.1::obj-3.1::obj-42" : [ "flonum", "flonum", 0 ],
-			"obj-69.4::obj-16" : [ "toggle[7]", "toggle", 0 ]
+			"obj-69.2::obj-16" : [ "toggle[3]", "toggle", 0 ],
+			"obj-69.1::obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
+			"obj-69.3::obj-3.1::obj-30" : [ "gain~[5]", "gain~", 0 ],
+			"obj-69.4::obj-3.1::obj-30" : [ "gain~[7]", "gain~", 0 ],
+			"obj-69.1::obj-16" : [ "toggle", "toggle", 0 ],
+			"obj-69.2::obj-3.1::obj-5" : [ "toggle[2]", "toggle[1]", 0 ],
+			"obj-69.3::obj-16" : [ "toggle[5]", "toggle", 0 ],
+			"obj-69.4::obj-3.1::obj-10" : [ "gain~[6]", "gain~[1]", 0 ],
+			"obj-69.1::obj-3.1::obj-42" : [ "flonum", "flonum", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
