@@ -41,6 +41,8 @@ var RIDICULOUS_ELBOW_MAG = 600;
 
 var CLOSE_HANDS_MAG = 100;
 
+var TORSO_MOVEMENT_MAG_MULT = 10;
+
 module.exports.PHRASE = 1;
 module.exports.KNOCK  = 2;
 module.exports.RUN    = 3;
@@ -49,7 +51,7 @@ var wrestler1, wrestler2, camera, light;
 
 module.exports.mode = module.exports.PHRASE;
 
-module.exports.eventHandler = function(event) {};
+module.exports.eventHandler = function(event, data) {};
 
 module.exports.begin = function(w1, w2, cam, l) {
   wrestler1 = w1;
@@ -181,7 +183,7 @@ function totalMagnitude(pos) {
 
 function rightHand1(position) {
   if (previousPositions.rightHand1) {
-    if (module.exports.mode == module.exports.KNOCK) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
       moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, 10);
     }
   }
@@ -197,7 +199,7 @@ function leftHand1(position) {
   }
 
   if (previousPositions.leftHand1) {
-    if (module.exports.mode == module.exports.KNOCK) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
       moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, 10);
     }
   }
@@ -229,7 +231,7 @@ function head1(position) {
 
       if (module.exports.mode == module.exports.KNOCK) {
         if (checkShatter(eventsWithRapidHeadVelocity.one)) {
-          module.exports.eventHandler('shatter');
+          module.exports.eventHandler('shatter', {});
         }
       }
 
@@ -247,7 +249,7 @@ function leftKnee1(position) {
   }
 
   if (previousPositions.leftKnee1) {
-    if (module.exports.mode == module.exports.KNOCK) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
       moveDelta(wrestler1.leftLeg, position, previousPositions.leftKnee1, 8);
     }
   }
@@ -257,7 +259,7 @@ function leftKnee1(position) {
 
 function rightKnee1(position) {
   if (previousPositions.rightKnee1) {
-    if (module.exports.mode == module.exports.KNOCK) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
       moveDelta(wrestler1.rightLeg, position, previousPositions.rightKnee1, 8);
     }
   }
@@ -285,7 +287,9 @@ function torso1(position) {
       moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      
+      var mag = totalMagnitude(position, previousPositions.torso1);
+      var dist = TORSO_MOVEMENT_MAG_MULT * mag;
+      wrestler1.move(0, 0, dist);
     }
 
     positionDeltas.torso1 = delta(position, previousPositions.torso1);
@@ -296,9 +300,9 @@ function torso1(position) {
 
 function rightHand2(position)  {
   if (previousPositions.rightHand2) {
-    [wrestler2.rightHand, wrestler2.rightArm].forEach(function(part) {
-      moveDelta(part, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
-    });
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
+        moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
+    }
   }
 
   previousPositions.rightHand2 = position;
@@ -312,9 +316,9 @@ function leftHand2(position) {
   }
 
   if (previousPositions.leftHand2) {
-    [wrestler2.leftHand, wrestler2.leftArm].forEach(function(part) {
-      moveDelta(part, position, previousPositions.leftHand2, 10);
-    });
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
+      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, 10);
+    }
   }
 
   previousPositions.leftHand2 = position;
@@ -346,7 +350,7 @@ function head2(position) {
 
       if (module.exports.mode == module.exports.KNOCK) {
         if (checkShatter(eventsWithRapidHeadVelocity.two)) {
-          module.exports.eventHandler('shatter');
+          module.exports.eventHandler('shatter', {});
         }
       }
     }
@@ -363,9 +367,9 @@ function leftKnee2(position) {
   }
 
   if (previousPositions.leftKnee2) {
-    [wrestler2.leftLeg, wrestler2.leftFoot].forEach(function(part) {
-      moveDelta(part, position, previousPositions.leftKnee2, 8, {x: true, y: true, z: true});
-    });
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
+      moveDelta(wrestler2.leftLeg, position, previousPositions.leftKnee2, 8, {x: true, y: true, z: true});
+    }
   }
 
   previousPositions.leftKnee2 = position;
@@ -373,9 +377,9 @@ function leftKnee2(position) {
 
 function rightKnee2(position) {
   if (previousPositions.rightKnee2) {
-    [wrestler2.rightLeg, wrestler2.rightFoot].forEach(function(part) {
-      moveDelta(part, position, previousPositions.rightKnee2, 8, {x: true, y: true, z: true});
-    });
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
+      moveDelta(wrestler2.rightLeg, position, previousPositions.rightKnee2, 8, {x: true, y: true, z: true});
+    }
   }
 
   previousPositions.rightKnee2 = position;
@@ -388,22 +392,23 @@ function leftElbow2(position) {
     elbow2DeltaAction(positionDeltas.elbow2);
   }
 
-  var mag = totalMagnitude(position);
-  light.distance = position.y;
-
   previousPositions.leftElbow2 = position;
 }
 
 function rightElbow2(position) {
-  var mag = totalMagnitude(position);
-  light.angle = Math.PI / 2 * Math.min(1, (Math.abs(position.y) / 400));
-
   previousPositions.rightElbow2 = position;
 }
 
 function torso2(position) {
   if (previousPositions.torso2) {
-    moveDelta(wrestler2, position, previousPositions.torso2, 8);
+    if (module.exports.mode == module.exports.KNOCK) {
+      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: true, y: false, z: true});
+    }
+    else if (module.exports.mode == module.exports.RUN) {
+      var mag = totalMagnitude(position, previousPositions.torso2);
+      var dist = TORSO_MOVEMENT_MAG_MULT * mag;
+      wrestler2.move(0, 0, dist);
+    }
 
     positionDeltas.torso2 = delta(position, previousPositions.torso2);
   }
