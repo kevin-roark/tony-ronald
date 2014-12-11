@@ -36,7 +36,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 74.0, 104.0, 86.0, 20.0 ],
-					"text" : "clip -400. 400."
+					"text" : "clip -100. 100."
 				}
 
 			}
@@ -190,7 +190,7 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 74.0, 146.0, 136.0, 20.0 ],
-					"text" : "scale -400. 400. 0.8 1.5"
+					"text" : "scale -100. 100. 0.8 1.5"
 				}
 
 			}
@@ -231,10 +231,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 74.0, 424.0, 37.0, 20.0 ],
-					"saved_object_attributes" : 					{
-						"attr_comment" : ""
-					}
-,
 					"text" : "out 1"
 				}
 
@@ -249,10 +245,6 @@
 					"numoutlets" : 1,
 					"outlettype" : [ "" ],
 					"patching_rect" : [ 74.0, 36.0, 30.0, 20.0 ],
-					"saved_object_attributes" : 					{
-						"attr_comment" : ""
-					}
-,
 					"text" : "in 1"
 				}
 
