@@ -14,6 +14,8 @@ $(function() {
   var Hotdog = require('./hotdog');
   var SKYBOX = require('./skybox');
 
+  var TEST_MODE = false;
+
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
    */
@@ -102,7 +104,9 @@ $(function() {
 
   start();
   function start() {
-    io.begin(kevinRonald, dylanRonald, camera, hueLight);
+    if (!TEST_MODE) {
+      io.begin(kevinRonald, dylanRonald, camera, hueLight);
+    }
 
     enterPhrasesState();
 
@@ -390,11 +394,13 @@ $(function() {
 
     setCameraPosition(0, 40, 10);
 
-    var phraseInterval = setInterval(function() {
-      // var rw = new RonaldWord();
-      // rw.addTo(scene);
-      // phraseState.phrases.push(rw);
-    }, 500);
+    if (TEST_MODE) {
+      var phraseInterval = setInterval(function() {
+        var rw = new RonaldWord();
+        rw.addTo(scene);
+        phraseState.phrases.push(rw);
+      }, 500);
+    }
 
     setTimeout(function() {
       fadeOverlay(true, function() {
@@ -416,7 +422,7 @@ $(function() {
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 1000);
+    }, 20000);
   }
 
   function enterTrappedState() {
@@ -472,7 +478,7 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 1000);
+    }, 20000);
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
@@ -551,11 +557,13 @@ $(function() {
 
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
-    var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 10;
-      kevinRonald.walk(negrand(3), 0, z);
-      dylanRonald.walk(negrand(3), 0, z);
-    }, 30);
+    if (TEST_MODE) {
+      var dummyForwardInterval = setInterval(function() {
+        var z = Math.random() * 0.5 + 10;
+        kevinRonald.walk(negrand(3), 0, z);
+        dylanRonald.walk(negrand(3), 0, z);
+      }, 30);
+    }
 
     desperateState.artifacts = [];
     rainArtifacts();
@@ -713,11 +721,13 @@ $(function() {
       heavenState.massiveComputer.material.opacity = 0.01;
     });
 
-    var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 10;
-      kevinRonald.walk(negrand(3), 0, z);
-      dylanRonald.walk(negrand(3), 0, z);
-    }, 30);
+    if (TEST_MODE) {
+      var dummyForwardInterval = setInterval(function() {
+        var z = Math.random() * 0.5 + 10;
+        kevinRonald.walk(negrand(3), 0, z);
+        dylanRonald.walk(negrand(3), 0, z);
+      }, 30);
+    }
 
     heavenState.artifacts = [];
     function rainArtifacts() {
@@ -778,7 +788,6 @@ $(function() {
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {
           var material = heavenState.bigGirlHand.materials[0];
-          console.log(material);
           material.color = new THREE.Color(198, 120, 86);
           material.needsUpdate = true;
 

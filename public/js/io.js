@@ -200,7 +200,7 @@ function rightHand1(position) {
         var delta = delta(position, previousPositions.rightHand1);
         var vel = {
           x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
           z: delta.z * PHRASE_GESTURE_DELTA_MULT
         };
         var pos = blankpos();
@@ -235,7 +235,7 @@ function leftHand1(position) {
         var delta = delta(position, previousPositions.leftHand1);
         var vel = {
           x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
           z: delta.z * PHRASE_GESTURE_DELTA_MULT
         };
         var pos = blankpos();
@@ -355,7 +355,7 @@ function rightHand2(position)  {
         var delta = delta(position, previousPositions.rightHand2);
         var vel = {
           x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
           z: delta.z * PHRASE_GESTURE_DELTA_MULT
         };
         var pos = blankpos();
@@ -390,7 +390,7 @@ function leftHand2(position) {
         var delta = delta(position, previousPositions.leftHand2);
         var vel = {
           x: delta.x * PHRASE_GESTURE_DELTA_MULT,
-          y: delta.y * PHRASE_GESTURE_DELTA_MULT.
+          y: delta.y * PHRASE_GESTURE_DELTA_MULT,
           z: delta.z * PHRASE_GESTURE_DELTA_MULT
         };
         var pos = blankpos();
