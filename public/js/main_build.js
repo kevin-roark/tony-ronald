@@ -1266,7 +1266,7 @@ var RIDICULOUS_ELBOW_MAG = 600;
 
 var CLOSE_HANDS_MAG = 100;
 
-var TORSO_MOVEMENT_MAG_MULT = 0.2;
+var TORSO_MOVEMENT_MAG_MULT = 0.25;
 
 module.exports.PHRASE = 1;
 module.exports.KNOCK  = 2;
@@ -1460,7 +1460,6 @@ function totalMagnitude(pos) {
 function phraseBlast(player, pos, vel) {
   var data = {player: player, pos: pos, vel: vel};
   module.exports.eventHandler('phraseBlast', data);
-  console.log(data.vel);
 }
 
 function rightHand1(position) {
@@ -1644,7 +1643,7 @@ function rightHand2(position)  {
         directions.y = false;
         directions.x = false;
       }
-      moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, directions);
+      moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -1686,7 +1685,7 @@ function leftHand2(position) {
         directions.y = false;
         directions.x = false;
       }
-      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, directions);
+      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -2603,8 +2602,6 @@ $(function() {
   var ronaldGUI = $('#ronald-gui');
 
   io.eventHandler = function(event, data) {
-    console.log('io event: ' + event);
-
     if (event == 'phraseBlast') {
       var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
       rw.addTo(scene);
@@ -3285,7 +3282,7 @@ $(function() {
       }
 
       if (!desperateState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(107, 26));
+        setTimeout(rainArtifacts, kt.randInt(250, 90));
       }
       else {
         setTimeout(function() {
@@ -3462,7 +3459,7 @@ $(function() {
       heavenState.skyBlocker.material.needsUpdate = true;
 
       if (!heavenState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(107, 26));
+        setTimeout(rainArtifacts, kt.randInt(250, 90));
       }
       else {
         setTimeout(function() {
@@ -3509,6 +3506,8 @@ $(function() {
           material.needsUpdate = true;
 
           pokeHandMany(z, function() {
+            io.socket.emit('noHeaven');
+            
             setTimeout(function() { // lets give some time to twitch
               endState();
             }, 10000);
@@ -3638,11 +3637,17 @@ $(function() {
 
       var amt = {x: 0.75, y: 0.15, z: 0.65};
       var thresh = 1;
+      var panTimes = 0;
       var panInterval = setInterval(function() {
         moveTowardsTarget(cameraFollowState.target, camTarget, amt);
         moveTowardsTarget(cameraFollowState.offset, camOffset, amt);
         moveTowardsTarget(lightFollowState.target, lightTarget, amt);
         moveTowardsTarget(lightFollowState.offset, lightOffset, amt);
+
+        panTimes += 1;
+        if (panTimes >= 1000) {
+          startComputerActivity();
+        }
 
         if (distanceMagnitude(cameraFollowState.target, camTarget) <= thresh &&
             distanceMagnitude(cameraFollowState.offset, camOffset) <= thresh &&

@@ -48,7 +48,7 @@ var RIDICULOUS_ELBOW_MAG = 600;
 
 var CLOSE_HANDS_MAG = 100;
 
-var TORSO_MOVEMENT_MAG_MULT = 0.2;
+var TORSO_MOVEMENT_MAG_MULT = 0.25;
 
 module.exports.PHRASE = 1;
 module.exports.KNOCK  = 2;
@@ -242,7 +242,6 @@ function totalMagnitude(pos) {
 function phraseBlast(player, pos, vel) {
   var data = {player: player, pos: pos, vel: vel};
   module.exports.eventHandler('phraseBlast', data);
-  console.log(data.vel);
 }
 
 function rightHand1(position) {
@@ -426,7 +425,7 @@ function rightHand2(position)  {
         directions.y = false;
         directions.x = false;
       }
-      moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, directions);
+      moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();
@@ -468,7 +467,7 @@ function leftHand2(position) {
         directions.y = false;
         directions.x = false;
       }
-      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, directions);
+      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, denom, directions);
     }
     else if (module.exports.mode == module.exports.PHRASE) {
       var now = new Date();

@@ -59,8 +59,6 @@ $(function() {
   var ronaldGUI = $('#ronald-gui');
 
   io.eventHandler = function(event, data) {
-    console.log('io event: ' + event);
-
     if (event == 'phraseBlast') {
       var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
       rw.addTo(scene);
@@ -741,7 +739,7 @@ $(function() {
       }
 
       if (!desperateState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(107, 26));
+        setTimeout(rainArtifacts, kt.randInt(250, 90));
       }
       else {
         setTimeout(function() {
@@ -918,7 +916,7 @@ $(function() {
       heavenState.skyBlocker.material.needsUpdate = true;
 
       if (!heavenState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(107, 26));
+        setTimeout(rainArtifacts, kt.randInt(250, 90));
       }
       else {
         setTimeout(function() {
@@ -965,6 +963,8 @@ $(function() {
           material.needsUpdate = true;
 
           pokeHandMany(z, function() {
+            io.socket.emit('noHeaven');
+            
             setTimeout(function() { // lets give some time to twitch
               endState();
             }, 10000);
@@ -1023,7 +1023,6 @@ $(function() {
     flash('RONALD?');
     active.endgame = true;
     io.mode = -1;
-    io.socket.emit('noHeaven');
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 
@@ -1095,11 +1094,17 @@ $(function() {
 
       var amt = {x: 0.75, y: 0.15, z: 0.65};
       var thresh = 1;
+      var panTimes = 0;
       var panInterval = setInterval(function() {
         moveTowardsTarget(cameraFollowState.target, camTarget, amt);
         moveTowardsTarget(cameraFollowState.offset, camOffset, amt);
         moveTowardsTarget(lightFollowState.target, lightTarget, amt);
         moveTowardsTarget(lightFollowState.offset, lightOffset, amt);
+
+        panTimes += 1;
+        if (panTimes >= 1000) {
+          startComputerActivity();
+        }
 
         if (distanceMagnitude(cameraFollowState.target, camTarget) <= thresh &&
             distanceMagnitude(cameraFollowState.offset, camOffset) <= thresh &&
