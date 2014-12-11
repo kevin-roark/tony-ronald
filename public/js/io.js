@@ -406,9 +406,10 @@ function torso1(position) {
       //moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      var mag = totalMagnitude(delta(position, previousPositions.torso1));
+      var d = delta(position, previousPositions.torso1);
+      var mag = totalMagnitude(d);
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
-      wrestler1.move(0, 0, dist);
+      wrestler1.move(d.x / 30, 0, dist);
     }
 
     positionDeltas.torso1 = delta(position, previousPositions.torso1);
@@ -578,9 +579,10 @@ function torso2(position) {
       //moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: false, y: false, z: true});
     }
     else if (module.exports.mode == module.exports.RUN) {
-      var mag = totalMagnitude(delta(position, previousPositions.torso2));
+      var d = delta(position, previousPositions.torso2);
+      var mag = totalMagnitude(d);
       var dist = TORSO_MOVEMENT_MAG_MULT * mag;
-      wrestler2.move(0, 0, dist);
+      wrestler2.move(d.x / 30, 0, dist);
     }
 
     positionDeltas.torso2 = delta(position, previousPositions.torso2);
