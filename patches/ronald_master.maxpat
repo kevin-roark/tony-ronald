@@ -3,9 +3,8 @@
 		"fileversion" : 1,
 		"appversion" : 		{
 			"major" : 6,
-			"minor" : 1,
-			"revision" : 8,
-			"architecture" : "x86"
+			"minor" : 0,
+			"revision" : 4
 		}
 ,
 		"rect" : [ 165.0, 52.0, 1123.0, 746.0 ],
@@ -50,8 +49,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 686.0, 575.0, 88.0, 20.0 ],
-					"text" : "poly~ whoa 16"
+					"patching_rect" : [ 686.0, 575.0, 82.0, 20.0 ],
+					"text" : "poly~ whoa 4"
 				}
 
 			}
@@ -66,31 +65,6 @@
 					"outlettype" : [ "int", "bang" ],
 					"parameter_enable" : 0,
 					"patching_rect" : [ 389.25, 445.0, 50.0, 20.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"id" : "obj-60",
-					"maxclass" : "button",
-					"numinlets" : 1,
-					"numoutlets" : 1,
-					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 673.0, 283.0, 20.0, 20.0 ]
-				}
-
-			}
-, 			{
-				"box" : 				{
-					"fontname" : "Arial",
-					"fontsize" : 12.0,
-					"id" : "obj-61",
-					"maxclass" : "flonum",
-					"numinlets" : 1,
-					"numoutlets" : 2,
-					"outlettype" : [ "float", "bang" ],
-					"parameter_enable" : 0,
-					"patching_rect" : [ 621.5, 445.0, 50.0, 20.0 ]
 				}
 
 			}
@@ -188,8 +162,8 @@
 					"numinlets" : 5,
 					"numoutlets" : 2,
 					"outlettype" : [ "signal", "signal" ],
-					"patching_rect" : [ 398.0, 533.0, 128.0, 20.0 ],
-					"text" : "poly~ ronald_playit 16"
+					"patching_rect" : [ 398.0, 533.0, 121.0, 20.0 ],
+					"text" : "poly~ ronald_playit 4"
 				}
 
 			}
@@ -306,7 +280,7 @@
 					"bgcolor" : [ 1.0, 0.994077, 0.27404, 1.0 ],
 					"fontname" : "Arial",
 					"fontsize" : 18.0,
-					"frgb" : 0.0,
+					"frgb" : [ 0.430678, 0.401019, 0.67951, 1.0 ],
 					"id" : "obj-38",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -337,8 +311,8 @@
 					"numinlets" : 1,
 					"numoutlets" : 1,
 					"outlettype" : [ "signal" ],
-					"patching_rect" : [ 323.0, 200.0, 91.0, 20.0 ],
-					"text" : "poly~ knock 16"
+					"patching_rect" : [ 323.0, 200.0, 84.0, 20.0 ],
+					"text" : "poly~ knock 4"
 				}
 
 			}
@@ -346,7 +320,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
+					"frgb" : [ 0.827671, 0.544408, 0.311287, 1.0 ],
 					"id" : "obj-31",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -375,7 +349,6 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
 					"id" : "obj-10",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -403,7 +376,7 @@
 				"box" : 				{
 					"fontname" : "Arial",
 					"fontsize" : 12.0,
-					"frgb" : 0.0,
+					"frgb" : [ 0.015097, 0.575236, 0.909319, 1.0 ],
 					"id" : "obj-20",
 					"maxclass" : "comment",
 					"numinlets" : 1,
@@ -771,24 +744,6 @@
 			}
 , 			{
 				"patchline" : 				{
-					"destination" : [ "obj-61", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-60", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
-					"destination" : [ "obj-68", 0 ],
-					"disabled" : 0,
-					"hidden" : 0,
-					"source" : [ "obj-60", 0 ]
-				}
-
-			}
-, 			{
-				"patchline" : 				{
 					"destination" : [ "obj-69", 0 ],
 					"disabled" : 0,
 					"hidden" : 0,
@@ -897,134 +852,74 @@
 			}
  ],
 		"parameters" : 		{
+			"obj-69.2::obj-3.1::obj-10" : [ "gain~[2]", "gain~[1]", 0 ],
+			"obj-69.3::obj-3.1::obj-42" : [ "flonum[2]", "flonum", 0 ],
 			"obj-69.2::obj-3.1::obj-5" : [ "toggle[2]", "toggle[1]", 0 ],
-			"obj-69.14::obj-16" : [ "toggle[27]", "toggle", 0 ],
-			"obj-69.15::obj-3.1::obj-42" : [ "flonum[14]", "flonum", 0 ],
-			"obj-69.11::obj-3.1::obj-42" : [ "flonum[10]", "flonum", 0 ],
-			"obj-69.6::obj-3.1::obj-5" : [ "toggle[10]", "toggle[1]", 0 ],
-			"obj-69.4::obj-3.1::obj-10" : [ "gain~[6]", "gain~[1]", 0 ],
-			"obj-69.8::obj-3.1::obj-10" : [ "gain~[14]", "gain~[1]", 0 ],
-			"obj-69.8::obj-16" : [ "toggle[15]", "toggle", 0 ],
-			"obj-69.16::obj-3.1::obj-5" : [ "toggle[30]", "toggle[1]", 0 ],
-			"obj-69.1::obj-3.1::obj-30" : [ "gain~", "gain~", 0 ],
-			"obj-69.4::obj-16" : [ "toggle[7]", "toggle", 0 ],
-			"obj-69.10::obj-3.1::obj-30" : [ "gain~[19]", "gain~", 0 ],
-			"obj-69.11::obj-3.1::obj-5" : [ "toggle[20]", "toggle[1]", 0 ],
-			"obj-69.7::obj-16" : [ "toggle[13]", "toggle", 0 ],
-			"obj-69.12::obj-3.1::obj-42" : [ "flonum[11]", "flonum", 0 ],
-			"obj-69.14::obj-3.1::obj-42" : [ "flonum[13]", "flonum", 0 ],
-			"obj-69.14::obj-3.1::obj-10" : [ "gain~[26]", "gain~[1]", 0 ],
-			"obj-69.5::obj-3.1::obj-30" : [ "gain~[9]", "gain~", 0 ],
-			"obj-69.15::obj-3.1::obj-5" : [ "toggle[28]", "toggle[1]", 0 ],
-			"obj-69.6::obj-3.1::obj-42" : [ "flonum[5]", "flonum", 0 ],
-			"obj-69.1::obj-16" : [ "toggle", "toggle", 0 ],
-			"obj-69.3::obj-16" : [ "toggle[5]", "toggle", 0 ],
-			"obj-69.3::obj-3.1::obj-10" : [ "gain~[4]", "gain~[1]", 0 ],
-			"obj-69.1::obj-3.1::obj-5" : [ "toggle[1]", "toggle[1]", 0 ],
-			"obj-69.4::obj-3.1::obj-30" : [ "gain~[7]", "gain~", 0 ],
-			"obj-69.1::obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
-			"obj-69.9::obj-3.1::obj-5" : [ "toggle[16]", "toggle[1]", 0 ],
-			"obj-69.16::obj-16" : [ "toggle[31]", "toggle", 0 ],
-			"obj-69.10::obj-3.1::obj-42" : [ "flonum[9]", "flonum", 0 ],
-			"obj-69.6::obj-3.1::obj-10" : [ "gain~[10]", "gain~[1]", 0 ],
-			"obj-69.6::obj-16" : [ "toggle[11]", "toggle", 0 ],
-			"obj-69.11::obj-16" : [ "toggle[21]", "toggle", 0 ],
-			"obj-69.15::obj-3.1::obj-10" : [ "gain~[28]", "gain~[1]", 0 ],
-			"obj-69.12::obj-16" : [ "toggle[23]", "toggle", 0 ],
-			"obj-69.16::obj-3.1::obj-10" : [ "gain~[30]", "gain~[1]", 0 ],
-			"obj-69.8::obj-3.1::obj-42" : [ "flonum[7]", "flonum", 0 ],
-			"obj-69.13::obj-16" : [ "toggle[25]", "toggle", 0 ],
-			"obj-69.11::obj-3.1::obj-10" : [ "gain~[20]", "gain~[1]", 0 ],
-			"obj-69.1::obj-3.1::obj-42" : [ "flonum", "flonum", 0 ],
 			"obj-69.3::obj-3.1::obj-30" : [ "gain~[5]", "gain~", 0 ],
-			"obj-69.15::obj-3.1::obj-30" : [ "gain~[29]", "gain~", 0 ],
+			"obj-69.3::obj-3.1::obj-5" : [ "toggle[4]", "toggle[1]", 0 ],
+			"obj-69.4::obj-3.1::obj-30" : [ "gain~[7]", "gain~", 0 ],
+			"obj-69.2::obj-3.1::obj-42" : [ "flonum[1]", "flonum", 0 ],
+			"obj-69.1::obj-3.1::obj-30" : [ "gain~", "gain~", 0 ],
+			"obj-69.2::obj-3.1::obj-30" : [ "gain~[3]", "gain~", 0 ],
+			"obj-69.1::obj-3.1::obj-5" : [ "toggle[1]", "toggle[1]", 0 ],
+			"obj-69.1::obj-3.1::obj-10" : [ "gain~[1]", "gain~[1]", 0 ],
+			"obj-69.4::obj-3.1::obj-10" : [ "gain~[6]", "gain~[1]", 0 ],
+			"obj-69.3::obj-16" : [ "toggle[5]", "toggle", 0 ],
+			"obj-69.1::obj-16" : [ "toggle", "toggle", 0 ],
+			"obj-69.3::obj-3.1::obj-10" : [ "gain~[4]", "gain~[1]", 0 ],
 			"obj-69.4::obj-3.1::obj-42" : [ "flonum[3]", "flonum", 0 ],
 			"obj-69.2::obj-16" : [ "toggle[3]", "toggle", 0 ],
-			"obj-69.7::obj-3.1::obj-10" : [ "gain~[12]", "gain~[1]", 0 ],
-			"obj-69.16::obj-3.1::obj-42" : [ "flonum[15]", "flonum", 0 ],
-			"obj-69.9::obj-3.1::obj-10" : [ "gain~[16]", "gain~[1]", 0 ],
-			"obj-69.13::obj-3.1::obj-5" : [ "toggle[24]", "toggle[1]", 0 ],
-			"obj-69.10::obj-3.1::obj-5" : [ "toggle[18]", "toggle[1]", 0 ],
-			"obj-69.12::obj-3.1::obj-5" : [ "toggle[22]", "toggle[1]", 0 ],
-			"obj-69.8::obj-3.1::obj-30" : [ "gain~[15]", "gain~", 0 ],
-			"obj-69.11::obj-3.1::obj-30" : [ "gain~[21]", "gain~", 0 ],
-			"obj-69.8::obj-3.1::obj-5" : [ "toggle[14]", "toggle[1]", 0 ],
-			"obj-69.13::obj-3.1::obj-10" : [ "gain~[24]", "gain~[1]", 0 ],
-			"obj-69.10::obj-16" : [ "toggle[19]", "toggle", 0 ],
-			"obj-69.5::obj-3.1::obj-5" : [ "toggle[8]", "toggle[1]", 0 ],
-			"obj-69.14::obj-3.1::obj-30" : [ "gain~[27]", "gain~", 0 ],
-			"obj-69.2::obj-3.1::obj-30" : [ "gain~[3]", "gain~", 0 ],
-			"obj-69.3::obj-3.1::obj-42" : [ "flonum[2]", "flonum", 0 ],
 			"obj-69.4::obj-3.1::obj-5" : [ "toggle[6]", "toggle[1]", 0 ],
-			"obj-69.13::obj-3.1::obj-42" : [ "flonum[12]", "flonum", 0 ],
-			"obj-69.9::obj-3.1::obj-42" : [ "flonum[8]", "flonum", 0 ],
-			"obj-69.5::obj-3.1::obj-10" : [ "gain~[8]", "gain~[1]", 0 ],
-			"obj-69.16::obj-3.1::obj-30" : [ "gain~[31]", "gain~", 0 ],
-			"obj-69.5::obj-16" : [ "toggle[9]", "toggle", 0 ],
-			"obj-69.7::obj-3.1::obj-30" : [ "gain~[13]", "gain~", 0 ],
-			"obj-69.12::obj-3.1::obj-10" : [ "gain~[22]", "gain~[1]", 0 ],
-			"obj-69.10::obj-3.1::obj-10" : [ "gain~[18]", "gain~[1]", 0 ],
-			"obj-69.14::obj-3.1::obj-5" : [ "toggle[26]", "toggle[1]", 0 ],
-			"obj-69.3::obj-3.1::obj-5" : [ "toggle[4]", "toggle[1]", 0 ],
-			"obj-69.2::obj-3.1::obj-10" : [ "gain~[2]", "gain~[1]", 0 ],
-			"obj-69.2::obj-3.1::obj-42" : [ "flonum[1]", "flonum", 0 ],
-			"obj-69.6::obj-3.1::obj-30" : [ "gain~[11]", "gain~", 0 ],
-			"obj-69.7::obj-3.1::obj-42" : [ "flonum[6]", "flonum", 0 ],
-			"obj-69.5::obj-3.1::obj-42" : [ "flonum[4]", "flonum", 0 ],
-			"obj-69.9::obj-3.1::obj-30" : [ "gain~[17]", "gain~", 0 ],
-			"obj-69.7::obj-3.1::obj-5" : [ "toggle[12]", "toggle[1]", 0 ],
-			"obj-69.12::obj-3.1::obj-30" : [ "gain~[23]", "gain~", 0 ],
-			"obj-69.13::obj-3.1::obj-30" : [ "gain~[25]", "gain~", 0 ],
-			"obj-69.15::obj-16" : [ "toggle[29]", "toggle", 0 ],
-			"obj-69.9::obj-16" : [ "toggle[17]", "toggle", 0 ]
+			"obj-69.1::obj-3.1::obj-42" : [ "flonum", "flonum", 0 ],
+			"obj-69.4::obj-16" : [ "toggle[7]", "toggle", 0 ]
 		}
 ,
 		"dependency_cache" : [ 			{
 				"name" : "osc_router.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "knock.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_playit.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_doppler.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_verb.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "ronald_pan.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
 , 			{
 				"name" : "whoa.maxpat",
-				"bootpath" : "/Users/kevinroark/code/art/tony/tony-ronald/patches",
-				"patcherrelativepath" : ".",
+				"bootpath" : "/Users/Dylan/Documents/Projects/tony-ronald/patches",
+				"patcherrelativepath" : "",
 				"type" : "JSON",
 				"implicit" : 1
 			}
