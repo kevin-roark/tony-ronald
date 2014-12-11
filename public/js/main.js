@@ -1,8 +1,9 @@
 $(function() {
 
   var kt = require('./lib/kutility');
+  var BodyPart = require('./bodypart');
   var Character = require('./character');
-  //var io = require('./io');
+  var io = require('./io');
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
   var Artifact = require('./artifact');
@@ -10,6 +11,10 @@ $(function() {
   var Hand = require('./hand');
   var Human = require('./human');
   var Billboard = require('./billboard');
+  var Hotdog = require('./hotdog');
+  var SKYBOX = require('./skybox');
+
+  var TEST_MODE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -36,7 +41,7 @@ $(function() {
     scene.simulate(undefined, 1);
   });
 
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 20000);
   camera.target = {x: 0, y: 0, z: 0};
   scene.add(camera);
 
@@ -48,6 +53,33 @@ $(function() {
   scene.add(mainLight);
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
+  var chatroomVideo = document.querySelector('#chatroom');
+  var ronaldGUI = $('#ronald-gui');
+
+  io.eventHandler = function(event, data) {
+    console.log('io event: ' + event);
+
+    if (event == 'phraseBlast') {
+      var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
+      rw.addTo(scene);
+      phraseState.phrases.push(rw);
+
+      io.socket.emit('phrase', data.player, rw.phraseIndex, data.vel);
+    }
+    else if (event == 'shatter') {
+      if (trappedState.mac) trappedState.mac.shatterable = true;
+      if (trappedState.pc) trappedState.pc.shatterable = true;
+    }
+    else if (event == 'endPhrases') {
+      phraseState.endScene();
+    }
+    else if (event == 'transparentComputers') {
+      trappedState.makeTransparent();
+    }
+    else if (event == 'endPokes') {
+      heavenState.stopPoking = true;
+    }
+  };
 
   /*
    * * * * * STATE OBJECTS * * * * *
@@ -71,9 +103,12 @@ $(function() {
     offset: {x: 0, y: 0, z: 0}
   };
 
-  var kevinRonald;
-  var dylanRonald;
-  var ronalds = [];
+  kevinRonald = new Character({x: -700, y: -200, z: -1000}, 20);
+  kevinRonald.addTo(scene);
+
+  dylanRonald = new Character({x: -600, y: -200, z: -1000}, 20);
+  dylanRonald.addTo(scene);
+  var ronalds = [kevinRonald, dylanRonald];
 
   /*
    * * * * * STARTIN AND RENDERIN * * * * *
@@ -81,7 +116,9 @@ $(function() {
 
   start();
   function start() {
-    //io.begin(kevinRonald, dylanRonald, camera, hueLight);
+    if (!TEST_MODE) {
+      io.begin(kevinRonald, dylanRonald, camera);
+    }
 
     enterPhrasesState();
 
@@ -171,9 +208,9 @@ $(function() {
       camera.position.copy(cameraFollowState.target).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.target);
     }
-    if (lightFollowState.obj) {
-      light.target.position.copy(lightFollowState.target);
-      light.position.addVectors(light.target.position, lightFollowState.offset);
+    if (lightFollowState.target) {
+      mainLight.target.position.copy(lightFollowState.target);
+      mainLight.position.addVectors(mainLight.target.position, lightFollowState.offset);
     }
 
     renderer.render(scene, camera);
@@ -198,6 +235,17 @@ $(function() {
     ronalds.forEach(function(ronald) {
       ronald.reset();
     });
+  }
+
+  function flash(text, timeout) {
+    if (!text) return;
+    if (!timeout) timeout = 200;
+
+    $('#flash').text(text);
+    $('#flash').show();
+    setTimeout(function() {
+      $('#flash').hide();
+    }, timeout);
   }
 
   function shakeCamera() {
@@ -233,6 +281,16 @@ $(function() {
     }).onComplete(function() {
       camera.lookAt(position);
     }).start();
+  }
+
+  function tweenCamera(position, callback) {
+    var tween = new TWEEN.Tween(camera.position).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+      console.log('got that update');
+    }).onComplete(function() {
+      callback();
+    });
+    tween.start();
   }
 
   function fadeOverlay(fadein, callback, color, time) {
@@ -295,6 +353,7 @@ $(function() {
 
   function enterPhrasesState() {
     active.phrases = true;
+    io.mode = io.PHRASE;
 
     phraseState.phrases = [];
 
@@ -357,38 +416,50 @@ $(function() {
 
     setCameraPosition(0, 40, 10);
 
-    var phraseInterval = setInterval(function() {
-      var rw = new RonaldWord();
-      rw.addTo(scene);
-      phraseState.phrases.push(rw);
-    }, 500);
+    if (TEST_MODE) {
+      var phraseInterval = setInterval(function() {
+        var rw = new RonaldWord();
+        rw.addTo(scene);
+        phraseState.phrases.push(rw);
+      }, 500);
+    }
 
-    setTimeout(function() {
+    phraseState.endScene = function() {
       fadeOverlay(true, function() {
         clearInterval(phraseInterval);
 
         var phraseMeshes = [
-          phraseState.leftWall,
-          phraseState.rightWall,
-          phraseState.backWall,
-          phraseState.frontWall,
-          phraseState.ceiling,
-          phraseState.ground
+        phraseState.leftWall,
+        phraseState.rightWall,
+        phraseState.backWall,
+        phraseState.frontWall,
+        phraseState.ceiling,
+        phraseState.ground
         ];
         phraseState.phrases.forEach(function(phrase) {
           phraseMeshes.push(phrase.mesh);
         });
+
         clearScene(phraseMeshes);
         active.phrases = false;
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 1000);
+    };
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        phraseState.endScene();
+      }, 5000);
+    }
   }
 
   function enterTrappedState() {
+    flash('RONALD IS BORN');
+
     active.ronalds = true;
     active.trapped = true;
+    io.mode = io.KNOCK;
 
     setCameraPosition(0, 0, 0);
 
@@ -400,15 +471,11 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -100, y: 5, z: -170}, 20);
-    kevinRonald.addTo(scene, function() {
-      kevinRonald.rotate(0, Math.PI/4, 0);
-    });
+    kevinRonald.moveTo(-100, 15, -170);
+    kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald = new Character({x: 100, y: 5, z: -170}, 20);
-    dylanRonald.addTo(scene, function() {
-      dylanRonald.rotate(0, -Math.PI/4, 0);
-    });
+    dylanRonald.moveTo(100, 15, -170);
+    dylanRonald.rotate(0, -Math.PI/4, 0);
 
     ronalds = [kevinRonald, dylanRonald];
 
@@ -423,14 +490,17 @@ $(function() {
     });
 
     trappedState.renderObjects = [mac, pc];
+    trappedState.mac = mac;
+    trappedState.pc = pc;
 
     kevinRonald.leftArm.collisionHandler = function() {
       kevinRonald.leftArm.move(-1, 0, -1);
     };
 
-    setTimeout(function() {
-      mac.becomeTransparent(0.02);
-      pc.becomeTransparent(0.02);
+    trappedState.makeTransparent = function() {
+      var delta = TEST_MODE? 0.02 : 0.002;
+      mac.becomeTransparent(delta, undefined, TEST_MODE);
+      pc.becomeTransparent(delta, undefined, TEST_MODE);
 
       var shatterChecker = setInterval(function() {
         if (mac.shattering && pc.shattering) {
@@ -438,20 +508,26 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 1000);
+    }
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        trappedState.makeTransparent();
+      }, 1000);
+    }
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
 
-      kevinRonald.reset(); dylanRonald.reset();
-
-      var cameraPosition = {x: 0, y: 40, z: -370};
-      setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-      camera.lookAt({x: 0, y: 0, z: -100});
-      //tweenCameraToTarget(cameraPosition);
-
-      active.trapped = false;
-      enterDesperateFleeState();
+      var endCameraZ = -150;
+      var panInterval = setInterval(function() {
+        camera.position.z -= 2.5;
+        if (camera.position.z <= endCameraZ) {
+          clearInterval(panInterval);
+          active.trapped = false;
+          enterDesperateFleeState();
+        }
+      }, 15);
     }
 
     $('body').keypress(function(ev) {
@@ -468,11 +544,22 @@ $(function() {
 
   function enterDesperateFleeState() {
     console.log('I AM DESPERATE NOW');
+    flash('RONALD ESCAPES');
+
+    kevinRonald.moveTo(-100, 5, -170);
+    dylanRonald.moveTo(100, 5, -170);
+    setCameraPosition(0, 40, -370);
+    camera.lookAt({x: 0, y: 0, z: -100});
 
     var groundLength = 2500;
     var darkLength = 1000;
+    var endRainZ = groundLength;
+    var endZ = groundLength + darkLength;
+    var numberOfArtifactTypes = 5;
 
     active.desperate = true;
+    io.mode = io.RUN;
+
     desperateState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
@@ -481,10 +568,10 @@ $(function() {
       lightFollowState.target = middle;
       lightFollowState.offset = {x: 10, y: 20, z: -60};
 
-      if (middle.z > groundLength + darkLength) {
+      if (middle.z > endZ) {
         endState();
       }
-      else if (!desperateState.dark && middle.z > groundLength) {
+      else if (!desperateState.dark && middle.z > endRainZ) {
         darkTime();
       }
     };
@@ -493,8 +580,13 @@ $(function() {
       kevinRonald.resetMovement();
     };
 
+    var groundTexture = THREE.ImageUtils.loadTexture('/images/circuit.jpg');
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(6, 24);
+
     desperateState.ground_material = Physijs.createMaterial(
-      new THREE.MeshBasicMaterial({color: 0xeeeeee, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({map: groundTexture, side: THREE.DoubleSide}),
       .8, .4
     );
     desperateState.ground_geometry = new THREE.PlaneGeometry(500, groundLength * 2);
@@ -506,18 +598,23 @@ $(function() {
 
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
-    var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 10;
-      kevinRonald.walk(negrand(3), 0, z);
-      dylanRonald.walk(negrand(3), 0, z);
-    }, 30);
+    if (TEST_MODE) {
+      var dummyForwardInterval = setInterval(function() {
+        var z = Math.random() * 0.5 + 10;
+        kevinRonald.walk(negrand(6), 0, z);
+        dylanRonald.walk(negrand(6), 0, z);
+      }, 30);
+    }
 
     desperateState.artifacts = [];
     rainArtifacts();
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 0);
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + Math.random() * 320 + 80};
+
+      var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
+      var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 20 + 9.8, false, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -527,7 +624,7 @@ $(function() {
       }
 
       if (!desperateState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(300, 50));
+        setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
       else {
         setTimeout(function() {
@@ -554,17 +651,20 @@ $(function() {
 
   function enterHeavenState(startGrassZ) {
     console.log('I AM HEAVEN NOW');
+    flash('RONALD LIVES');
 
     if (!startGrassZ) startGrassZ = 4500;
 
     var groundLength = 3000;
-
     var heavenGroundZ = startGrassZ + groundLength / 2;
-
     var massiveComputerZ = startGrassZ + groundLength;
+    var numberOfArtifactTypes = 5;
+    var grassPath = '/images/grass.jpg';
 
     active.heaven = true;
     var grassMeshes = [];
+
+    var patchTexture = THREE.ImageUtils.loadTexture(grassPath);
     heavenState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
@@ -583,7 +683,10 @@ $(function() {
         for (var i = 0; i < count; i++) {
           var size = kt.randInt(9, 1);
           var grassGeometry = new THREE.PlaneGeometry(size, size);
-          var grassMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide});
+          var grassMaterial = new THREE.MeshBasicMaterial({
+            map: patchTexture,
+            side: THREE.DoubleSide
+          });
           var grassMesh = new THREE.Mesh(grassGeometry, grassMaterial);
           grassMesh.rotation.x = -Math.PI / 2;
           grassMesh.position.z = middle.z + kt.randInt(100);
@@ -605,6 +708,10 @@ $(function() {
         }
       }
 
+      if (middle.z >= massiveComputerZ - 1150 && !heavenState.visualizedComputer) {
+        heavenState.visualizedComputer = true;
+        heavenState.massiveComputer.material.opacity = 0.33;
+      }
       if (middle.z >= massiveComputerZ - 250 && !heavenState.reachedComputer) {
         heavenState.reachedComputer = true;
         reachedComputer();
@@ -626,8 +733,19 @@ $(function() {
       }
     };
 
+    heavenState.skybox = SKYBOX.create(undefined, '/images/mountain.jpg');
+    scene.add(heavenState.skybox);
+
+    heavenState.skyBlocker = SKYBOX.blocker();
+    scene.add(heavenState.skyBlocker);
+
+    var grassTexture = THREE.ImageUtils.loadTexture(grassPath);
+    grassTexture.wrapS = THREE.RepeatWrapping;
+    grassTexture.wrapT = THREE.RepeatWrapping;
+    grassTexture.repeat.set(4, 20);
+
     heavenState.ground_material = Physijs.createMaterial(
-      new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({map: grassTexture, side: THREE.DoubleSide}),
       .8, .4
     );
     heavenState.ground_geometry = new THREE.PlaneGeometry(500, groundLength);
@@ -641,20 +759,27 @@ $(function() {
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
-      heavenState.massiveComputer.material.opacity = 0.33;
+      heavenState.massiveComputer.material.opacity = 0.01;
     });
 
-    var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 10;
-      kevinRonald.walk(negrand(3), 0, z);
-      dylanRonald.walk(negrand(3), 0, z);
-    }, 30);
+    if (TEST_MODE) {
+      var dummyForwardInterval = setInterval(function() {
+        var z = Math.random() * 0.5 + 10;
+        kevinRonald.walk(negrand(3), 0, z);
+        dylanRonald.walk(negrand(3), 0, z);
+      }, 30);
+    }
 
     heavenState.artifacts = [];
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 2);
+
+      var z = (heavenState.artifactZOffset)? heavenState.artifactZOffset() : Math.random() * 200 + 80;
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + z};
+
+      var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
+      var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 20 + 9.8, true, artifactIndex);
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -663,8 +788,11 @@ $(function() {
         scene.remove(firstArtifact.mesh);
       }
 
+      heavenState.skyBlocker.material.opacity = Math.max(0, heavenState.skyBlocker.material.opacity - 0.01);
+      heavenState.skyBlocker.material.needsUpdate = true;
+
       if (!heavenState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(300, 50));
+        setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
       else {
         setTimeout(function() {
@@ -679,6 +807,8 @@ $(function() {
       console.log('I AM AT LINUX NOW');
       clearInterval(dummyForwardInterval);
 
+      heavenState.artifactZOffset = function() {return (Math.random() - 0.5) * -12};
+
       var currentTarget = cameraFollowState.target;
       var initY = currentTarget.y;
       cameraFollowState.target = null;
@@ -689,6 +819,8 @@ $(function() {
 
         if (currentTarget.y >= initY + 40) {
           clearInterval(aimCameraUpInterval);
+          scene.remove(heavenState.skybox);
+          scene.remove(heavenState.skyBlocker);
           addHand();
         }
       }, 10);
@@ -701,7 +833,6 @@ $(function() {
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {
           var material = heavenState.bigGirlHand.materials[0];
-          console.log(material);
           material.color = new THREE.Color(198, 120, 86);
           material.needsUpdate = true;
 
@@ -735,13 +866,13 @@ $(function() {
         var dist = 60;
         var hand = heavenState.bigGirlHand;
         var pokeCount = 0;
-        var maxPokes = 3;
+        var maxPokes = TEST_MODE? 3 : 1000;
 
         poke();
         function poke() {
           hand.pokeUntilCollision(dist, function() {
             pokeCount += 1;
-            if (pokeCount < maxPokes) {
+            if (!heavenState.stopPoking && pokeCount < maxPokes) {
               setTimeout(poke, 1);
             } else {
               donePoking();
@@ -761,29 +892,48 @@ $(function() {
 
   function enterEndgameState(linux) {
     console.log('IT IS TIME TO DIE RONALD');
+    flash('RONALD?');
     active.endgame = true;
+    io.mode = -1;
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    linux.material.opacity = 0.985;
+    linux.material.opacity = 0.975;
     linux.reset();
     linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
 
+    var skybox = SKYBOX.create();
+    scene.add(skybox);
+
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
-    cameraFollowState.offset = {x: 400, y: 25, z: 0};
+    cameraFollowState.offset = {x: 500, y: 25, z: 50};
     lightFollowState.target = cameraFollowState.target;
-    lightFollowState.offset = {x: 100, y: 40, z: 0};
+    lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 220, y: 50, z: girlZ}, 35, 'girl');
+    finalState.girl = new Human({x: 295, y: 50, z: girlZ - 10}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
+
+    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo};
+    finalState.tonyRonaldScreen = new Billboard({x: -127, y: 280, z: girlZ - 165}, 1, tonyRonaldVideoStruct);
+    finalState.tonyRonaldScreen.addTo(scene);
+
+    var chatroomVideoStruct = {vid: chatroomVideo, width: 340, height: 120};
+    finalState.chatroomScreen = new Billboard({x: -100, y: 75, z: girlZ - 165}, 1, chatroomVideoStruct);
+    finalState.chatroomScreen.addTo(scene);
+
+    finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
+    finalState.hotdog.addTo(scene);
+
+    finalState.keyboard = new BodyPart({x: 0, y: -10, z: girlZ - 30}, 15, '/js/models/keyboard.js');
+    finalState.keyboard.addTo(scene);
 
     fadeOverlay(false, function() {
       girlGonnaTalkNow();
@@ -792,6 +942,7 @@ $(function() {
     finalState.render = function() {
       finalState.girl.render();
       if (finalState.tonyRonaldScreen) finalState.tonyRonaldScreen.render();
+      if (finalState.chatroomScreen) finalState.chatroomScreen.render();
     };
     finalState.physicsUpdate = function() {
 
@@ -801,6 +952,8 @@ $(function() {
       console.log('can you see me, ronald?');
 
       setTimeout(function() {
+        tonyRonaldVideo.play();
+        chatroomVideo.play();
         panToShowScreen();
       }, 4444);
     }
@@ -833,14 +986,35 @@ $(function() {
     function startComputerActivity() {
       console.log('can u see the video and dress my ronald?');
 
-      tonyRonaldVideo.play();
-      var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
-      finalState.tonyRonaldScreen = new Billboard({x: -130, y: 300, z: girlZ - 100}, 1, tonyRonaldVideoStruct);
-      finalState.tonyRonaldScreen.addTo(scene, function() {
-
-      });
+      ronaldGUI.fadeIn(800);
     }
 
+    // fallbacks to position the GUI
+    finalState.movingGUI = false;
+    $('body').keypress(function(ev) {
+      ev.preventDefault();
+
+      if (ev.which == 98) { // b
+        finalState.movingGUI = !finalState.movingGUI;
+      }
+    });
+    $('body').mousemove(function(ev) {
+      if (finalState.movingGUI) {
+        console.log(parseInt(ronaldGUI.css('left')));
+        console.log(parseInt(ronaldGUI.css('top')));
+
+        ronaldGUI.css('left', ev.clientX + 'px');
+        ronaldGUI.css('top', ev.clientY + 'px');
+      }
+    });
+
+    // reacting to button clicks in the GUI
+    $('.ronald-button').click(function(ev) {
+      var target = $(ev.target);
+      var id = target[0].id;
+      var shirtNumber = parseInt(id.replace('shirt', ''));
+      finalState.hotdog.changeTeeShirt(shirtNumber);
+    });
   }
 
 });

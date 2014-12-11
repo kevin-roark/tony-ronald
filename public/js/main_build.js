@@ -40,7 +40,7 @@ Arm.prototype.collisonHandle = function() {
   if (this.collisionHandler) this.collisionHandler();
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],2:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],2:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -52,22 +52,87 @@ module.exports = Artifact;
 
 var COMPUTER_TYPE = 'COMPUTER';
 var SPORT_TYPE = 'SPORT';
+var HORSE_TYPE = 'HORSE';
+var BUZZFEED_TYPE = 'BUZZFEED';
+var HOTDOG_TYPE = 'HOTDOG';
+
 var MONEY_TYPE = 'MONEY';
-var ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, MONEY_TYPE];
+var BALOON_TYPE = 'BALOON';
+var HALO_TYPE = 'HALO';
+var TV_TYPE = 'TV';
+var SWORD_TYPE = 'SWORD';
+
+var COMPUTER_ARTIFACT_TYPES = [COMPUTER_TYPE, SPORT_TYPE, HORSE_TYPE, BUZZFEED_TYPE, HOTDOG_TYPE];
+var EARTH_ARTIFACT_TYPES = [BALOON_TYPE, HALO_TYPE, TV_TYPE, SWORD_TYPE, MONEY_TYPE];
 
 var artifactTextureNames = {};
 artifactTextureNames[COMPUTER_TYPE] = [
   '/images/finder.jpg',
-  '/images/pc_monitor.jpg',
-  '/images/mac_monitor.jpg'
+  '/images/server.jpg',
+  '/images/microsoft_word.jpg',
+  '/images/imovie.jpg',
+  '/images/computer_trash.jpg'
 ];
-artifactTextureNames[SPORT_TYPE] = [];
-artifactTextureNames[MONEY_TYPE] = [
-  '/images/coin.jpg',
-  '/images/dollar.jpg'
+artifactTextureNames[SPORT_TYPE] = [
+  '/images/basketball.jpg',
+  '/images/football.jpg',
+  '/images/frame.jpg',
+  '/images/framed_sports.jpg',
+  '/images/quarterback.jpg'
+];
+artifactTextureNames[HORSE_TYPE] = [
+  '/images/barn.jpg',
+  '/images/black_horse.jpg',
+  '/images/horse_diagram.jpg',
+  '/images/lasso.jpg',
+  '/images/sky_horse.jpg'
+];
+artifactTextureNames[BUZZFEED_TYPE] = [
+  '/images/buzzfeed_1.jpg',
+  '/images/buzzfeed_2.jpg',
+  '/images/listicle_1.jpg',
+  '/images/listicle_2.jpg',
+  '/images/fishboy.jpg'
+];
+artifactTextureNames[HOTDOG_TYPE] = [
+  '/images/chicago_dog.jpg',
+  '/images/turtle_dog.jpg',
+  '/images/profit_dog.jpg',
+  '/images/mom_dog.jpg',
+  '/images/hawaii_dog.jpg'
 ];
 
-function Artifact(startPos, scale, typeIndex) {
+artifactTextureNames[MONEY_TYPE] = [
+  '/images/coin.jpg',
+  '/images/dollar.jpg',
+  '/images/canada_dollar.jpg',
+  '/images/ruby.jpg',
+];
+artifactTextureNames[BALOON_TYPE] = [
+  '/images/green_baloon.jpg',
+  '/images/red_baloon.jpg',
+  '/images/blue_baloon.jpg'
+];
+artifactTextureNames[HALO_TYPE] = [
+  '/images/halo.jpg',
+  '/images/stairs.jpg',
+  '/images/angel_fig.jpg',
+  '/images/moses.jpg',
+  '/images/demon_fig.jpg'
+];
+artifactTextureNames[TV_TYPE] = [
+  '/images/remote.jpg',
+  '/images/tv_1.jpg',
+  '/images/tv_2.jpg',
+  '/images/tv_3.jpg'
+];
+artifactTextureNames[SWORD_TYPE] = [
+  '/images/sword_1.jpg',
+  '/images/sword_2.jpg',
+  '/images/daggers.jpg'
+];
+
+function Artifact(startPos, scale, earthType, typeIndex) {
   var self = this;
 
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -77,7 +142,8 @@ function Artifact(startPos, scale, typeIndex) {
 
   if (typeIndex === undefined) typeIndex = 0;
 
-  this.artifactType = ARTIFACT_TYPES[typeIndex];
+  var artifactTypes = earthType? EARTH_ARTIFACT_TYPES : COMPUTER_ARTIFACT_TYPES;
+  this.artifactType = artifactTypes[typeIndex];
   this.textureName = kt.choice(artifactTextureNames[this.artifactType]);
 
   this.scale = scale || 20;
@@ -88,7 +154,7 @@ function Artifact(startPos, scale, typeIndex) {
 Artifact.prototype.__proto__ = BodyPart.prototype;
 
 Artifact.prototype.createMesh = function(callback) {
-  if (Math.random() < 0.3) {
+  if (Math.random() < 0.24) {
     this.geometry = new THREE.SphereGeometry(1);
   }
   else {
@@ -110,7 +176,7 @@ Artifact.prototype.collisonHandle = function(other_object, relative_velocity, re
   //console.log('artifact collision with: artifact ' + other_object.artifact + ' ground ' + other_object.ground);
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],3:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],3:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -120,8 +186,8 @@ var BodyPart = require('./bodypart');
 
 module.exports = Billboard;
 
-var VID_WIDTH = 300;
-var VID_HEIGHT = 240;
+var DEFAULT_VID_WIDTH = 300;
+var DEFAULT_VID_HEIGHT = 240;
 
 function Billboard(startPos, scale, videoDomElementObject) {
   if (!startPos) startPos = {x: 0, y: 0, z: 0};
@@ -129,7 +195,13 @@ function Billboard(startPos, scale, videoDomElementObject) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
+  if (!videoDomElementObject.width) videoDomElementObject.width = DEFAULT_VID_WIDTH;
+  if (!videoDomElementObject.height) videoDomElementObject.height = DEFAULT_VID_HEIGHT;
+
   this.scale = scale || 1;
+
+  this.width = videoDomElementObject.width;
+  this.height = videoDomElementObject.height;
 
   this.video = videoDomElementObject.vid;
 
@@ -139,7 +211,7 @@ function Billboard(startPos, scale, videoDomElementObject) {
 
   this.videoImageContext = this.videoImage.getContext('2d');
 	this.videoImageContext.fillStyle = '#ffffff'; // background color if no video present
-	this.videoImageContext.fillRect( 0, 0, VID_WIDTH, VID_HEIGHT);
+	this.videoImageContext.fillRect( 0, 0, this.width, this.height);
 }
 
 Billboard.prototype.__proto__ = BodyPart.prototype;
@@ -152,13 +224,12 @@ Billboard.prototype.createMesh = function(callback) {
   this.videoTexture.generateMipmaps = false;
 
   this.material = new THREE.MeshBasicMaterial({
-    map: this.videoTexture,
-    overdraw: true
+    map: this.videoTexture
+    , overdraw: true
     , side: THREE.DoubleSide
-    , color: 0xffffff
   });
 
-  this.geometry = new THREE.PlaneGeometry(VID_WIDTH, VID_HEIGHT);
+  this.geometry = new THREE.PlaneGeometry(this.width, this.height);
   this.mesh = new THREE.Mesh(this.geometry, this.material);
 
   callback();
@@ -172,7 +243,7 @@ Billboard.prototype.render = function() {
   }
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],4:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],4:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -204,14 +275,25 @@ Body.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],5:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],5:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 var modelNames = require('./model_names');
 
 module.exports = BodyPart;
 
-function BodyPart(startPos, scale) {
+function BodyPart(startPos, scale, model) {
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.scale = scale || 1;
+
+  if (model) {
+    this.specificModelName = model;
+  }
+
   this.modelChoices = [];
 
   this.melting = false;
@@ -471,7 +553,7 @@ BodyPart.prototype.additionalInit = function() {};
 BodyPart.prototype.additionalRender = function() {};
 BodyPart.prototype.collisonHandle = function() {}
 
-},{"./lib/kutility":12,"./model_names":14}],6:[function(require,module,exports){
+},{"./lib/kutility":14,"./model_names":16}],6:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -671,7 +753,7 @@ function posNegRandom() {
   return (Math.random() - 0.5) * 2;
 }
 
-},{"./arm":1,"./body":4,"./hand":8,"./head":9,"./leg":11,"./lib/kutility":12,"./model_names":14}],7:[function(require,module,exports){
+},{"./arm":1,"./body":4,"./hand":8,"./head":9,"./leg":13,"./lib/kutility":14,"./model_names":16}],7:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -730,7 +812,7 @@ Computer.prototype.createMesh = function(callback) {
   callback();
 }
 
-Computer.prototype.becomeTransparent = function(delta, thresh) {
+Computer.prototype.becomeTransparent = function(delta, thresh, shatterAfter) {
   var self = this;
 
   if (!delta) delta = 0.01;
@@ -740,8 +822,9 @@ Computer.prototype.becomeTransparent = function(delta, thresh) {
     self.material.opacity -= delta;
     if (self.material.opacity <= thresh) {
       clearInterval(int);
-      self.shatterable = true;
-      console.log('SHATTERABLE');
+      if (shatterAfter) {
+        self.shatterable = true;
+      }
     }
   }, 30);
 }
@@ -779,7 +862,7 @@ Computer.prototype.shatter = function() {
   console.log('SHATTERED');
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],8:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],8:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -856,17 +939,15 @@ Hand.prototype.collisonHandle = function() {
   }
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],9:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],9:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
-
-var modelNames = require('./model_names');
 
 var BodyPart = require('./bodypart');
 
 module.exports = Head;
 
-var headNames = ['/images/dylan.jpg', '/images/kevin.jpg'];
+var headNames = ['/images/kevin.jpg', '/images/dylan.jpg'];
 var headIndex = 0;
 
 function Head(startPos, scale) {
@@ -875,10 +956,13 @@ function Head(startPos, scale) {
   this.startY = startPos.y;
   this.startZ = startPos.z;
 
-  this.textureName = headNames[++headIndex % headNames.length];
+  this.textureName = headNames[headIndex % headNames.length];
+  headIndex += 1;
 
   this.scale = scale || 20;
   this.scale *= 0.4;
+
+  this.revolving = true;
 }
 
 Head.prototype.__proto__ = BodyPart.prototype;
@@ -894,21 +978,174 @@ Head.prototype.createMesh = function(callback) {
   callback();
 }
 
-Head.prototype.additionalInit = function() {
-  var self = this;
-
-  if (self.modelName == modelNames.LOWPOLY_HEAD) {
-    self.scale *= 1.5;
-    self.scaleBody(self.scale);
-    self.move(0, -15, 0);
-  }
-};
-
 Head.prototype.render = function() {
-  this.mesh.rotation.y += 0.02;
+  if (this.revolving) {
+    this.mesh.rotation.y += 0.02;
+  }
 }
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],10:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14}],10:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var modelNames = require('./model_names');
+
+var BodyPart = require('./bodypart');
+var Head = require('./head');
+
+module.exports = Hotdog;
+
+var teeShirts = [
+  '/images/linkin_park.jpg'
+  , '/images/trapt.jpg'
+  , '/images/soad.jpg'
+  , '/images/eminem.jpg'
+  , '/images/drowning_pool.jpg'
+  , '/images/creed.jpg'
+];
+
+function Hotdog(startPos, scale) {
+  var self = this;
+
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+  this.startPos = startPos;
+
+  this.scale = scale || 1;
+
+  this.leftDogOffset = {x: -2.2 * this.scale, y: 0, z: 0};
+  this.rightDogOffset = {x: 2.2 * this.scale, y: 0, z: 0};
+  this.leftHeadOffset = {x: -3.5 * this.scale, y: 0, z: 10};
+  this.rightHeadOffset = {x: 3.5 * this.scale, y: 0, z: 10};
+}
+
+Hotdog.prototype.__proto__ = BodyPart.prototype;
+
+Hotdog.prototype.move = function(x, y, z) {
+  if (!this.hotDogs) return;
+
+  this.hotDogs.forEach(function(dog) {
+    dog.position.x += x;
+    dog.position.y += y;
+    dog.position.z += z;
+  });
+
+  this.heads.forEach(function(head) {
+    head.move(x, y, z);
+  });
+}
+
+Hotdog.prototype.rotate = function(rx, ry, rz) {
+  if (!this.hotDogs) return;
+
+  this.hotDogs.forEach(function(dog) {
+    dog.rotation.x += rx;
+    dog.rotation.y += ry;
+    dog.rotation.z += rz;
+  });
+
+  this.heads.forEach(function(head) {
+    head.rotate(rx, ry, rz);
+  });
+}
+
+Hotdog.prototype.moveTo = function(x, y, z) {
+  if (!this.hotDogs) return;
+
+  this.centerHotdogMesh.position.set(x, y, z);
+  this.leftHotdogMesh.position.set(x + this.leftDogOffset.x, y + this.leftDogOffset.y, z + this.leftDogOffset.z)
+  this.rightHotdogMesh.position.set(x + this.rightDogOffset.x, y + this.rightDogOffset.y, z + this.rightDogOffset.z)
+
+  this.move(0, 0, 0);
+
+  this.leftHead.moveTo(x + this.leftHeadOffset.x, y + this.leftHeadOffset.y, z + this.leftHeadOffset.z);
+  this.rightHead.moveTo(x + this.rightHeadOffset.x, y + this.rightHeadOffset.y, z + this.rightHeadOffset.z);
+}
+
+Hotdog.prototype.scaleBody = function(s) {
+  if (!this.hotDogs) return;
+
+  this.hotDogs.forEach(function(dog) {
+    dog.scale.set(s, s, s);
+  });
+
+  this.heads.forEach(function(head) {
+    head.scaleBody(s);
+  });
+}
+
+Hotdog.prototype.createMesh = function(callback) {
+  // radius bottom, radius top, height
+  this.leftHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
+  this.centerHotdogGeometry = new THREE.BoxGeometry(4, 1.7, 1.7);
+  this.rightHotdogGeometry = new THREE.CylinderGeometry(1, 1, 2);
+
+  this.centerHotdogMaterial = new THREE.MeshBasicMaterial({
+      color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
+    , map: THREE.ImageUtils.loadTexture(teeShirts[0])
+  });
+  this.sideHotdogMaterial = new THREE.MeshBasicMaterial({
+    color: new THREE.Color(250 / 255, 128 / 255, 114 / 255) // salmon
+  });
+
+  this.centerHotdogMesh = new THREE.Mesh(this.centerHotdogGeometry, this.centerHotdogMaterial);
+  this.leftHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.sideHotdogMaterial.clone());
+  this.rightHotdogMesh = new THREE.Mesh(this.leftHotdogGeometry, this.sideHotdogMaterial.clone());
+  this.hotDogs = [this.centerHotdogMesh, this.leftHotdogMesh, this.rightHotdogMesh];
+
+  this.leftHotdogMesh.rotation.z = -Math.PI / 2;
+  this.rightHotdogMesh.rotation.z = -Math.PI / 2;
+
+  this.leftHead = new Head({
+    x: this.startX + this.leftHeadOffset.x,
+    y: this.startY + this.leftHeadOffset.y,
+    z: this.startZ + this.leftHeadOffset.z
+  }, this.scale * 2);
+
+  this.rightHead = new Head({
+    x: this.startX + this.rightHeadOffset.x,
+    y: this.startY + this.rightHeadOffset.y,
+    z: this.startZ + this.rightHeadOffset.z
+  }, this.scale * 2);
+
+  this.heads = [this.leftHead, this.rightHead];
+
+  callback();
+}
+
+Hotdog.prototype.changeTeeShirt = function(index) {
+  var teeShirt = teeShirts[index % teeShirts.length];
+  this.centerHotdogMesh.material.map = THREE.ImageUtils.loadTexture(teeShirt);
+  this.centerHotdogMesh.material.needsUpdate = true;
+};
+
+Hotdog.prototype.addTo = function(scene, callback) {
+  var self = this;
+
+  self.createMesh(function() {
+    self.scaleBody(self.scale);
+
+    self.moveTo(self.startX, self.startY, self.startZ);
+
+    scene.add(self.centerHotdogMesh);
+    scene.add(self.leftHotdogMesh);
+    scene.add(self.rightHotdogMesh);
+    self.leftHead.addTo(scene, function() {
+      self.leftHead.rotate(0, -0.6, 0);
+    });
+    self.rightHead.addTo(scene, function() {
+      self.rightHead.rotate(0, -1.5, 0);
+    });
+
+    if (callback) {
+      callback(self);
+    }
+  });
+}
+
+},{"./bodypart":5,"./head":9,"./lib/kutility":14,"./model_names":16}],11:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -957,7 +1194,691 @@ Human.prototype.additionalInit = function() {
   var self = this;
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],11:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],12:[function(require,module,exports){
+
+// CONTROLS::::
+
+// move torso to move character
+// shake head to swell character
+// left and right hands correspond to left and right arms for the character
+// delta between hands corresponds to degree of melt (closer together means more melt)
+// left and right knees handle the legs of the character
+// delta between knees controls rotation about y
+// delta between elbows controls rotation about x
+// elbows fuckily control the secondary light source
+
+// what does closest hand do?
+
+// TODO: all these things are separate and repetitive right now because there is no
+// guarantee that each wrestler will behave the same. please fix later.
+
+var socket = io('http://localhost:8888');
+
+var previousPositions = {};
+var positionDeltas = {};
+var previousPositionDeltas = {};
+
+var eventsWithRapidHeadVelocity = {one: 0, two: 0};
+
+var startDate = new Date();
+var meltingHistory = {one: {meltEndTime: startDate, meltStartTime: startDate}, two: {meltEndTime: startDate, meltStartTime: startDate}};
+
+var kneeHistory = {one: {rotating: false}, two: {rotating: false}};
+
+var elbowHistory = {one: {rotUp: false, rotDown: false}, two: {rotUp: false, rotDown: false}};
+
+var MIN_TIME_BETWEEN_GESTURES = 800;
+var PHRASE_GESTURE_DELTA_MULT = 4.0;
+var MIN_PHRASE_VEL = 120.0;
+var phraseGestureTimes = {left1: new Date(), right1: new Date(), left2: new Date(), right2: new Date()};
+var phraseGestureStartPositions = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
+var phraseGestureVelocities = {left1: blankpos(), right1: blankpos(), left2: blankpos(), right2: blankpos()};
+
+var BIG_HEAD_MAG = 15;
+var MAX_HEAD_SWELL = 500;
+var TORSO_CLOSE_MAG = 11;
+
+var CLOSE_KNEE_MAG = 60;
+var CLOSE_ELBOW_MAG = 60;
+var FAR_ELBOW_MAG = 300;
+var RIDICULOUS_ELBOW_MAG = 600;
+
+var CLOSE_HANDS_MAG = 100;
+
+var TORSO_MOVEMENT_MAG_MULT = 10;
+
+module.exports.PHRASE = 1;
+module.exports.KNOCK  = 2;
+module.exports.RUN    = 3;
+
+var wrestler1, wrestler2, camera, light;
+
+module.exports.mode = module.exports.PHRASE;
+
+function blankpos() { return {x: 0, y: 0, z: 0}; };
+
+function phrasePos(left) {
+  var pos = blankpos();
+  pos.x = left? -60 : 60;
+  pos.y = (Math.random() - 0.5) * 100;
+  pos.z = (Math.random() * -100);
+  return pos;
+}
+
+module.exports.eventHandler = function(event, data) {};
+
+module.exports.socket = socket;
+
+module.exports.begin = function(w1, w2, cam, l) {
+  wrestler1 = w1;
+  wrestler2 = w2;
+  camera = cam;
+  light = l;
+
+  socket.emit('rollcall', 'browser');
+
+  socket.on('leftHand', function(data) {
+    if (data.wrestler == 1) {
+      leftHand1(data.position);
+    } else {
+      leftHand2(data.position);
+    }
+  });
+
+  socket.on('rightHand', function(data) {
+    if (data.wrestler == 1) {
+      rightHand1(data.position);
+    } else {
+      rightHand2(data.position);
+    }
+  });
+
+  socket.on('closestHand', function(data) {
+    if (data.wrestler == 1) {
+      closestHand1(data.position);
+    } else {
+      closestHand2(data.position);
+    }
+  });
+
+  socket.on('head', function(data) {
+    if (data.wrestler == 1) {
+      head1(data.position);
+    } else {
+      head2(data.position);
+    }
+  });
+
+  socket.on('leftKnee', function(data) {
+    if (data.wrestler == 1) {
+      leftKnee1(data.position);
+    } else {
+      leftKnee2(data.position);
+    }
+  });
+
+  socket.on('rightKnee', function(data) {
+    if (data.wrestler == 1) {
+      rightKnee1(data.position);
+    } else {
+      rightKnee2(data.position);
+    }
+  });
+
+  socket.on('leftElbow', function(data) {
+    if (data.wrestler == 1) {
+      leftElbow1(data.position);
+    } else {
+      leftElbow2(data.position);
+    }
+  });
+
+  socket.on('rightElbow', function(data) {
+    if (data.wrestler == 1) {
+      rightElbow1(data.position);
+    } else {
+      rightElbow2(data.position);
+    }
+  });
+
+  socket.on('torso', function(data) {
+    if (data.wrestler == 1) {
+      torso1(data.position);
+    } else {
+      torso2(data.position);
+    }
+  });
+
+  socket.on('resetPlayer', function(player) {
+    if (player == 1) {
+      wrestler1.reset();
+    } else {
+      wrestler2.reset();
+    }
+  });
+
+  socket.on('endPhrases', function() {
+    console.log('got my end phrases');
+    module.exports.eventHandler('endPhrases');
+  });
+  socket.on('transparentComputers', function() {
+    module.exports.eventHandler('transparentComputers');
+  });
+  socket.on('endPokes', function() {
+    module.exports.eventHandler('endPokes');
+  });
+}
+
+function moveDelta(bodypart, position, lastPos, divisor, directions) {
+  if (!directions) directions = {x: true, y: true, z: true};
+
+  var deltaX = 0;
+  var deltaY = 0;
+  var deltaZ = 0;
+
+  if (directions.x) {
+    deltaX = (position.x - lastPos.x) / divisor;
+  }
+
+  if (directions.y) {
+    deltaY = (position.y - lastPos.y) / -divisor;
+  }
+
+  if (directions.z) {
+    deltaZ = (position.z - lastPos.z) / -divisor;
+  }
+
+  bodypart.move(deltaX, deltaY, deltaZ);
+}
+
+function scaleWrestler(wrestler, rapidHeadTicks) {
+  var s = 1.0 + 20.0 * (rapidHeadTicks / MAX_HEAD_SWELL);
+  wrestler.swell(s);
+}
+
+function checkShatter(rapidHeadCount) {
+  return rapidHeadCount >= MAX_HEAD_SWELL;
+}
+
+function delta(current, previous) {
+  return {x: current.x - previous.x, y: current.y - previous.y, z: current.z - previous.z};
+}
+
+function totalMagnitude(pos) {
+  return Math.abs(pos.x) + Math.abs(pos.y) + Math.abs(pos.z);
+}
+
+function phraseBlast(player, pos, vel) {
+  var data = {player: 1, pos: pos, vel: vel};
+  module.exports.eventHandler('phraseBlast', data);
+  console.log('blasted phrase:');
+  console.log(data);
+}
+
+function rightHand1(position) {
+  if (previousPositions.rightHand1) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
+      moveDelta(wrestler1.rightArm, position, previousPositions.rightHand1, 10);
+    }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.right1 >= MIN_TIME_BETWEEN_GESTURES) {
+        var pdelta = delta(position, previousPositions.rightHand1);
+        var vel = {
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(false);
+
+          phraseGestureTimes.right1 = now;
+          phraseGestureVelocities.right1 = vel;
+          phraseGestureStartPositions.right1 = pos;
+
+          phraseBlast(1, pos, vel);
+        }
+      }
+    }
+  }
+
+  previousPositions.rightHand1 = position;
+}
+
+function leftHand1(position) {
+  if (previousPositions.rightHand1) {
+    var rh = previousPositions.rightHand1;
+    positionDeltas.hand1 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
+    hand1DeltaAction(positionDeltas.hand1);
+  }
+
+  if (previousPositions.leftHand1) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
+      moveDelta(wrestler1.leftArm, position, previousPositions.leftHand1, 10);
+    }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.left1 >= MIN_TIME_BETWEEN_GESTURES) {
+        var pdelta = delta(position, previousPositions.leftHand1);
+        var vel = {
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(true);
+
+          phraseGestureTimes.left1 = now;
+          phraseGestureVelocities.left1 = vel;
+          phraseGestureStartPositions.left1 = pos;
+
+          phraseBlast(1, pos, vel);
+        }
+      }
+    }
+  }
+
+  previousPositions.leftHand1 = position;
+}
+
+function closestHand1(position) {}
+
+function head1(position) {
+  if (previousPositions.head1) {
+    if (positionDeltas.torso1 && totalMagnitude(positionDeltas.torso1) < TORSO_CLOSE_MAG) {
+      var positionChange = delta(position, previousPositions.head1);
+      var mag = totalMagnitude(positionChange);
+
+      if (mag > BIG_HEAD_MAG) {
+        if (eventsWithRapidHeadVelocity.one == 0) {
+          socket.emit('startSwell', 1);
+        }
+
+        eventsWithRapidHeadVelocity.one = Math.min(eventsWithRapidHeadVelocity.one + 1, MAX_HEAD_SWELL);
+      } else {
+        if (eventsWithRapidHeadVelocity.one == 1) {
+          socket.emit('endSwell', 1);
+        }
+
+        eventsWithRapidHeadVelocity.one = Math.max(eventsWithRapidHeadVelocity.one - 1, 0);
+      }
+
+      if (module.exports.mode == module.exports.KNOCK) {
+        if (checkShatter(eventsWithRapidHeadVelocity.one)) {
+          module.exports.eventHandler('shatter', {});
+        }
+
+        scaleWrestler(wrestler1, eventsWithRapidHeadVelocity.one);
+      }
+
+    }
+  }
+
+  previousPositions.head1 = position;
+}
+
+function leftKnee1(position) {
+  if (previousPositions.rightKnee1) {
+    var rh = previousPositions.rightKnee1;
+    positionDeltas.knee1 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
+    knee1DeltaAction(positionDeltas.knee1);
+  }
+
+  if (previousPositions.leftKnee1) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
+      moveDelta(wrestler1.leftLeg, position, previousPositions.leftKnee1, 8);
+    }
+  }
+
+  previousPositions.leftKnee1 = position;
+}
+
+function rightKnee1(position) {
+  if (previousPositions.rightKnee1) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
+      moveDelta(wrestler1.rightLeg, position, previousPositions.rightKnee1, 8);
+    }
+  }
+
+  previousPositions.rightKnee1 = position;
+}
+
+function leftElbow1(position) {
+  if (previousPositions.rightElbow1) {
+    var rh = previousPositions.rightElbow1;
+    positionDeltas.elbow1 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
+    elbow1DeltaAction(positionDeltas.elbow1);
+  }
+
+  previousPositions.leftElbow1 = position;
+}
+
+function rightElbow1(position) {
+  previousPositions.rightElbow1 = position;
+}
+
+function torso1(position) {
+  if (previousPositions.torso1) {
+    if (module.exports.mode == module.exports.KNOCK) {
+      moveDelta(wrestler1, position, previousPositions.torso1, 8, {x: true, y: false, z: true});
+    }
+    else if (module.exports.mode == module.exports.RUN) {
+      var mag = totalMagnitude(delta(position, previousPositions.torso1));
+      var dist = TORSO_MOVEMENT_MAG_MULT * mag;
+      wrestler1.move(0, 0, dist);
+    }
+
+    positionDeltas.torso1 = delta(position, previousPositions.torso1);
+  }
+
+  previousPositions.torso1 = position;
+}
+
+function rightHand2(position)  {
+  if (previousPositions.rightHand2) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
+        moveDelta(wrestler2.rightArm, position, previousPositions.rightHand2, 10, {x: true, y: false, z: true});
+    }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.right2 >= MIN_TIME_BETWEEN_GESTURES) {
+        var pdelta = delta(position, previousPositions.rightHand2);
+        var vel = {
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(false);
+
+          phraseGestureTimes.right2 = now;
+          phraseGestureVelocities.right2 = vel;
+          phraseGestureStartPositions.right2 = pos;
+
+          phraseBlast(2, pos, vel);
+        }
+      }
+    }
+  }
+
+  previousPositions.rightHand2 = position;
+}
+
+function leftHand2(position) {
+  if (previousPositions.rightHand2) {
+    var rh = previousPositions.rightHand2;
+    positionDeltas.hand2 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
+    hand2DeltaAction(positionDeltas.hand2);
+  }
+
+  if (previousPositions.leftHand2) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.RUN) {
+      moveDelta(wrestler2.leftArm, position, previousPositions.leftHand2, 10);
+    }
+    else if (module.exports.mode == module.exports.PHRASE) {
+      var now = new Date();
+      if (now - phraseGestureTimes.left2 >= MIN_TIME_BETWEEN_GESTURES) {
+        var pdelta = delta(position, previousPositions.leftHand2);
+        var vel = {
+          x: pdelta.x * PHRASE_GESTURE_DELTA_MULT,
+          y: pdelta.y * PHRASE_GESTURE_DELTA_MULT,
+          z: pdelta.z * PHRASE_GESTURE_DELTA_MULT
+        };
+        if (totalMagnitude(vel) >= MIN_PHRASE_VEL) {
+          var pos = phrasePos(true);
+
+          phraseGestureTimes.left2 = now;
+          phraseGestureVelocities.left2 = vel;
+          phraseGestureStartPositions.left2 = pos;
+
+          phraseBlast(2, pos, vel);
+        }
+      }
+    }
+  }
+
+  previousPositions.leftHand2 = position;
+}
+
+function closestHand2(position) {
+
+}
+
+function head2(position) {
+  if (previousPositions.head2) {
+    if (positionDeltas.torso2 && totalMagnitude(positionDeltas.torso2) < TORSO_CLOSE_MAG) {
+      var positionChange = delta(position, previousPositions.head2);
+      var mag = totalMagnitude(positionChange);
+
+      if (mag > BIG_HEAD_MAG) {
+        if (eventsWithRapidHeadVelocity.two == 0) {
+          socket.emit('startSwell', 2);
+        }
+
+        eventsWithRapidHeadVelocity.two = Math.min(eventsWithRapidHeadVelocity.two + 1, MAX_HEAD_SWELL);
+      } else {
+        if (eventsWithRapidHeadVelocity.two == 1) {
+          socket.emit('endSwell', 2);
+        }
+
+        eventsWithRapidHeadVelocity.two = Math.max(eventsWithRapidHeadVelocity.two - 1, 0);
+      }
+
+      if (module.exports.mode == module.exports.KNOCK) {
+        if (checkShatter(eventsWithRapidHeadVelocity.two)) {
+          module.exports.eventHandler('shatter', {});
+        }
+
+        scaleWrestler(wrestler2, eventsWithRapidHeadVelocity.two);
+      }
+    }
+  }
+
+  previousPositions.head2 = position;
+}
+
+function leftKnee2(position) {
+  if (previousPositions.rightKnee2) {
+    var rh = previousPositions.rightKnee2;
+    positionDeltas.knee2 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
+    knee2DeltaAction(positionDeltas.knee2);
+  }
+
+  if (previousPositions.leftKnee2) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
+      moveDelta(wrestler2.leftLeg, position, previousPositions.leftKnee2, 8, {x: true, y: true, z: true});
+    }
+  }
+
+  previousPositions.leftKnee2 = position;
+}
+
+function rightKnee2(position) {
+  if (previousPositions.rightKnee2) {
+    if (module.exports.mode == module.exports.KNOCK || module.exports.mode == module.exports.PHRASE) {
+      moveDelta(wrestler2.rightLeg, position, previousPositions.rightKnee2, 8, {x: true, y: true, z: true});
+    }
+  }
+
+  previousPositions.rightKnee2 = position;
+}
+
+function leftElbow2(position) {
+  if (previousPositions.rightElbow2) {
+    var rh = previousPositions.rightElbow2;
+    positionDeltas.elbow2 = {x: position.x - rh.x, y: position.y - rh.y, z: position.z - rh.z};
+    elbow2DeltaAction(positionDeltas.elbow2);
+  }
+
+  previousPositions.leftElbow2 = position;
+}
+
+function rightElbow2(position) {
+  previousPositions.rightElbow2 = position;
+}
+
+function torso2(position) {
+  if (previousPositions.torso2) {
+    if (module.exports.mode == module.exports.KNOCK) {
+      moveDelta(wrestler2, position, previousPositions.torso2, 8, {x: true, y: false, z: true});
+    }
+    else if (module.exports.mode == module.exports.RUN) {
+      var mag = totalMagnitude(delta(position, previousPositions.torso2));
+      var dist = TORSO_MOVEMENT_MAG_MULT * mag;
+      wrestler2.move(0, 0, dist);
+    }
+
+    positionDeltas.torso2 = delta(position, previousPositions.torso2);
+  }
+
+  previousPositions.torso2 = position;
+}
+
+function hand1DeltaAction(positionDelta) {
+  var mag = totalMagnitude(positionDelta);
+  var date = new Date();
+
+  if (mag < CLOSE_HANDS_MAG) {
+
+  } else {
+
+  }
+
+  socket.emit('handDelta', 1, mag);
+}
+
+function hand2DeltaAction(positionDelta) {
+  var mag = totalMagnitude(positionDelta);
+  var date = new Date();
+
+  if (mag < CLOSE_HANDS_MAG) {
+
+  } else {
+
+  }
+
+  socket.emit('handDelta', 2, mag);
+}
+
+function knee1DeltaAction(positionDelta) {
+  var mag = totalMagnitude(positionDelta);
+
+  if (mag < CLOSE_KNEE_MAG) {
+
+  } else {
+
+  }
+}
+
+function knee2DeltaAction(positionDelta) {
+  var mag = totalMagnitude(positionDelta);
+
+  if (mag < CLOSE_KNEE_MAG) {
+
+  } else {
+
+  }
+}
+
+function elbow1DeltaAction(positionDelta) {
+  var mag = totalMagnitude(positionDelta);
+
+  if (mag > FAR_ELBOW_MAG && handsBetweenElbows(1)) {
+    if (previousPositions.rightHand1.y < previousPositions.rightElbow1.y - 10 &&
+        previousPositions.leftHand1.y > previousPositions.leftElbow1.y + 10) {
+
+    } else {
+      checkPlayer1ElbowNonRot(true, false);
+    }
+
+    if (previousPositions.rightHand1.y > previousPositions.rightElbow1.y + 10 &&
+             previousPositions.leftHand1.y < previousPositions.leftElbow1.y - 10) {
+
+    } else {
+      checkPlayer1ElbowNonRot(false, true);
+    }
+  } else {
+    checkPlayer1ElbowNonRot(true, true);
+  }
+
+  previousPositionDeltas.elbow1 = positionDelta;
+}
+
+function elbow2DeltaAction(positionDelta) {
+  var mag = totalMagnitude(positionDelta);
+
+  if (mag > FAR_ELBOW_MAG && handsBetweenElbows(2)) {
+    if (previousPositions.rightHand2.y < previousPositions.rightElbow2.y - 10 &&
+        previousPositions.leftHand2.y > previousPositions.leftElbow2.y + 10) {
+
+    } else {
+      checkPlayer2ElbowNonRot(true, false);
+    }
+
+    if (previousPositions.rightHand2.y > previousPositions.rightElbow2.y + 10 &&
+             previousPositions.leftHand2.y < previousPositions.leftElbow2.y - 10) {
+
+    } else {
+      checkPlayer2ElbowNonRot(false, true);
+    }
+  } else {
+    checkPlayer2ElbowNonRot(true, true);
+  }
+
+  previousPositionDeltas.elbow2 = positionDelta;
+}
+
+function checkPlayer1ElbowNonRot(rotUp, rotDown) {
+  if (rotUp && elbowHistory.one.rotUp) {
+    elbowHistory.one.rotUp = false;
+    socket.emit('endElbowRotUp', 1);
+  }
+
+  if (rotDown && elbowHistory.one.rotDown) {
+    elbowHistory.one.rotDown = false;
+    socket.emit('endElbowRotDown', 1);
+  }
+}
+
+function checkPlayer2ElbowNonRot(rotUp, rotDown) {
+  if (rotUp && elbowHistory.two.rotUp) {
+    elbowHistory.two.rotUp = false;
+    socket.emit('endElbowRotUp', 2);
+  }
+
+  if (rotDown && elbowHistory.two.rotDown) {
+    elbowHistory.two.rotDown = false;
+    socket.emit('endElbowRotDown', 2);
+  }
+}
+
+function handsBetweenElbows(playerNum) {
+  var leftHand, rightHand, leftElbow, rightElbow;
+
+  if (playerNum == 1) {
+    leftHand = previousPositions.leftHand1;
+    rightHand = previousPositions.rightHand1;
+    leftElbow = previousPositions.leftElbow1;
+    rightElbow = previousPositions.rightElbow1;
+  } else {
+    leftHand = previousPositions.leftHand2;
+    rightHand = previousPositions.rightHand2;
+    leftElbow = previousPositions.leftElbow2;
+    rightElbow = previousPositions.rightElbow2;
+  }
+
+  if (!leftHand || !rightHand || !leftElbow || !rightElbow) return false;
+
+  // left hand above and to right of left elbow
+  // right hand below and to the left of the right elbow
+
+  // left hand below and to the right of left elbow
+  // right hand above and to the left of right elbow
+
+  return (leftHand.x > leftElbow.x) && (rightHand.x < rightElbow.x);
+}
+
+},{}],13:[function(require,module,exports){
 
 var kt = require('./lib/kutility');
 
@@ -989,7 +1910,7 @@ Leg.prototype.additionalInit = function() {
   }
 };
 
-},{"./bodypart":5,"./lib/kutility":12,"./model_names":14}],12:[function(require,module,exports){
+},{"./bodypart":5,"./lib/kutility":14,"./model_names":16}],14:[function(require,module,exports){
 /* export something */
 module.exports = new Kutility;
 
@@ -1554,12 +2475,13 @@ Kutility.prototype.blur = function(el, x) {
   this.setFilter(el, cf + f);
 }
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 $(function() {
 
   var kt = require('./lib/kutility');
+  var BodyPart = require('./bodypart');
   var Character = require('./character');
-  //var io = require('./io');
+  var io = require('./io');
   var RonaldWord = require('./ronald_word');
   var Computer = require('./computer');
   var Artifact = require('./artifact');
@@ -1567,6 +2489,10 @@ $(function() {
   var Hand = require('./hand');
   var Human = require('./human');
   var Billboard = require('./billboard');
+  var Hotdog = require('./hotdog');
+  var SKYBOX = require('./skybox');
+
+  var TEST_MODE = true;
 
   /*
    * * * * * RENDERIN AND LIGHTIN * * * * *
@@ -1593,7 +2519,7 @@ $(function() {
     scene.simulate(undefined, 1);
   });
 
-  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 1000);
+  var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 1, 20000);
   camera.target = {x: 0, y: 0, z: 0};
   scene.add(camera);
 
@@ -1605,6 +2531,34 @@ $(function() {
   scene.add(mainLight);
 
   var tonyRonaldVideo = document.querySelector('#tony-ronald');
+  var chatroomVideo = document.querySelector('#chatroom');
+  console.log(chatroomVideo);
+  var ronaldGUI = $('#ronald-gui');
+
+  io.eventHandler = function(event, data) {
+    console.log('io event: ' + event);
+
+    if (event == 'phraseBlast') {
+      var rw = new RonaldWord(data.player, undefined, {position: data.pos, velocity: data.vel});
+      rw.addTo(scene);
+      phraseState.phrases.push(rw);
+
+      io.socket.emit('phrase', data.player, rw.phraseIndex, data.vel);
+    }
+    else if (event == 'shatter') {
+      if (trappedState.mac) trappedState.mac.shatterable = true;
+      if (trappedState.pc) trappedState.pc.shatterable = true;
+    }
+    else if (event == 'endPhrases') {
+      phraseState.endScene();
+    }
+    else if (event == 'transparentComputers') {
+      trappedState.makeTransparent();
+    }
+    else if (event == 'endPokes') {
+      heavenState.stopPoking = true;
+    }
+  };
 
   /*
    * * * * * STATE OBJECTS * * * * *
@@ -1628,9 +2582,12 @@ $(function() {
     offset: {x: 0, y: 0, z: 0}
   };
 
-  var kevinRonald;
-  var dylanRonald;
-  var ronalds = [];
+  kevinRonald = new Character({x: -700, y: -200, z: -1000}, 20);
+  kevinRonald.addTo(scene);
+
+  dylanRonald = new Character({x: -600, y: -200, z: -1000}, 20);
+  dylanRonald.addTo(scene);
+  var ronalds = [kevinRonald, dylanRonald];
 
   /*
    * * * * * STARTIN AND RENDERIN * * * * *
@@ -1638,7 +2595,9 @@ $(function() {
 
   start();
   function start() {
-    //io.begin(kevinRonald, dylanRonald, camera, hueLight);
+    if (!TEST_MODE) {
+      io.begin(kevinRonald, dylanRonald, camera);
+    }
 
     enterPhrasesState();
 
@@ -1728,9 +2687,9 @@ $(function() {
       camera.position.copy(cameraFollowState.target).add(cameraFollowState.offset);
       camera.lookAt(cameraFollowState.target);
     }
-    if (lightFollowState.obj) {
-      light.target.position.copy(lightFollowState.target);
-      light.position.addVectors(light.target.position, lightFollowState.offset);
+    if (lightFollowState.target) {
+      mainLight.target.position.copy(lightFollowState.target);
+      mainLight.position.addVectors(mainLight.target.position, lightFollowState.offset);
     }
 
     renderer.render(scene, camera);
@@ -1755,6 +2714,17 @@ $(function() {
     ronalds.forEach(function(ronald) {
       ronald.reset();
     });
+  }
+
+  function flash(text, timeout) {
+    if (!text) return;
+    if (!timeout) timeout = 200;
+
+    $('#flash').text(text);
+    $('#flash').show();
+    setTimeout(function() {
+      $('#flash').hide();
+    }, timeout);
   }
 
   function shakeCamera() {
@@ -1790,6 +2760,16 @@ $(function() {
     }).onComplete(function() {
       camera.lookAt(position);
     }).start();
+  }
+
+  function tweenCamera(position, callback) {
+    var tween = new TWEEN.Tween(camera.position).to(position)
+    .easing(TWEEN.Easing.Linear.None).onUpdate(function() {
+      console.log('got that update');
+    }).onComplete(function() {
+      callback();
+    });
+    tween.start();
   }
 
   function fadeOverlay(fadein, callback, color, time) {
@@ -1852,6 +2832,7 @@ $(function() {
 
   function enterPhrasesState() {
     active.phrases = true;
+    io.mode = io.PHRASE;
 
     phraseState.phrases = [];
 
@@ -1914,38 +2895,50 @@ $(function() {
 
     setCameraPosition(0, 40, 10);
 
-    var phraseInterval = setInterval(function() {
-      var rw = new RonaldWord();
-      rw.addTo(scene);
-      phraseState.phrases.push(rw);
-    }, 500);
+    if (TEST_MODE) {
+      var phraseInterval = setInterval(function() {
+        var rw = new RonaldWord();
+        rw.addTo(scene);
+        phraseState.phrases.push(rw);
+      }, 500);
+    }
 
-    setTimeout(function() {
+    phraseState.endScene = function() {
       fadeOverlay(true, function() {
         clearInterval(phraseInterval);
 
         var phraseMeshes = [
-          phraseState.leftWall,
-          phraseState.rightWall,
-          phraseState.backWall,
-          phraseState.frontWall,
-          phraseState.ceiling,
-          phraseState.ground
+        phraseState.leftWall,
+        phraseState.rightWall,
+        phraseState.backWall,
+        phraseState.frontWall,
+        phraseState.ceiling,
+        phraseState.ground
         ];
         phraseState.phrases.forEach(function(phrase) {
           phraseMeshes.push(phrase.mesh);
         });
+
         clearScene(phraseMeshes);
         active.phrases = false;
         enterTrappedState();
         fadeOverlay(false);
       });
-    }, 1000);
+    };
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        phraseState.endScene();
+      }, 5000);
+    }
   }
 
   function enterTrappedState() {
+    flash('RONALD IS BORN');
+
     active.ronalds = true;
     active.trapped = true;
+    io.mode = io.KNOCK;
 
     setCameraPosition(0, 0, 0);
 
@@ -1957,15 +2950,11 @@ $(function() {
     trappedState.ambientLight.position.set(0, 20, -100);
     scene.add(trappedState.ambientLight);
 
-    kevinRonald = new Character({x: -100, y: 5, z: -170}, 20);
-    kevinRonald.addTo(scene, function() {
-      kevinRonald.rotate(0, Math.PI/4, 0);
-    });
+    kevinRonald.moveTo(-100, 15, -170);
+    kevinRonald.rotate(0, Math.PI/4, 0);
 
-    dylanRonald = new Character({x: 100, y: 5, z: -170}, 20);
-    dylanRonald.addTo(scene, function() {
-      dylanRonald.rotate(0, -Math.PI/4, 0);
-    });
+    dylanRonald.moveTo(100, 15, -170);
+    dylanRonald.rotate(0, -Math.PI/4, 0);
 
     ronalds = [kevinRonald, dylanRonald];
 
@@ -1980,14 +2969,17 @@ $(function() {
     });
 
     trappedState.renderObjects = [mac, pc];
+    trappedState.mac = mac;
+    trappedState.pc = pc;
 
     kevinRonald.leftArm.collisionHandler = function() {
       kevinRonald.leftArm.move(-1, 0, -1);
     };
 
-    setTimeout(function() {
-      mac.becomeTransparent(0.02);
-      pc.becomeTransparent(0.02);
+    trappedState.makeTransparent = function() {
+      var delta = TEST_MODE? 0.02 : 0.002;
+      mac.becomeTransparent(delta, undefined, TEST_MODE);
+      pc.becomeTransparent(delta, undefined, TEST_MODE);
 
       var shatterChecker = setInterval(function() {
         if (mac.shattering && pc.shattering) {
@@ -1995,20 +2987,26 @@ $(function() {
           endScene();
         }
       }, 100);
-    }, 1000);
+    }
+
+    if (TEST_MODE) {
+      setTimeout(function() {
+        trappedState.makeTransparent();
+      }, 1000);
+    }
 
     function endScene() {
       console.log('IM DONE WITH COMPUTER!!!');
 
-      kevinRonald.reset(); dylanRonald.reset();
-
-      var cameraPosition = {x: 0, y: 40, z: -370};
-      setCameraPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z);
-      camera.lookAt({x: 0, y: 0, z: -100});
-      //tweenCameraToTarget(cameraPosition);
-
-      active.trapped = false;
-      enterDesperateFleeState();
+      var endCameraZ = -150;
+      var panInterval = setInterval(function() {
+        camera.position.z -= 2.5;
+        if (camera.position.z <= endCameraZ) {
+          clearInterval(panInterval);
+          active.trapped = false;
+          enterDesperateFleeState();
+        }
+      }, 15);
     }
 
     $('body').keypress(function(ev) {
@@ -2025,11 +3023,22 @@ $(function() {
 
   function enterDesperateFleeState() {
     console.log('I AM DESPERATE NOW');
+    flash('RONALD ESCAPES');
+
+    kevinRonald.moveTo(-100, 5, -170);
+    dylanRonald.moveTo(100, 5, -170);
+    setCameraPosition(0, 40, -370);
+    camera.lookAt({x: 0, y: 0, z: -100});
 
     var groundLength = 2500;
     var darkLength = 1000;
+    var endRainZ = groundLength;
+    var endZ = groundLength + darkLength;
+    var numberOfArtifactTypes = 5;
 
     active.desperate = true;
+    io.mode = io.RUN;
+
     desperateState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
@@ -2038,10 +3047,10 @@ $(function() {
       lightFollowState.target = middle;
       lightFollowState.offset = {x: 10, y: 20, z: -60};
 
-      if (middle.z > groundLength + darkLength) {
+      if (middle.z > endZ) {
         endState();
       }
-      else if (!desperateState.dark && middle.z > groundLength) {
+      else if (!desperateState.dark && middle.z > endRainZ) {
         darkTime();
       }
     };
@@ -2050,8 +3059,13 @@ $(function() {
       kevinRonald.resetMovement();
     };
 
+    var groundTexture = THREE.ImageUtils.loadTexture('/images/circuit.jpg');
+    groundTexture.wrapS = THREE.RepeatWrapping;
+    groundTexture.wrapT = THREE.RepeatWrapping;
+    groundTexture.repeat.set(6, 24);
+
     desperateState.ground_material = Physijs.createMaterial(
-      new THREE.MeshBasicMaterial({color: 0xeeeeee, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({map: groundTexture, side: THREE.DoubleSide}),
       .8, .4
     );
     desperateState.ground_geometry = new THREE.PlaneGeometry(500, groundLength * 2);
@@ -2063,18 +3077,23 @@ $(function() {
 
     scene.setGravity(new THREE.Vector3(0, -100, 0));
 
-    var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 10;
-      kevinRonald.walk(negrand(3), 0, z);
-      dylanRonald.walk(negrand(3), 0, z);
-    }, 30);
+    if (TEST_MODE) {
+      var dummyForwardInterval = setInterval(function() {
+        var z = Math.random() * 0.5 + 10;
+        kevinRonald.walk(negrand(6), 0, z);
+        dylanRonald.walk(negrand(6), 0, z);
+      }, 30);
+    }
 
     desperateState.artifacts = [];
     rainArtifacts();
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 0);
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + Math.random() * 320 + 80};
+
+      var percentageThroughRain = Math.min(0.99, Math.max(0, middle.z / endRainZ));
+      var artifactIndex = Math.floor(percentageThroughRain * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 20 + 9.8, false, artifactIndex);
       desperateState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2084,7 +3103,7 @@ $(function() {
       }
 
       if (!desperateState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(300, 50));
+        setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
       else {
         setTimeout(function() {
@@ -2111,17 +3130,20 @@ $(function() {
 
   function enterHeavenState(startGrassZ) {
     console.log('I AM HEAVEN NOW');
+    flash('RONALD LIVES');
 
     if (!startGrassZ) startGrassZ = 4500;
 
     var groundLength = 3000;
-
     var heavenGroundZ = startGrassZ + groundLength / 2;
-
     var massiveComputerZ = startGrassZ + groundLength;
+    var numberOfArtifactTypes = 5;
+    var grassPath = '/images/grass.jpg';
 
     active.heaven = true;
     var grassMeshes = [];
+
+    var patchTexture = THREE.ImageUtils.loadTexture(grassPath);
     heavenState.render = function() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
       middle.z += 70;
@@ -2140,7 +3162,10 @@ $(function() {
         for (var i = 0; i < count; i++) {
           var size = kt.randInt(9, 1);
           var grassGeometry = new THREE.PlaneGeometry(size, size);
-          var grassMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide});
+          var grassMaterial = new THREE.MeshBasicMaterial({
+            map: patchTexture,
+            side: THREE.DoubleSide
+          });
           var grassMesh = new THREE.Mesh(grassGeometry, grassMaterial);
           grassMesh.rotation.x = -Math.PI / 2;
           grassMesh.position.z = middle.z + kt.randInt(100);
@@ -2162,6 +3187,10 @@ $(function() {
         }
       }
 
+      if (middle.z >= massiveComputerZ - 1150 && !heavenState.visualizedComputer) {
+        heavenState.visualizedComputer = true;
+        heavenState.massiveComputer.material.opacity = 0.33;
+      }
       if (middle.z >= massiveComputerZ - 250 && !heavenState.reachedComputer) {
         heavenState.reachedComputer = true;
         reachedComputer();
@@ -2183,8 +3212,19 @@ $(function() {
       }
     };
 
+    heavenState.skybox = SKYBOX.create(undefined, '/images/mountain.jpg');
+    scene.add(heavenState.skybox);
+
+    heavenState.skyBlocker = SKYBOX.blocker();
+    scene.add(heavenState.skyBlocker);
+
+    var grassTexture = THREE.ImageUtils.loadTexture(grassPath);
+    grassTexture.wrapS = THREE.RepeatWrapping;
+    grassTexture.wrapT = THREE.RepeatWrapping;
+    grassTexture.repeat.set(4, 20);
+
     heavenState.ground_material = Physijs.createMaterial(
-      new THREE.MeshBasicMaterial({color: 0x00ff00, side: THREE.DoubleSide}),
+      new THREE.MeshBasicMaterial({map: grassTexture, side: THREE.DoubleSide}),
       .8, .4
     );
     heavenState.ground_geometry = new THREE.PlaneGeometry(500, groundLength);
@@ -2198,20 +3238,27 @@ $(function() {
     heavenState.massiveComputer = new Computer({x: 0, y: 300, z: massiveComputerZ}, 600, 1000);
     heavenState.massiveComputer.twitchIntensity = 5;
     heavenState.massiveComputer.addTo(scene, function() {
-      heavenState.massiveComputer.material.opacity = 0.33;
+      heavenState.massiveComputer.material.opacity = 0.01;
     });
 
-    var dummyForwardInterval = setInterval(function() {
-      var z = Math.random() * 0.5 + 10;
-      kevinRonald.walk(negrand(3), 0, z);
-      dylanRonald.walk(negrand(3), 0, z);
-    }, 30);
+    if (TEST_MODE) {
+      var dummyForwardInterval = setInterval(function() {
+        var z = Math.random() * 0.5 + 10;
+        kevinRonald.walk(negrand(3), 0, z);
+        dylanRonald.walk(negrand(3), 0, z);
+      }, 30);
+    }
 
     heavenState.artifacts = [];
     function rainArtifacts() {
       var middle = middlePosition(kevinRonald.head.mesh.position, dylanRonald.head.mesh.position);
-      var future = {x: middle.x + negrand(400), y: kt.randInt(4), z: middle.z + Math.random() * 200 + 100};
-      var artifact = new Artifact(future, Math.random() * 9 + 3, 2);
+
+      var z = (heavenState.artifactZOffset)? heavenState.artifactZOffset() : Math.random() * 200 + 80;
+      var future = {x: middle.x + negrand(400), y: kt.randInt(10), z: middle.z + z};
+
+      var percentageThroughGrass = Math.min(0.99, Math.max(0, (middle.z - startGrassZ) / (massiveComputerZ - startGrassZ)));
+      var artifactIndex = Math.floor(percentageThroughGrass * numberOfArtifactTypes);
+      var artifact = new Artifact(future, Math.random() * 20 + 9.8, true, artifactIndex);
       heavenState.artifacts.push(artifact);
       artifact.addTo(scene);
 
@@ -2220,8 +3267,11 @@ $(function() {
         scene.remove(firstArtifact.mesh);
       }
 
+      heavenState.skyBlocker.material.opacity = Math.max(0, heavenState.skyBlocker.material.opacity - 0.01);
+      heavenState.skyBlocker.material.needsUpdate = true;
+
       if (!heavenState.stopRaining) {
-        setTimeout(rainArtifacts, kt.randInt(300, 50));
+        setTimeout(rainArtifacts, kt.randInt(107, 26));
       }
       else {
         setTimeout(function() {
@@ -2236,6 +3286,8 @@ $(function() {
       console.log('I AM AT LINUX NOW');
       clearInterval(dummyForwardInterval);
 
+      heavenState.artifactZOffset = function() {return (Math.random() - 0.5) * -12};
+
       var currentTarget = cameraFollowState.target;
       var initY = currentTarget.y;
       cameraFollowState.target = null;
@@ -2246,6 +3298,8 @@ $(function() {
 
         if (currentTarget.y >= initY + 40) {
           clearInterval(aimCameraUpInterval);
+          scene.remove(heavenState.skybox);
+          scene.remove(heavenState.skyBlocker);
           addHand();
         }
       }, 10);
@@ -2258,7 +3312,6 @@ $(function() {
         heavenState.bigGirlHand.specificModelName = mn.BASE_HAND;
         heavenState.bigGirlHand.addTo(scene, function() {
           var material = heavenState.bigGirlHand.materials[0];
-          console.log(material);
           material.color = new THREE.Color(198, 120, 86);
           material.needsUpdate = true;
 
@@ -2292,13 +3345,13 @@ $(function() {
         var dist = 60;
         var hand = heavenState.bigGirlHand;
         var pokeCount = 0;
-        var maxPokes = 3;
+        var maxPokes = TEST_MODE? 3 : 1000;
 
         poke();
         function poke() {
           hand.pokeUntilCollision(dist, function() {
             pokeCount += 1;
-            if (pokeCount < maxPokes) {
+            if (!heavenState.stopPoking && pokeCount < maxPokes) {
               setTimeout(poke, 1);
             } else {
               donePoking();
@@ -2318,29 +3371,48 @@ $(function() {
 
   function enterEndgameState(linux) {
     console.log('IT IS TIME TO DIE RONALD');
+    flash('RONALD?');
     active.endgame = true;
+    io.mode = -1;
 
     scene.setGravity(new THREE.Vector3(0, 0, 0));
 
     // modify things from previous state y not
     heavenState.bigGirlHand.move(-300, 170, 400);
-    linux.material.opacity = 0.985;
+    linux.material.opacity = 0.975;
     linux.reset();
     linux.mesh.position.y = 200;
     kevinRonald.move(0, -5, -25);
     dylanRonald.move(0, -5, -25);
 
+    var skybox = SKYBOX.create();
+    scene.add(skybox);
+
     var girlZ = linux.mesh.position.z + 200;
     cameraFollowState.target = {x: 0, y: 50, z: girlZ};
-    cameraFollowState.offset = {x: 400, y: 25, z: 0};
+    cameraFollowState.offset = {x: 500, y: 25, z: 50};
     lightFollowState.target = cameraFollowState.target;
-    lightFollowState.offset = {x: 100, y: 40, z: 0};
+    lightFollowState.offset = {x: 0, y: 40, z: 0};
 
-    finalState.girl = new Human({x: 220, y: 50, z: girlZ}, 35, 'girl');
+    finalState.girl = new Human({x: 295, y: 50, z: girlZ - 10}, 29, 'girl');
     finalState.girl.addTo(scene);
 
     finalState.boy = new Human({x: -300, y: 50, z: girlZ - 50}, 45, 'boy');
     finalState.boy.addTo(scene);
+
+    var tonyRonaldVideoStruct = {vid: tonyRonaldVideo};
+    finalState.tonyRonaldScreen = new Billboard({x: -127, y: 280, z: girlZ - 165}, 1, tonyRonaldVideoStruct);
+    finalState.tonyRonaldScreen.addTo(scene);
+
+    var chatroomVideoStruct = {vid: chatroomVideo, width: 340, height: 120};
+    finalState.chatroomScreen = new Billboard({x: -100, y: 75, z: girlZ - 165}, 1, chatroomVideoStruct);
+    finalState.chatroomScreen.addTo(scene);
+
+    finalState.hotdog = new Hotdog({x: 30, y: 110, z: girlZ - 145}, 25);
+    finalState.hotdog.addTo(scene);
+
+    finalState.keyboard = new BodyPart({x: 0, y: -10, z: girlZ - 30}, 15, '/js/models/keyboard.js');
+    finalState.keyboard.addTo(scene);
 
     fadeOverlay(false, function() {
       girlGonnaTalkNow();
@@ -2349,6 +3421,7 @@ $(function() {
     finalState.render = function() {
       finalState.girl.render();
       if (finalState.tonyRonaldScreen) finalState.tonyRonaldScreen.render();
+      if (finalState.chatroomScreen) finalState.chatroomScreen.render();
     };
     finalState.physicsUpdate = function() {
 
@@ -2358,6 +3431,8 @@ $(function() {
       console.log('can you see me, ronald?');
 
       setTimeout(function() {
+        tonyRonaldVideo.play();
+        chatroomVideo.play();
         panToShowScreen();
       }, 4444);
     }
@@ -2390,19 +3465,40 @@ $(function() {
     function startComputerActivity() {
       console.log('can u see the video and dress my ronald?');
 
-      tonyRonaldVideo.play();
-      var tonyRonaldVideoStruct = {vid: tonyRonaldVideo, width: 320, height: 240};
-      finalState.tonyRonaldScreen = new Billboard({x: -130, y: 300, z: girlZ - 100}, 1, tonyRonaldVideoStruct);
-      finalState.tonyRonaldScreen.addTo(scene, function() {
-
-      });
+      ronaldGUI.fadeIn(800);
     }
 
+    // fallbacks to position the GUI
+    finalState.movingGUI = false;
+    $('body').keypress(function(ev) {
+      ev.preventDefault();
+
+      if (ev.which == 98) { // b
+        finalState.movingGUI = !finalState.movingGUI;
+      }
+    });
+    $('body').mousemove(function(ev) {
+      if (finalState.movingGUI) {
+        console.log(parseInt(ronaldGUI.css('left')));
+        console.log(parseInt(ronaldGUI.css('top')));
+
+        ronaldGUI.css('left', ev.clientX + 'px');
+        ronaldGUI.css('top', ev.clientY + 'px');
+      }
+    });
+
+    // reacting to button clicks in the GUI
+    $('.ronald-button').click(function(ev) {
+      var target = $(ev.target);
+      var id = target[0].id;
+      var shirtNumber = parseInt(id.replace('shirt', ''));
+      finalState.hotdog.changeTeeShirt(shirtNumber);
+    });
   }
 
 });
 
-},{"./artifact":2,"./billboard":3,"./character":6,"./computer":7,"./hand":8,"./human":10,"./lib/kutility":12,"./model_names":14,"./ronald_word":15}],14:[function(require,module,exports){
+},{"./artifact":2,"./billboard":3,"./bodypart":5,"./character":6,"./computer":7,"./hand":8,"./hotdog":10,"./human":11,"./io":12,"./lib/kutility":14,"./model_names":16,"./ronald_word":17,"./skybox":18}],16:[function(require,module,exports){
 
 var prefix = '/js/models/';
 
@@ -2442,7 +3538,7 @@ module.exports.FOOTBALL_FOOT = pre('football_foot.js');
 
 /* HUMANS */
 
-module.exports.TWEEN_GIRL = pre('chubby.js');
+module.exports.TWEEN_GIRL = pre('manga.js');
 module.exports.BOY = pre('chubby.js');
 
 /* FUNCTIONS */
@@ -2455,12 +3551,12 @@ module.exports.loadModel = function(modelName, callback) {
   });
 }
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var kt = require('./lib/kutility');
 
 module.exports = RonaldWord;
 
-var phraseBank = [
+var player1PhraseBank = [
   'RONALD',
   'MY FRIEND RONALD LIVES INSIDE THE COMPUTER',
   'MY FRIEND RONALD',
@@ -2468,6 +3564,34 @@ var phraseBank = [
   'RONALD EATS ALL THE COMPUTER TRASH',
   'MY FRIEND RONALD SMOKES WEED',
   "MY FRIEND RONALD'S DEAD",
+  'MY FRIEND RONALD USES ADOBE CREATIVE CLOUD',
+  'MY FRIEND RONALD HAS A STARTUP',
+  'MY FRIEND RONALD NEVER HAS TO GO OUTSIDE',
+  "RONALD'S NOT AFRAID",
+  "WHERE'D YOU GO, RONALD?",
+  'MY FRIEND RONALD WEARS BAND TEES',
+  'MY FRIEND RONALD HAS DESIRES',
+  'MY FRIEND RONALD SEEKS CLOSURE',
+  'MY FRIEND RONALD HELPS ME ESCAPE'
+];
+
+var player2PhraseBank =  [
+  'I SEE MY FRIEND RONALD INSIDE OF EVERYONE',
+  'MY FRIEND RONALD IS ON SNAPCHAT',
+  'MY FRIEND RONALD BETA TESTED IOS 8',
+  'MY FRIEND RONALD IS A DEVELOPER',
+  'MY FRIEND RONALD PREFERS XBOX',
+  'MY FRIEND RONALD HAS CONNECTIONS',
+  'MY FRIEND RONALD WAKES UP EVERY MORNING WITH A SMILE',
+  "RONALD'S ONLY FRIEND IS ME",
+  'MY ONLY FRIEND IS RONALD',
+  'MY FRIEND RONALD USES VSCO CAM',
+  'MY FRIEND RONALD LOVES TV PARTY',
+  'RONALD USES ANGULAR.JS FOR FRONTEND WEB DEVELOPMENT',
+  "RONALD'S FAVORITE TRASH IS PICTURES",
+  "RONALD'S HOME IS TRASH",
+  "MY FRIEND RONALD IS AN EXPERT WHEN IT COMES TO CLEANING COMPUTERS",
+  'YOU HAVE TO FEED MY FRIEND RONALD TRASH OR HE WILL DIE'
 ];
 
 function negrand(scalar) {
@@ -2481,7 +3605,12 @@ function randcolor() {
   return new THREE.Color(r, g, b);
 }
 
-function RonaldWord(phrase, config) {
+function RonaldWord(player, phrase, config) {
+  if (!player) {
+    player = 1;
+  }
+
+  var phraseBank = (player == 1)? player1PhraseBank : player2PhraseBank;
   if (!phrase) {
     phrase = kt.choice(phraseBank);
   }
@@ -2497,6 +3626,7 @@ function RonaldWord(phrase, config) {
     config.decay = 60000;
   }
 
+  this.phraseIndex = phraseBank.indexOf(phrase) + 1;
   this.phrase = phrase;
   this.position = config.position;
   this.velocity = config.velocity;
@@ -2572,4 +3702,72 @@ RonaldWord.prototype.render = function() {
   //this.move(this.velocity.x, this.velocity.y, this.velocity.z);
 }
 
-},{"./lib/kutility":12}]},{},[13])
+},{"./lib/kutility":14}],18:[function(require,module,exports){
+
+var kt = require('./lib/kutility');
+
+var girlRoomPath = '/images/girl_room.jpg';
+
+function cubify(url) {
+  return [url, url, url, url, url, url];
+}
+
+function makeCubemap(textureURL, repeatX, repeatY) {
+  if (!textureURL) return;
+  if (!repeatX) repeatX = 4;
+  if (!repeatY) repeatY = 4;
+
+  var textureCube = cubify(textureURL);
+
+  var cubemap = THREE.ImageUtils.loadTextureCube(textureCube); // load textures
+  cubemap.format = THREE.RGBFormat;
+  cubemap.wrapS = THREE.RepeatWrapping;
+  cubemap.wrapT = THREE.RepeatWrapping;
+  cubemap.repeat.set(repeatX, repeatY);
+
+  return cubemap;
+}
+
+function makeShader(cubemap) {
+  var shader = THREE.ShaderLib['cube']; // init cube shader from built-in lib
+  shader.uniforms['tCube'].value = cubemap; // apply textures to shader
+  return shader;
+}
+
+function skyboxMaterial(textureURL) {
+  var cubemap = makeCubemap(textureURL);
+  var shader = makeShader(cubemap);
+
+  return new THREE.ShaderMaterial({
+    fragmentShader: shader.fragmentShader,
+    vertexShader: shader.vertexShader,
+    uniforms: shader.uniforms,
+    depthWrite: false,
+    side: THREE.BackSide,
+    opacity: 0.5
+  });
+}
+
+module.exports.create = function(size, textureURL) {
+  if (!textureURL) textureURL = girlRoomPath;
+  if (!size) size = {x: 20000, y: 20000, z: 20000};
+
+  var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+  var material = skyboxMaterial(textureURL);
+  return new THREE.Mesh(geometry, material);
+}
+
+module.exports.blocker = function(size) {
+  if (!size) size = {x: 19500, y: 19500, z: 19500};
+
+  var geometry = new THREE.BoxGeometry(size.x, size.y, size.z);
+  var material = new THREE.MeshBasicMaterial({
+      color: 0x000000
+    , side: THREE.DoubleSide
+    , opacity: 1.0
+    , transparent: true
+  });
+  return new THREE.Mesh(geometry, material);
+}
+
+},{"./lib/kutility":14}]},{},[15])

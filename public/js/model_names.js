@@ -37,7 +37,7 @@ module.exports.FOOTBALL_FOOT = pre('football_foot.js');
 
 /* HUMANS */
 
-module.exports.TWEEN_GIRL = pre('chubby.js');
+module.exports.TWEEN_GIRL = pre('manga.js');
 module.exports.BOY = pre('chubby.js');
 
 /* FUNCTIONS */

@@ -14,6 +14,8 @@ var START_ROTDOWN_ADDRESS = '/startRotDown';
 var END_ROTDOWN_ADDRESS = '/endRotDown';
 var HAND_DELTA_ADDRESS = '/handDelta';
 
+var PHRASE_ADDRESS = '/phrase';
+
 var signalMap = {};
 signalMap[playerize(START_SWELL_ADDRESS, 1)] = 1;
 signalMap[playerize(START_SWELL_ADDRESS, 2)] = 2;
@@ -69,6 +71,10 @@ module.exports.endElbowRotDown = function(player) {
 module.exports.handDelta = function(player, mag) {
   var address = playerize(HAND_DELTA_ADDRESS, player);
   sendPacketToMax(address, mag);
+}
+
+module.exports.phrase = function(playerIndex, phraseIndex, velocity) {
+  maxClient.send(PHRASE_ADDRESS, [playerIndex - 1, phraseIndex, velocity.x, velocity.y, velocity.z]);
 }
 
 function playerize(address, player) {

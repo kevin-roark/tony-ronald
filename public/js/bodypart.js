@@ -4,7 +4,18 @@ var modelNames = require('./model_names');
 
 module.exports = BodyPart;
 
-function BodyPart(startPos, scale) {
+function BodyPart(startPos, scale, model) {
+  if (!startPos) startPos = {x: 0, y: 0, z: 0};
+  this.startX = startPos.x;
+  this.startY = startPos.y;
+  this.startZ = startPos.z;
+
+  this.scale = scale || 1;
+
+  if (model) {
+    this.specificModelName = model;
+  }
+
   this.modelChoices = [];
 
   this.melting = false;

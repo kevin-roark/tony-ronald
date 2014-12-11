@@ -9,3 +9,5 @@ run server on server computer
 connect other computer to server with node forwarder.js
 
 connect server's browser
+
+to connect phone u gotta use sever_ip/8888:phone.html in safari
