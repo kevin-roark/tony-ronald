@@ -112,24 +112,23 @@ io.on('connection', function(socket) {
   socket.on('phrase', function(player, phraseIndex, velocity) {
     maxer.phrase(player, phraseIndex, velocity);
   });
-
   socket.on('artifact', function(player) {
     maxer.whoa(player);
   });
-
   socket.on('knock', function(player) {
     maxer.knock(player);
   });
-
   socket.on('rock', function(index) {
     maxer.rock(index);
   });
-
   socket.on('heaven', function() {
     maxer.heaven();
   });
   socket.on('running', function() {
     maxer.running();
+  });
+  socket.on('noHeaven', function() {
+    maxer.stopHeaven();
   });
 });
 
