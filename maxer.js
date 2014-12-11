@@ -1,6 +1,7 @@
 
 var osc = require('node-osc');
 
+var PORT_MAX_SENDING = 12348;
 var PORT_MAX_LISTENING = 12349;
 var HOST = '127.0.0.1';
 
@@ -74,7 +75,7 @@ module.exports.handDelta = function(player, mag) {
 }
 
 module.exports.phrase = function(playerIndex, phraseIndex, velocity) {
-  maxClient.send(PHRASE_ADDRESS, [playerIndex - 1, phraseIndex, velocity.x, velocity.y, velocity.z]);
+  maxClient.send(PHRASE_ADDRESS, playerIndex - 1, phraseIndex, velocity.x, velocity.y, velocity.z);
 }
 
 function playerize(address, player) {

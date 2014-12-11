@@ -6,9 +6,6 @@ var io = require('socket.io')(server);
 var osc = require('osc');
 var maxer = require('./maxer');
 
-var PORT_MAX_SENDING = 12348;
-var PORT_MAX_LISTENING = 12349;
-var HOST = '127.0.0.1';
 
 app.use(express.static(__dirname + '/public'));
 

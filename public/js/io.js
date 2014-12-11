@@ -212,7 +212,7 @@ function totalMagnitude(pos) {
 }
 
 function phraseBlast(player, pos, vel) {
-  var data = {player: 1, pos: pos, vel: vel};
+  var data = {player: player, pos: pos, vel: vel};
   module.exports.eventHandler('phraseBlast', data);
   console.log('blasted phrase:');
   console.log(data);
@@ -546,8 +546,6 @@ function hand1DeltaAction(positionDelta) {
   } else {
 
   }
-
-  socket.emit('handDelta', 1, mag);
 }
 
 function hand2DeltaAction(positionDelta) {
@@ -559,8 +557,6 @@ function hand2DeltaAction(positionDelta) {
   } else {
 
   }
-
-  socket.emit('handDelta', 2, mag);
 }
 
 function knee1DeltaAction(positionDelta) {
@@ -634,24 +630,20 @@ function elbow2DeltaAction(positionDelta) {
 function checkPlayer1ElbowNonRot(rotUp, rotDown) {
   if (rotUp && elbowHistory.one.rotUp) {
     elbowHistory.one.rotUp = false;
-    socket.emit('endElbowRotUp', 1);
   }
 
   if (rotDown && elbowHistory.one.rotDown) {
     elbowHistory.one.rotDown = false;
-    socket.emit('endElbowRotDown', 1);
   }
 }
 
 function checkPlayer2ElbowNonRot(rotUp, rotDown) {
   if (rotUp && elbowHistory.two.rotUp) {
     elbowHistory.two.rotUp = false;
-    socket.emit('endElbowRotUp', 2);
   }
 
   if (rotDown && elbowHistory.two.rotDown) {
     elbowHistory.two.rotDown = false;
-    socket.emit('endElbowRotDown', 2);
   }
 }
 
